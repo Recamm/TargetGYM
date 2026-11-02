@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext, inicioPorRol } from './AuthContext.js';
 import { useNotifications } from './NotificationContext.js';
-import { consultarSesion, iniciarSesion, registrarUsuario, cerrarSesion, actualizarPerfil } from '../services/authService.js';
+import { consultarSesion, iniciarSesion, registrarUsuario, cerrarSesion, actualizarPerfil, activarAcceso } from '../services/authService.js';
 import { onSessionExpired } from '../services/api.js';
 
 export default function AuthProvider({ children }) {
@@ -25,8 +25,9 @@ export default function AuthProvider({ children }) {
         return () => { active = false; onSessionExpired(null); };
     }, [notifyError, notify]);
     const login = async datos => { const result = await iniciarSesion(datos); setUsuario(result.usuario); setError(null); navigate(inicioPorRol(result.usuario.rol)); return result.usuario; };
-    const registro = async datos => { const result = await registrarUsuario(datos); setUsuario(result.usuario); setError(null); navigate('/mi-membresia'); return result.usuario; };
+    const registro = async datos => { const result = await registrarUsuario(datos); setUsuario(result.usuario); setError(null); navigate('/mi-espacio'); return result.usuario; };
+    const aceptarInvitacion = async datos => { const result = await activarAcceso(datos); setUsuario(result.usuario); setError(null); navigate(inicioPorRol(result.usuario.rol)); return result.usuario; };
     const logout = async () => { await cerrarSesion(); setUsuario(null); navigate('/'); };
     const editarPerfil = async datos => { const updated = await actualizarPerfil(datos); setUsuario(updated); return updated; };
-    return <AuthContext.Provider value={{ usuario, loading, error, refresh, login, registro, logout, editarPerfil }}>{children}</AuthContext.Provider>;
+    return <AuthContext.Provider value={{ usuario, loading, error, refresh, login, registro, logout, editarPerfil, aceptarInvitacion }}>{children}</AuthContext.Provider>;
 }

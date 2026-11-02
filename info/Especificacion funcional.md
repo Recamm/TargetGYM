@@ -34,6 +34,30 @@ Precios y descuento anual configurables, polling de 30 segundos y conciliacion
 temporal en servidor. Estas decisiones reemplazan las aclaraciones anteriores
 incompatibles, sin borrar su registro historico.
 
+### Ampliacion aprobada 2026-11-02: catalogo administrable
+
+Los planes dejan de limitarse a mensual/trimestral/anual: esos tres se
+conservan como iniciales. El administrador crea/edita nombre, meses
+calendario, precio y descuentos generales o condicionados. Deshabilitar
+oculta el plan de portada/registro y bloquea nuevos contratantes, pero
+permite renovacion a socios con membresias anteriores de ese plan.
+Eliminar impide nuevas operaciones incluso renovaciones, sin borrar
+vigencias, pagos o historial. El administrador puede cambiar un plan
+vigente a otro habilitado conservando fechas, sin inventar un cobro;
+quedan registrados autor y fecha. No hay cupos en planes: el usuario
+retiro expresamente esa propuesta.
+
+Los descuentos con condiciones o metodo especifico requieren confirmacion
+del administrador al registrar el pago presencial; el servidor valida
+el metodo y calcula el importe. La portada muestra precio base y oferta
+condicionada, no promete una rebaja incondicional. Descuentos generales
+se aplican automaticamente solo al plan elegido. Integracion de Mercado
+Pago/tarjeta online queda fuera de esta etapa, por decision del usuario.
+
+La informacion publica del establecimiento se conserva con fuentes en
+[target-gym](./target-gym/FUENTES.md). Solo se publican contactos
+verificados; no se presume WhatsApp por conocer un telefono.
+
 ### User Story 1 - Un socio se inscribe a una clase grupal (Priority: P1)
 
 Un socio con membresia activa quiere ver el calendario semanal de clases (spinning,
@@ -203,7 +227,8 @@ verificando que muestra las clases finalizadas a las que asistio.
 ### Functional Requirements
 
 - **FR-001**: El sistema MUST permitir a un visitante registrarse como socio
-  eligiendo un plan de membresia (mensual, trimestral o anual), validando nombre,
+  eligiendo un plan habilitado con precio y metodo de pago (efectivo o
+  transferencia) del catalogo administrable, validando nombre,
   apellido, email, contraseña, DNI, telefono y fecha de nacimiento (16 años o mas).
 - **FR-002**: El sistema MUST validar que el email sea unico y tenga formato
   `usuario@dominio.com` antes de aceptar un registro o actualizacion.
@@ -214,15 +239,17 @@ verificando que muestra las clases finalizadas a las que asistio.
 - **FR-005**: El sistema MUST calcular y mantener el estado (activa, vencida,
   reemplazada en el historial) y la fecha de vencimiento de cada membresia segun el plan
   contratado, sumando a la fecha de inicio la cantidad de meses calendario del plan
-  (mensual = 1 mes, trimestral = 3 meses, anual = 12 meses), venciendo el mismo dia
+  (iniciales: mensual = 1 mes, trimestral = 3 meses, anual = 12 meses;
+  nuevos planes: duracion configurada entre 1 y 120 meses), venciendo el mismo dia
   del mes de inicio N meses despues (ej. contratada el 20 de enero, un plan mensual
   vence el 20 de febrero). La suspension/baja pertenece al socio y bloquea sus
   reservas aunque aun tenga una membresia no vencida.
 - **FR-006**: El sistema MUST permitir al administrador registrar pagos de cuotas y
   mostrar alertas de membresias vencidas o que vencen dentro de los proximos 7 dias.
-- **FR-007**: El sistema MUST aplicar el descuento del plan anual unicamente en el
-  momento de contratar ese plan, sin trasladarlo a otros planes ni de forma
-  retroactiva.
+- **FR-007**: El sistema MUST aplicar el descuento configurado unicamente al
+  plan contratado y al momento del pago, sin trasladarlo a otros planes ni
+  modificar pagos historicos. Si tiene condiciones o metodo especifico,
+  requiere confirmacion del administrador y metodo compatible.
 - **FR-008**: El sistema MUST permitir al administrador crear, editar, cancelar y
   eliminar clases grupales, asignando instructor, horario y cupo maximo.
 - **FR-009**: El sistema MUST rechazar la creacion o edicion de una clase con cupo
@@ -263,6 +290,25 @@ verificando que muestra las clases finalizadas a las que asistio.
   (Cerca: blanco/grafito, acentos Mandarina, Outfit/DM Sans y logo Mancuerna;
   identidad aprobada por el usuario el 2026-11-02, que reemplaza la paleta
   negro/blanco/rojo y Oswald/Nunito Sans sin cambiar las reglas funcionales).
+- **FR-021**: Solo el administrador MUST crear, editar, habilitar, deshabilitar
+  y eliminar planes. Deshabilitados admiten unicamente renovaciones de socios
+  con membresias previas; eliminados no admiten nuevas operaciones.
+- **FR-022**: El sistema MUST preservar membresias, fechas, pagos, importes,
+  nombres de plan y condiciones de pagos registrados al modificar/eliminar
+  planes. El cambio administrativo de plan vigente conserva fechas y registra
+  autor/fecha, sin generar pagos.
+- **FR-023**: La navegacion publica MUST distinguir Asociate de Ya soy socio,
+  y mostrar Mi espacio al socio conectado. Administradores e instructores
+  disponen de un portal visual separado, reutilizando autenticacion y permisos.
+- **FR-024**: El registro publico MUST crear la cuenta y guardar el plan y
+  metodo solicitado, sin activar una membresia hasta el pago confirmado por
+  el administrador. Informar una transferencia no acredita dinero ni permite
+  reservar sin membresia activa. La interfaz administrativa exige confirmar
+  que se recibio el dinero antes de registrar el pago.
+- **FR-025**: El administrador MUST poder crear cuentas de socios sin conocer
+  su contraseña. Su primer acceso usa una invitacion personal de un uso,
+  valida durante 48 horas, almacenada como hash y revocada al reemplazarla.
+  Activar acceso no modifica pagos, membresias ni permisos.
 
 ### Key Entities *(include if feature involves data)*
 
@@ -272,8 +318,10 @@ verificando que muestra las clases finalizadas a las que asistio.
 - **Socio**: usuario registrado con membresia; tiene fecha de alta y estado (activo,
   suspendido, dado de baja); se relaciona con Membresia (1 a muchas, historial de
   planes) e Inscripcion (1 a muchas).
-- **Membresia**: plan contratado por un socio (mensual = 1 mes, trimestral = 3 meses,
-  anual = 12 meses) con fecha de inicio, fecha de vencimiento calculada en meses
+- **Plan**: identificador estable, nombre, duracion en meses calendario, precio,
+  descuento, condiciones y metodo opcionales, habilitado y eliminacion logica.
+- **Membresia**: plan contratado por un socio con nombre historico,
+  fecha de inicio, fecha de vencimiento calculada en meses
   calendario desde el inicio, estado (activa/vencida) y precio; se relaciona con
   Pago (1 a muchas).
 - **Pago**: registro de un pago de cuota o membresia, con fecha, monto y metodo de

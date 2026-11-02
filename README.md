@@ -44,17 +44,42 @@ un servidor compartido entre procesos. Las pruebas usan otra base aislada.
 
 ### Primer recorrido
 
-1. Ingresar con el administrador creado.
+1. Abrir **Acceso del equipo** (`/equipo`) e ingresar con el administrador creado.
 2. En **Gestión → Planes**, configurar los precios reales y el descuento anual.
    Los precios empiezan sin configurar; no se inventan importes.
 3. Crear un instructor y una clase con fecha futura, duración y cupo.
-4. Registrar un socio desde la web o desde Gestión.
-5. Registrar su pago manual: la membresía recién entonces queda activa.
+4. Desde **Asociate**, el socio elige un plan con precio y efectivo/transferencia.
+   También se puede crear desde Gestión y entregarle una invitación de acceso.
+5. Verificar el dinero recibido y registrar su pago manual: la membresía recién
+   entonces queda activa. Informar una transferencia no confirma el cobro.
 6. El socio puede reservar, consultar/cancelar inscripciones y ver su asistencia.
 7. Desde el inicio de la clase, el instructor asignado o el administrador registra
    presentes/ausentes. El historial acredita solo asistencias a clases finalizadas.
 
 ## Roles y reglas
+
+### Asociarse, ingresar y administrar
+
+- `/asociate`: plan, datos y método de pago obligatorios. `/registro` conserva
+  compatibilidad y redirige, incluyendo el plan seleccionado desde portada.
+- `/login`: **Ya soy socio**, con destino `/mi-espacio`; cuenta y membresía son
+  estados diferentes. Pendientes pueden consultar y coordinar el pago, no
+  reservar sin membresía activa.
+- `/equipo`: login del equipo con la misma sesión y permisos. Administración
+  entra a `/gestion`, con resumen de pagos/altas pendientes y vencimientos;
+  instructores, a sus clases. Paneles sin navegación ni pie comerciales.
+- Altas desde recepción: plan opcional, sin pedir contraseña al administrador.
+  En la ficha del socio, **Generar enlace de acceso** y entregarlo personalmente.
+  El socio elige su contraseña. Enlaces personales de un uso, 48 horas, solo
+  hash en la base; generar otro invalida el anterior. No se envían correos.
+- Efectivo: confirmar el cobro en recepción. Transferencia: coordinar datos por
+  WhatsApp y verificar dinero recibido. El aviso **Ya realicé la transferencia**
+  crea una tarea de revisión, nunca un pago ni una membresía.
+- No hay pasarela online, datos bancarios inventados, archivos de comprobantes
+  ni doble factor en esta etapa. «Tarjeta» en pagos administrativos continúa
+  siendo el registro de un cobro externo, no un checkout web.
+
+Detalle y evidencia en el [informe de cambios](info/Informe-de-asociacion-y-accesos.md).
 
 | Rol | Operaciones |
 |---|---|
@@ -65,10 +90,18 @@ un servidor compartido entre procesos. Las pruebas usan otra base aislada.
 
 - Registro desde **16 años inclusive**, email/DNI únicos y contraseña de 8 a 128
   caracteres, con mayúscula y número.
-- Planes de **1/3/12 meses calendario**, ajustando al último día válido.
+- Catálogo administrable de planes de **1 a 120 meses calendario**, ajustando al último día válido.
+  Los planes iniciales de 1/3/12 meses se conservan; se pueden crear otros.
   La renovación anticipada se suma al vencimiento vigente.
-- El servidor calcula el importe; el descuento anual no se traslada a otros planes.
+- El servidor calcula el importe y el descuento de cada plan sin trasladarlo a otros.
+  Las condiciones/método del descuento requieren confirmación del administrador
+  al registrar el pago presencial. Cambiar el método reinicia esa confirmación.
   Un UUID identifica cada operación de pago para que reintentar no duplique la renovación.
+- Deshabilitar oculta el plan de portada/registro y bloquea nuevos contratantes,
+  permitiendo renovar a quienes ya tuvieron una membresía de ese plan.
+  Eliminar impide también renovar, sin borrar historial ni vigencias actuales.
+  El administrador puede cambiar un plan vigente desde la ficha del socio;
+  conserva fechas y pagos, no genera un cobro y registra autor/fecha.
 - Solo socios y membresías activos pueden reservar. No hay sobreventa ni reservas
   activas duplicadas. El cupo se deriva de Pendientes, Confirmadas y En curso.
 - Cancelación propia con **al menos 2 horas** de anticipación; repetirla no
@@ -103,6 +136,23 @@ conservan como documentación estructural; los DTO operativos vienen de SQL.
 Sesiones persistidas, cookies HttpOnly/SameSite, Secure en producción, CSRF,
 contraseñas con scrypt, límites de autenticación y errores centralizados.
 React no almacena contraseñas ni tokens de sesión en localStorage.
+
+Catálogo público: `GET /api/planes`. Administración: `GET /api/gestion/planes`,
+`POST /api/planes`, `PUT /api/planes/:tipo`, `DELETE /api/planes/:tipo`.
+Planes elegibles para renovar: `GET /api/mi-membresia/planes`; por socio
+para administración: `GET /api/socios/:id/planes`. Cambio administrativo:
+`PUT /api/socios/:id/plan`. Las mutaciones requieren administrador y CSRF,
+excepto solicitudes propias de socios, que mantienen su ruta y permisos.
+Migración versionada 2 en `backend/src/database/planes.sql`: mantiene los
+identificadores iniciales y agrega catálogo dinámico, estados y snapshots.
+Los descuentos antiguos no registrados no se reconstruyen con reglas actuales.
+
+Migración 3 en `backend/src/database/accesos.sql`: método/fecha de solicitud,
+transferencia informada, primer acceso pendiente e invitaciones. Conserva las
+cuentas y membresías existentes, sin activaciones retroactivas. Nuevas rutas:
+`POST /api/socios/:id/invitacion` (administrador),
+`POST /api/auth/activar-acceso` (token personal, contraseña, CSRF y límite de
+autenticación), `POST /api/mi-membresia/pago-reportado` (socio, solicitud propia).
 
 Todos los recursos están bajo `/api`: `auth`, `clases`, `planes`, `socios`,
 `instructores`, `pagos`, `inscripciones`, `mi-cuenta`, `mi-membresia`,
@@ -153,12 +203,13 @@ npm run test:e2e
 npm audit
 ```
 
-Validación del rediseño: **26 pruebas frontend y 3 recorridos Playwright**,
+Validación del catálogo y ajustes de uso: **20 pruebas backend, 44 frontend y 4 recorridos Playwright**,
 lint y build de producción correctos. Los recorridos verifican administración,
 socio e instructor, pagos, reservas/cancelaciones, asistencia, responsive,
 accesibilidad automatizada y zoom nativo de Chromium al 200%.
-La entrega funcional previa verificó además 15 pruebas backend y auditoría de
-dependencias; no se repitieron para este cambio exclusivamente visual.
+La auditoría de dependencias de la entrega funcional previa no se repitió;
+este cambio no agrega paquetes. La migración se probó también sobre datos
+del esquema anterior y con reapertura de PostgreSQL embebido.
 
 Playwright levanta procesos aislados en **3011/5174**, usa solo datos sintéticos y
 cierra los procesos al terminar. Si falta Chromium, ejecutar
@@ -179,18 +230,31 @@ grafito `#2C3035` y Mandarina `#F48335` como acento, logo **Mancuerna**,
 Outfit para titulares y DM Sans para lectura/controles, ambas locales y con
 licencias OFL. Se aplica a portada, agenda, formularios y paneles por rol.
 Los errores y confirmaciones conservan colores semánticos y texto explícito.
+Temporalmente, la cabecera y el pie usan solo **Target gym** en Outfit,
+sin símbolo; los maestros Mancuerna se conservan. El favicon usa una T.
+Los avisos transitorios se cierran a los 6 s (confirmación) o 10 s (error)
+y se pausan con puntero/foco. Los errores en campos/paneles no se ocultan.
+Inicio muestra precios configurados en ARS por período, descuentos reales
+y pago manual; se actualizan cada 30 s. Navegación reducida a Inicio,
+Clases, Planes y accesos de sesión/rol. El menú móvil entra en 220 ms y
+respeta movimiento reducido.
 
 [Manual final de marca](info/marca/Manual-de-marca.md) ·
 [Manual visual PDF](info/marca/Manual-de-marca.pdf) ·
 [Manual visual HTML](info/marca/manual.html).
 
 La fotografía de portada es una referencia de Danielle Cerullo / Unsplash,
-identificada junto a la imagen. **No corresponde a Target GYM** y debe
+sin leyenda visible por pedido del usuario. **No corresponde a Target GYM** y debe
 reemplazarse por una foto autorizada real antes de representar sus instalaciones.
 Autor/licencia en [ORIGEN.txt](frontend/public/marca/ORIGEN.txt).
 No se inventan cifras ni testimonios reales.
 Dirección: Gral. José de San Martín 2462, Florida, Vicente López.
-No se inventan contactos/redes ausentes en las fuentes.
+Teléfono y horario semanal obtenidos de Maps; Instagram aportado por el usuario.
+Fuente de contenido del pie y registro por dato:
+[info/target-gym](info/target-gym/FUENTES.md).
+WhatsApp **11 6824-4559** confirmado por el usuario; enlace internacional
+`https://wa.me/5491168244559`, separado del teléfono fijo de Maps.
+La grilla de Instagram no se carga como clases reales de la agenda.
 
 Superpowers está adaptado localmente mediante CreateApp y `ca-workflow`,
 sin plugin global ni infraestructura Spec Kit. Leer

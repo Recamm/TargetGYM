@@ -1206,3 +1206,182 @@ visual no equivale a publicacion ni certificacion de accesibilidad o marca.
 
 **Estado:** identidad aprobada aplicada a toda la interfaz, manual final
 entregado y comprobaciones locales completadas. Sin commits ni despliegue.
+
+## 21. Ajustes de uso, cabecera y planes en inicio - 2026-11-02
+
+Pedido: avisos temporales, ocultar logo y usar el nombre, planes/precios
+en portada, retirar leyenda fotografica, simplificar navbar y animar
+el despliegue del menu movil.
+
+- Notificaciones: autocierre independiente de 6 s (confirmacion) y 10 s
+  (error), pausa al pasar el puntero o enfocar, cierre manual y limpieza
+  al desmontar. Posicion flotante sin desplazar el contenido ni quedar
+  atrapadas antes de la cabecera.
+- Nombre temporal Target gym en Outfit, sin simbolo en cabecera/pie;
+  conservar maestros y documentar la excepcion temporal.
+- Inicio con los planes obtenidos de /api/planes, total por periodo en ARS
+  y descuento configurado. No inventar precios ni simular cobro online;
+  carga, error con reintento y precio no configurado explicitos.
+- Navegacion publica: Inicio, Clases y Planes, mas acceso/cuenta y rutas
+  del rol sin duplicar la agenda del socio. Mantener acceso a toda funcion.
+- Menu movil con entrada suave al abrir, Escape/cierre por enlace y
+  preferencia de movimiento reducido. Opciones cerradas no enfocables.
+- Retirar la leyenda visible de portada, conservando origen/licencia y
+  aclaracion de la fotografia en documentacion. No atribuirla al gimnasio.
+- Actualizar manual y PDF con cambios operativos/temporales.
+
+Prueba de regresion de notificaciones ejecutada antes del arreglo: tres
+casos fallan por ausencia de temporizadores/autocierre. Los demas cambios
+se comprobaran con pruebas de planes y navegador responsive/accesible.
+
+### Resultado y comprobaciones
+
+- Implementados todos los ajustes. El favicon temporal usa una T; los SVG
+  originales permanecen sin cambios. No se modificaron backend ni precios.
+- 37 pruebas frontend aprobadas en 8 archivos: autocierre a 6000/10000 ms,
+  temporizadores independientes, pausa puntero/foco, cierre manual y
+  limpieza en StrictMode/desmontaje; planes, descuento, precio nulo,
+  carga/vacio/error/reintento y acciones por rol.
+- Tres recorridos Playwright aprobados juntos en Chromium del sistema:
+  administrador/socio/instructor, interfaz publica y zoom nativo al 200%.
+  Verificados precios configurados, total por periodo, menu de 220 ms,
+  movimiento reducido, Escape/retorno de foco y cierre por enlace.
+- El aviso de error desaparece en navegador a los 10 s; su panel de error
+  y reintento permanecen. La pila es flotante y no mueve el contenido.
+- Responsive de portada entre 320 y 1920 px, Axe sin violaciones en los
+  estados comprobados y capturas revisadas en movil/escritorio.
+- Build de produccion, lint y comprobacion de espacios correctos.
+  La primera comprobacion de moneda de pruebas se ajusto para normalizar
+  espacios no separables y convertir centavos a ARS en el oraculo E2E.
+- Manual 1.1 en Markdown/HTML y PDF etiquetado regenerado: seis hojas A4
+  sin desborde; revisadas visualmente las hojas de logo y sistema.
+  Actualizados README y registros de origen sin borrar autor/licencia.
+- Aplicacion real local comprobada con sus planes vigentes. Sin commits
+  ni despliegue. Chromium no acredita Safari/WebKit ni dispositivos fisicos;
+  no se repitieron backend, auditoria de dependencias o pruebas de produccion.
+
+**Estado:** pedido implementado y validado localmente.
+
+## 22. Catalogo de planes e informacion del gimnasio - 2026-11-02
+
+Alcance confirmado por el usuario:
+
+- Crear, editar y eliminar planes con nombre, duracion en meses, precio,
+  porcentaje de descuento y condiciones opcionales. Mantener Cerca.
+- Deshabilitar los retira de portada/registro y bloquea contrataciones
+  nuevas; quienes ya tuvieron el plan pueden seguir renovandolo.
+- Eliminar los retira tambien de renovaciones, conservando membresias,
+  importes y nombres historicos. Identificador estable, no reutilizable.
+- Administrador puede cambiar el plan vigente de un socio a uno habilitado
+  sin cobrar ni modificar fechas; conservar anterior y auditar autor/fecha.
+- Condiciones/método de descuento se muestran con precio base y promocional;
+  administrador confirma presencialmente si se cumplen al registrar pago.
+  Los descuentos generales conservan su aplicacion automatica.
+- Sin cupos: el usuario retiro expresamente ese pedido. Sin pagos online:
+  integrar Mercado Pago/tarjeta queda para otro paso autorizado.
+- Nueva carpeta info/target-gym con datos extraidos de las fuentes aportadas,
+  fecha y procedencia por dato. No inventar WhatsApp a partir de un telefono.
+  Solo publicar contactos verificados; grilla de clases no equivale a
+  sesiones reales de la agenda ni se carga automaticamente.
+- Migracion versionada de las tablas existentes, API con rol administrador,
+  CSRF, validacion estricta y transacciones; todas las superficies usan el
+  catalogo dinamico, sin enum fijo mensual/trimestral/anual.
+
+Pruebas iniciales: cuatro casos nuevos fallan antes de implementar por
+ausencia de CRUD, renovaciones diferenciadas y rutas protegidas.
+
+### Resultado y evidencia
+
+- Catalogo dinamico implementado en API, administracion, portada, registro,
+  solicitudes, pagos y detalle del socio. Los nombres visibles no exponen
+  identificadores tecnicos. La seleccion de plan en registro sigue requerida.
+- Migracion versionada 2: mantiene los identificadores iniciales y datos
+  previos; nombres/importes/condiciones se guardan en los pagos nuevos y el
+  nombre en cada membresia. No se infieren descuentos de pagos antiguos.
+- Deshabilitar permite renovar a quienes tienen membresias anteriores del
+  plan; eliminar lo retira tambien de renovaciones sin borrar las vigencias.
+  Los cambios administrativos conservan fechas y se muestran con autor/fecha
+  en el historial; nunca inventan un pago.
+- Condiciones/método opcionales se publican junto al precio promocional
+  separado del base. El cobro condicionado exige confirmacion explicita
+  compatible con el metodo; cambiar de socio/plan/metodo la reinicia.
+  El servidor calcula montos y conserva idempotencia por UUID.
+- Relevamiento: Maps confirma telefono 011 4795-5087, lunes-viernes 6-22 h,
+  sabados 8-20 h y domingos cerrado. Perfil/publicacion de Instagram
+  confirman direccion y actividades de referencia. Se agregan telefono,
+  Instagram y horarios al pie; feriados por consultar.
+- Nueva carpeta info/target-gym con JSON de datos y FUENTES.md, procedencia
+  por dato y limitaciones. WhatsApp no confirmado: no se inventa wa.me.
+  Instagram restringe parte del contenido sin sesion; no se elude.
+  targetgym.net devolvio 404. La grilla no se importa como sesiones/cupos.
+- Pruebas: 20 backend y 44 frontend aprobadas; seis casos de backend
+  focalizados repetidos tras los ajustes de auditoria y persistencia.
+  Incluyen permisos/CSRF, entradas invalidas, redondeo, condiciones,
+  renovaciones, eliminacion logica, migracion desde esquema previo y
+  persistencia de plan personalizado/deshabilitado al reabrir la base.
+- Cuatro recorridos Playwright aprobados juntos: flujo completo por roles,
+  interfaz publica, catalogo/promocion/renovacion/cambio/eliminacion y zoom
+  nativo al 200%. Axe sin violaciones en estados comprobados, responsive
+  de portada entre 320-1920 px y formularios nuevos a 360/1440 px.
+- Capturas revisadas de gestion y portada real movil/escritorio; catalogo
+  real conserva sus precios originales. Build, lint y espacios correctos.
+  Manual actualizado y PDF etiquetado de seis hojas A4 sin desborde.
+- Sin nuevas dependencias, cupos de planes, pagos online, commits ni
+  despliegue. Neon/Vercel, Safari/WebKit y dispositivos fisicos no probados.
+
+**Estado:** pedido implementado, persistido y verificado localmente.
+
+## 23. WhatsApp confirmado por el usuario - 2026-11-02
+
+Numero informado: 1168244559. Guardado como 11 6824-4559 y enlace
+https://wa.me/5491168244559, con fuente de confirmacion directa del usuario.
+Agregado al pie, separado del telefono fijo de Maps. Actualizados JSON,
+FUENTES.md y README; sin afirmar verificacion externa de titularidad.
+
+Comprobaciones: prueba focalizada del pie aprobada, build y lint correctos.
+Chromium a 390/1440 px: enlace exacto, area tactil de 44 px, sin desborde
+horizontal y Axe sin violaciones en el pie. La pestaña integrada no pudo
+desplazarse estando oculta; la verificacion se completo en Chromium local.
+No se abrio una conversacion ni se enviaron mensajes. No se repitieron
+backend ni bateria completa por este ajuste de contenido.
+
+**Estado:** contacto incorporado y comprobado.
+
+## 24. Asociacion, espacio del socio y portal del equipo - 2026-11-02
+
+**Alcance aprobado:** aplicar la propuesta de accesos y entregar un informe.
+Asociate para altas nuevas, Ya soy socio para ingresar y Mi espacio cuando
+existe una sesion. Portal del equipo separado visualmente, con la misma
+autenticacion y permisos por rol.
+
+Plan obligatorio con precio y metodo de pago manual en el registro publico.
+Cuenta creada no equivale a membresia activa: efectivo requiere cobro
+confirmado, transferencia requiere verificacion del administrador. Declarar
+una transferencia no acredita dinero ni habilita reservas.
+
+Altas administrativas sin compartir contraseñas, mediante invitacion de
+primer acceso de un uso y vencimiento. Panel de gestion centrado en altas,
+pagos pendientes y vencimientos. Conservar planes, historial y reglas actuales.
+
+Secuencia: pruebas de reglas y permisos; migracion y API; interfaz responsive;
+pruebas de integracion y navegador; requisitos, README e informe solicitado.
+Fuera de esta etapa: pasarela online, correo automatico, comprobantes subidos
+a la web y segundo factor. No inventar datos bancarios ni enviar mensajes.
+
+**Cierre:** implementacion local completa. Migracion 3 conserva cuentas y
+membresias; plan con precio y metodo obligatorios en alta publica; declaracion
+de transferencia no activa nada; cobro confirmado, idempotencia y permisos
+comprobados. Invitaciones de un uso/48 horas con hash, reemplazo y expiracion.
+
+Verificacion final: 26 pruebas backend, 58 frontend y seis flujos Playwright
+aprobados; build, lint y diff --check correctos. Persistencia de solicitudes e
+invitaciones comprobada tras cerrar/reabrir la base. Responsive, teclado,
+Escape, movimiento reducido y Axe en las pantallas comprobadas; zoom nativo
+Chromium al 200%. Manual 1.2: seis paginas A4 etiquetadas, sin desborde.
+
+Entregado [informe de cambios](./Informe-de-asociacion-y-accesos.md).
+Actualizados requisitos FR-001 y FR-023/024/025, README y manual de marca.
+Aplicacion local disponible. Sin pasarela, mensajes, servicios externos,
+commits ni despliegue; no se acredita Safari/iPhone ni Neon/Vercel reales.
+
+**Estado:** aplicado, documentado y verificado localmente.

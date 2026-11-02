@@ -4,27 +4,35 @@ const positivo = value => Number.isSafeInteger(value) && value > 0;
 const cantidad = value => Number.isSafeInteger(value) && value >= 0;
 const fecha = value => texto(value) && Number.isFinite(Date.parse(value));
 const dia = value => texto(value) && /^\d{4}-\d{2}-\d{2}$/.test(value) && fecha(`${value}T12:00:00Z`);
-const plan = value => ['mensual','trimestral','anual'].includes(value);
+const plan = value => texto(value) && /^[a-z0-9][a-z0-9-]{0,79}$/.test(value);
 const nullable = (value, validar) => value === null || validar(value);
 export const lista = validar => value => Array.isArray(value) && value.every(validar);
 export const usuario = value => objeto(value) && positivo(value.id) && texto(value.nombre) && texto(value.apellido) && texto(value.email)
     && ['Socio','Instructor','Administrador'].includes(value.rol) && ['activo','suspendido','baja'].includes(value.estado)
-    && nullable(value.dni, texto) && nullable(value.telefono, texto) && nullable(value.fechaNacimiento, dia) && nullable(value.tipoPlan, plan);
+    && nullable(value.dni, texto) && nullable(value.telefono, texto) && nullable(value.fechaNacimiento, dia) && nullable(value.tipoPlan, plan)
+    && nullable(value.nombrePlanSolicitado, texto) && typeof value.accesoPendiente === 'boolean'
+    && nullable(value.metodoPagoSolicitado, item => ['Efectivo','Transferencia'].includes(item))
+    && nullable(value.solicitadoEn, fecha) && nullable(value.pagoReportadoEn, fecha);
 export const sesionValida = value => objeto(value) && nullable(value.usuario, usuario) && texto(value.csrfToken) && value.csrfToken.length > 0;
 export const clase = value => objeto(value) && positivo(value.id) && texto(value.nombre) && texto(value.tipo) && dia(value.fecha)
     && texto(value.horaInicio) && /^([01]\d|2[0-3]):[0-5]\d$/.test(value.horaInicio) && fecha(value.inicio) && positivo(value.duracionMinutos)
     && positivo(value.instructorId) && texto(value.instructor) && positivo(value.cupoMaximo) && cantidad(value.cupoDisponible) && value.cupoDisponible <= value.cupoMaximo
     && ['Programada','En curso','Finalizada','Cancelada'].includes(value.estado);
-export const membresia = value => objeto(value) && positivo(value.id) && positivo(value.socioId) && plan(value.tipoPlan)
+export const membresia = value => objeto(value) && positivo(value.id) && positivo(value.socioId) && plan(value.tipoPlan) && texto(value.nombrePlan)
     && fecha(value.fechaInicio) && fecha(value.fechaVencimiento) && ['activa','vencida','reemplazada'].includes(value.estado);
 export const membresiaNullable = value => nullable(value, membresia);
-export const precio = value => objeto(value) && plan(value.tipo) && positivo(value.meses) && nullable(value.precioCentavos, positivo)
-    && cantidad(value.descuentoPorcentaje) && value.descuentoPorcentaje <= 99;
+export const precio = value => objeto(value) && plan(value.tipo) && texto(value.nombre) && value.nombre.trim().length > 0 && value.nombre.length <= 120
+    && positivo(value.meses) && value.meses <= 120 && nullable(value.precioCentavos, item => positivo(item) && item <= 100000000)
+    && cantidad(value.descuentoPorcentaje) && value.descuentoPorcentaje <= 99 && typeof value.habilitado === 'boolean'
+    && texto(value.condicionesDescuento) && value.condicionesDescuento.length <= 500 && nullable(value.metodoDescuento, item => ['Efectivo','Transferencia','Tarjeta'].includes(item));
+export const planEliminado = value => objeto(value) && value.eliminado === true;
 export const pago = value => objeto(value) && positivo(value.id) && positivo(value.socioId) && plan(value.tipoPlan)
-    && positivo(value.montoCentavos) && texto(value.metodoPago) && fecha(value.fecha);
+    && texto(value.nombrePlan) && positivo(value.montoCentavos) && positivo(value.precioBaseCentavos)
+    && cantidad(value.descuentoPorcentaje) && value.descuentoPorcentaje <= 99 && texto(value.condicionesDescuento) && texto(value.metodoPago) && fecha(value.fecha);
 export const pagoRegistrado = value => objeto(value) && positivo(value.id) && positivo(value.montoCentavos);
 export const socio = value => usuario(value) && value.rol === 'Socio' && membresiaNullable(value.membresia) && typeof value.proximaAVencer === 'boolean';
-export const detalleSocio = value => usuario(value) && value.rol === 'Socio' && lista(membresia)(value.membresias) && lista(pago)(value.pagos);
+const cambioPlan = value => objeto(value) && positivo(value.id) && fecha(value.fecha) && texto(value.administrador) && texto(value.planAnterior) && texto(value.planNuevo);
+export const detalleSocio = value => usuario(value) && value.rol === 'Socio' && lista(membresia)(value.membresias) && lista(pago)(value.pagos) && lista(cambioPlan)(value.cambiosPlan);
 export const instructor = value => usuario(value) && value.rol === 'Instructor' && texto(value.especialidad);
 export const inscripcion = value => objeto(value) && positivo(value.id) && positivo(value.socioId) && positivo(value.claseId)
     && texto(value.nombre) && texto(value.tipo) && texto(value.socio) && dia(value.fecha) && texto(value.horaInicio) && fecha(value.inicio)
@@ -32,3 +40,4 @@ export const inscripcion = value => objeto(value) && positivo(value.id) && posit
 export const reporte = value => objeto(value) && positivo(value.id) && texto(value.nombre) && dia(value.fecha)
     && positivo(value.cupoMaximo) && cantidad(value.inscripciones) && cantidad(value.asistencias);
 export const solicitud = value => objeto(value) && plan(value.tipoPlan) && value.pendienteDePago === true && fecha(value.solicitadoEn);
+export const invitacion = value => objeto(value) && texto(value.token) && /^[a-f0-9]{64}$/.test(value.token) && fecha(value.expira);

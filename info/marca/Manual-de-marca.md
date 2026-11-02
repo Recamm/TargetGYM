@@ -1,6 +1,6 @@
 # Target GYM — Manual de marca
 
-**Versión 1.0 · Identidad aprobada el 2 de noviembre de 2026**
+**Versión 1.2 · Identidad aprobada el 2 de noviembre de 2026**
 
 **Dirección:** Cerca. **Logo:** Mancuerna. **Paleta:** blanco y grafito
 con acentos Mandarina. **Tipografía:** Outfit + DM Sans.
@@ -46,8 +46,8 @@ El lettering está vectorizado: no requiere una fuente instalada.
 | Logo principal, grafito + Mandarina | [target-mancuerna-logo.svg](./logos/target-mancuerna-logo.svg) |
 | Logo monocromo | [target-mancuerna-mono.svg](./logos/target-mancuerna-mono.svg) |
 | Símbolo aislado | [target-mancuerna-simbolo.svg](./logos/target-mancuerna-simbolo.svg) |
-| Logo en la aplicación | [logo.svg](../../frontend/public/marca/logo.svg) |
-| Favicon | [favicon.svg](../../frontend/public/favicon.svg) |
+| Logo de distribución, temporalmente oculto | [logo.svg](../../frontend/public/marca/logo.svg) |
+| Favicon temporal con inicial T | [favicon.svg](../../frontend/public/favicon.svg) |
 
 Usar SVG para web y originales vectoriales. Para soportes que exijan raster,
 exportar desde el maestro a la resolución final, sin capturas de pantalla.
@@ -59,7 +59,7 @@ esta carpeta son la referencia al actualizar assets.
 - Dejar espacio libre mínimo de **media anchura del símbolo** alrededor:
   16 px por lado para el logo a 164 px de ancho, escalados proporcionalmente.
 - Logo completo: **144 px de ancho mínimo recomendado en pantalla**.
-  La cabecera usa 164 px y el pie 144 px.
+  Referencia de aplicación con símbolo: cabecera 164 px y pie 144 px.
 - Símbolo: 24 px como mínimo recomendado para uso general. El favicon
   se puede mostrar a 16 px como excepción del navegador; no se acredita
   con ello legibilidad óptica a ese tamaño en todos los dispositivos.
@@ -73,6 +73,14 @@ esta carpeta son la referencia al actualizar assets.
 No deformar, girar, agregar sombras, cambiar los platos, recolorear el texto,
 rearmar el nombre con una fuente ni incorporar el símbolo a un escudo.
 No afirmar registro o exclusividad jurídica: no se realizó búsqueda marcaria.
+
+### Excepción temporal en la web
+
+Por pedido del usuario, cabecera y pie muestran solo **Target gym**, en
+Outfit 500, grafito sobre blanco, sin símbolo: 28,8 px en cabecera y
+25,6 px en pie, con espaciado de −0,04 em. El favicon muestra la inicial T.
+No se eliminan ni modifican los maestros Mancuerna; esta excepción no
+sustituye el logo aprobado ni autoriza nuevas variantes de la identidad.
 
 ## 3. Paleta activa
 
@@ -136,7 +144,6 @@ externos en ejecución. Solo se usan estilos normales; no simular cursivas.
 | Lectura | 16 px | 1,6–1,7 |
 | Botón o control | 15–16 px | 1,4–1,6 |
 | Ayuda / metadato | 13,6–14,4 px | 1,6 |
-| Crédito fotográfico | 12 px | 1,5–1,6 |
 
 Usar mayúsculas y minúsculas naturales, no etiquetas espaciadas en mayúsculas.
 Reservar el espaciado negativo para titulares; no comprimir párrafos.
@@ -170,15 +177,15 @@ son referencias RGB para pantalla; no se certificaron CMYK ni Pantone.
 
 | Superficie | Tratamiento implementado |
 |---|---|
-| Cabecera | Logo, navegación clara, menú móvil con Escape, acceso y sesión |
-| Portada | Bienvenida Cerca, foto en arco, actividades desplegables y agenda real |
+| Cabecera | Nombre sin símbolo; Inicio, Clases, Planes; Ya soy socio discreto y Asociate Mandarina |
+| Portada | Bienvenida Cerca, foto en arco, actividades, planes con precios reales y agenda |
 | Agenda pública / socio | Filtros sobre gris claro; fecha, instructor, duración y cupo visibles |
 | Acceso / registro / perfil | Campos blancos con borde perceptible, etiqueta y error cercano |
-| Área del socio | Navegación neutra; membresía, pagos, reservas e historial legibles |
+| Área del socio | Mi espacio como entrada; cuenta creada y membresía activa se distinguen |
 | Instructor | Clases y asistencia sin decoración de campaña |
-| Administración | Mismos formularios, filtros, registros, métricas y botones |
+| Administración | Portal del equipo; navegación lateral, resumen de pendientes y mismos componentes |
 | Confirmación | Diálogo blanco, foco inicial en volver y retorno al control anterior |
-| Notificaciones | Texto explícito, cierre accesible y acento semántico |
+| Notificaciones | Flotantes, temporales, texto explícito, cierre accesible y acento semántico |
 | Vacío / carga / error | Panel gris o error diferenciado; nunca éxito simulado |
 
 Las acciones principales usan Mandarina con texto Grafito. Las secundarias
@@ -189,6 +196,47 @@ No ocultar datos o acciones importantes solo para reducir densidad.
 La cabecera fija reserva su altura y las anclas dejan margen de lectura.
 El menú móvil conserva las mismas rutas y operaciones que escritorio.
 La navegación interna del socio y administración indica la página activa.
+
+«Asociate» inicia la contratación, no un login. «Ya soy socio» permite ingresar.
+Asociación: plan con precio, datos y método de pago obligatorios. «Mi espacio»
+explica los estados Pendiente de pago, Pago a revisar y Membresía activa,
+sin presentar la creación de una cuenta o el aviso de transferencia como un pago.
+
+El enlace «Acceso del equipo» vive discretamente en el pie. Administración e
+instructores usan una envolvente operativa sin pie comercial; administración
+prioriza altas/pagos pendientes y vencimientos, no gráficos decorativos.
+La marca de su cabecera usa Outfit 500 a 25,6 px (21,6 px en mobile).
+Mismo blanco/grafito y Mandarina, navegación lateral en escritorio y menú
+animado en mobile. Separación visual no implica otro sistema de autenticación.
+
+El menú móvil entra con opacidad y desplazamiento vertical de 12 px durante
+220 ms. Escape lo cierra y devuelve el foco al botón; los enlaces también
+lo cierran. Cerrado, sus enlaces no son enfocables. Sin animación si se
+prefiere movimiento reducido.
+
+Los avisos transitorios se cierran a los **6 s** para confirmaciones y
+**10 s** para errores, cada uno con su propio temporizador. Pasar el puntero
+o enfocar el aviso pausa el cierre; al salir se reinicia su plazo completo.
+Siempre se permite cierre manual. Los errores junto a campos o paneles
+permanecen visibles hasta su corrección o reintento.
+
+Los planes de portada consultan los precios configurados y se actualizan
+cada 30 s; solo se publican planes habilitados. Mostrar el total en ARS
+por el período completo. En descuentos generales, usar precio anterior y
+porcentaje. En promociones condicionadas, mantener el precio base principal,
+mostrar la oferta aparte y explicar método/condiciones y confirmación
+presencial. Nunca tachar el precio base como si la rebaja fuera universal.
+Un precio sin configurar dice «Consultá el precio», nunca cero inventado.
+La acción lleva al registro, membresía, configuración o consulta según
+el rol; no cobra online. Carga, vacío y error con reintento son explícitos.
+
+Administración permite crear/editar planes y confirmar su deshabilitación
+o eliminación con consecuencias claras. Los nombres históricos no son
+identificadores técnicos. La ficha del socio permite cambiar de plan sin
+cobro ni alteración de fechas, con confirmación e historial.
+Teléfono, Instagram y horarios del pie provienen del
+[registro de fuentes del gimnasio](../target-gym/FUENTES.md).
+No publicar un botón de WhatsApp a partir de un teléfono no confirmado para ese uso.
 
 La identidad no modifica validaciones, permisos, API ni reglas de negocio.
 Reservas, pagos manuales, cancelaciones, gracia, membresías y asistencia
@@ -217,7 +265,7 @@ Priorizar fotos autorizadas del gimnasio real: espacio, equipamiento y
 entrenamiento cotidiano. Respetar permisos de imagen de personas. No usar
 fotografía generada para aparentar instalaciones o resultados reales.
 
-La aplicación local conserva una **fotografía de referencia identificada**
+La aplicación local conserva una **fotografía de referencia**
 de [Danielle Cerullo / Unsplash](https://unsplash.com/photos/woman-standing-surrounded-by-exercise-equipment-CQfNt66ttZM),
 bajo [Unsplash License](https://unsplash.com/license), de uso gratuito.
 Se muestra en gris y se sirve como WebP local de 1920 × 1040 px.
@@ -225,10 +273,13 @@ El [registro de origen](./imagenes/ORIGEN.txt) conserva su procedencia.
 
 **No representa Target GYM.** Reemplazarla por fotografía autorizada real
 antes de presentarla como sus instalaciones. Esta limitación permanece
-visible junto a la imagen. La licencia de la foto no implica exclusividad
+documentada aquí y en los registros de origen; por pedido del usuario no
+hay leyenda bajo la fotografía en la web funcional. La licencia no exige
+un crédito visible. No implica exclusividad
 ni certificación de todas las autorizaciones de imagen para campañas.
 
-No hay animaciones decorativas automáticas. Los cambios de estado se
+No hay animaciones decorativas automáticas; la entrada del menú responde
+a una acción del usuario. Los cambios de estado se
 explican con texto. Se respeta `prefers-reduced-motion`; no secuestrar
 el scroll, reproducir audio automático ni depender de hover.
 

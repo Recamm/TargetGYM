@@ -33,6 +33,7 @@ export function validarClase(datos) {
     if (!entero(datos.duracionMinutos, 480)) errors.duracionMinutos = 'Ingresá de 1 a 480 minutos.';
     return errors;
 }
+export function passwordValida(value) { return typeof value === 'string' && value.length >= 8 && value.length <= 128 && /[A-Z]/.test(value) && /\d/.test(value); }
 export function validarUsuario(datos, { editar = false, instructor = false } = {}) {
     const errors = {};
     for (const campo of ['nombre','apellido']) if (!textoValido(datos[campo]) || datos[campo].trim().length > 120) errors[campo] = 'Completá este campo (hasta 120 caracteres).';
@@ -41,7 +42,7 @@ export function validarUsuario(datos, { editar = false, instructor = false } = {
     if (!/^\+?[\d ()-]{7,24}$/.test(datos.telefono ?? '')) errors.telefono = 'Ingresá un teléfono válido.';
     const hoy = fechaActual();
     if (!fechaValida(datos.fechaNacimiento) || datos.fechaNacimiento > `${Number(hoy.slice(0, 4)) - 16}${hoy.slice(4)}`) errors.fechaNacimiento = 'Debés tener al menos 16 años.';
-    if ((!editar || datos.password) && (!datos.password || datos.password.length < 8 || datos.password.length > 128 || !/[A-Z]/.test(datos.password) || !/\d/.test(datos.password))) errors.password = 'Usá 8 a 128 caracteres, una mayúscula y un número.';
+    if ((!editar || datos.password) && !passwordValida(datos.password)) errors.password = 'Usá 8 a 128 caracteres, una mayúscula y un número.';
     if (instructor && !textoValido(datos.especialidad)) errors.especialidad = 'Indicá la especialidad.';
     return errors;
 }

@@ -1,9 +1,16 @@
 import { request } from './api.js';
-import { lista, precio, membresiaNullable, solicitud, pago, pagoRegistrado } from './contratos.js';
+import { lista, precio, membresia, membresiaNullable, solicitud, pago, pagoRegistrado, planEliminado, usuario } from './contratos.js';
 export const listarPlanes = signal => request('/planes', { signal, validate: lista(precio) });
+export const listarPlanesGestion = signal => request('/gestion/planes', { signal, validate: lista(precio) });
+export const listarPlanesRenovacion = signal => request('/mi-membresia/planes', { signal, validate: lista(precio) });
+export const listarPlanesSocio = (id, signal) => request(`/socios/${id}/planes`, { signal, validate: lista(precio) });
+export const crearPlan = body => request('/planes', { method: 'POST', body, validate: precio });
 export const configurarPlan = (tipo, body) => request(`/planes/${tipo}`, { method: 'PUT', body, validate: precio });
+export const eliminarPlan = tipo => request(`/planes/${tipo}`, { method: 'DELETE', validate: planEliminado });
+export const cambiarPlanSocio = (id, body) => request(`/socios/${id}/plan`, { method: 'PUT', body, validate: membresia });
 export const miMembresia = signal => request('/mi-membresia', { signal, validate: membresiaNullable });
 export const solicitarPlan = body => request('/mi-membresia/solicitud', { method: 'POST', body, validate: solicitud });
 export const misPagos = signal => request('/mis-pagos', { signal, validate: lista(pago) });
 export const listarPagos = signal => request('/pagos', { signal, validate: lista(pago) });
 export const registrarPago = body => request('/pagos', { method: 'POST', body, validate: pagoRegistrado });
+export const informarTransferencia = () => request('/mi-membresia/pago-reportado', { method: 'POST', body: {}, validate: usuario });

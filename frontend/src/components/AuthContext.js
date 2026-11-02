@@ -5,4 +5,4 @@ export function useAuth() {
     if (!value) throw new Error('Falta AuthProvider.');
     return value;
 }
-export function inicioPorRol(rol) { return rol === 'Administrador' ? '/gestion/clases' : rol === 'Instructor' ? '/instructor/clases' : '/clases'; }
+export function inicioPorRol(rol) { return rol === 'Administrador' ? '/gestion' : rol === 'Instructor' ? '/instructor/clases' : '/mi-espacio'; }

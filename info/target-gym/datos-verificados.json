@@ -1,0 +1,50 @@
+{
+  "nombre": "Target gym",
+  "consultadoEl": "2026-11-02",
+  "direccion": {
+    "calle": "Gral. José de San Martín 2462",
+    "localidad": "Florida, Vicente López",
+    "provincia": "Buenos Aires",
+    "pais": "Argentina"
+  },
+  "contacto": {
+    "telefono": "011 4795-5087",
+    "telefonoHref": "tel:+541147955087",
+    "whatsapp": "11 6824-4559",
+    "whatsappHref": "https://wa.me/5491168244559",
+    "instagram": "https://www.instagram.com/targetgym_florida/",
+    "instagramUsuario": "@targetgym_florida"
+  },
+  "horarios": {
+    "lunesAViernes": "6 a 22 h",
+    "sabados": "8 a 20 h",
+    "domingos": "Cerrado",
+    "feriados": "Consultá en el gimnasio."
+  },
+  "actividadesObservadas": [
+    "Musculación",
+    "Clases fitness grupales",
+    "Indoor Bike",
+    "Funcional",
+    "Localizada",
+    "Pilates Mat",
+    "Stretching",
+    "Aerobox",
+    "Zumba"
+  ],
+  "fuentes": {
+    "perfilInstagram": "https://www.instagram.com/targetgym_florida/?hl=en",
+    "publicacionClases": "https://www.instagram.com/targetgym_florida/p/DcbZzz5IY9P/?hl=en",
+    "maps": "https://maps.app.goo.gl/fyNL18dV3umtNDJx8",
+    "mapsExpandido": "https://www.google.com/maps/place/Target+GYM/data=!4m2!3m1!1s0x95bcb132c61946ab:0x3e8fabd972889e5f?hl=es",
+    "usuarioWhatsapp": "Número 1168244559 confirmado directamente por el usuario el 2026-11-02."
+  },
+  "verificaciones": [
+    { "dato": "direccion", "fuentes": ["maps", "perfilInstagram"], "estado": "observado_en_fuentes_publicas" },
+    { "dato": "contacto.telefono", "fuentes": ["maps"], "estado": "observado_en_fuente_publica" },
+    { "dato": "contacto.instagram", "fuentes": ["perfilInstagram"], "estado": "perfil_aportado_por_usuario" },
+    { "dato": "contacto.whatsapp", "fuentes": ["usuarioWhatsapp"], "estado": "confirmado_por_usuario" },
+    { "dato": "horarios", "fuentes": ["maps"], "estado": "horario_semanal_observado_feriados_por_confirmar" },
+    { "dato": "actividadesObservadas", "fuentes": ["perfilInstagram", "publicacionClases"], "estado": "referencia_no_crea_clases_en_agenda" }
+  ]
+}

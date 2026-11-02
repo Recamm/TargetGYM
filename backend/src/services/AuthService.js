@@ -1,13 +1,14 @@
 import { randomBytes, scrypt as scryptCallback, timingSafeEqual, createHash } from 'node:crypto';
 import { promisify } from 'node:util';
 import UsuarioRepository from '../repositories/UsuarioRepository.js';
+import PlanRepository from '../repositories/PlanRepository.js';
 import { una } from '../repositories/query.js';
 import { objeto, texto, exigir, fechaValida, id } from '../utils/validation.js';
 import { UnauthorizedError, NotFoundError, ConflictError, TooManyRequestsError } from '../exceptions/AppError.js';
 
 const scrypt = promisify(scryptCallback);
 const opciones = { N: 32768, r: 8, p: 1, maxmem: 64 * 1024 * 1024 };
-const campos = ['nombre','apellido','email','password','dni','telefono','fechaNacimiento','tipoPlan','especialidad'];
+const campos = ['nombre','apellido','email','password','dni','telefono','fechaNacimiento','tipoPlan','especialidad','metodoPago'];
 function validarPassword(password) {
     exigir(typeof password === 'string' && password.length >= 8 && password.length <= 128
         && /[A-Z]/.test(password) && /\d/.test(password), 'La contraseña requiere 8 a 128 caracteres, una mayuscula y un numero.');
@@ -39,7 +40,7 @@ function validarUsuario(datos, ahora, requierePassword = true) {
         validarPassword(datos.password);
     }
     if (datos.tipoPlan !== undefined) {
-        exigir(['mensual','trimestral','anual'].includes(datos.tipoPlan), 'El plan no es valido.');
+        exigir(typeof datos.tipoPlan === 'string' && /^[a-z0-9][a-z0-9-]{0,79}$/.test(datos.tipoPlan), 'El plan no es valido.');
         limpio.tipoPlan = datos.tipoPlan;
     }
     if (datos.especialidad !== undefined) limpio.especialidad = texto(datos.especialidad, 'Especialidad');
@@ -48,12 +49,61 @@ function validarUsuario(datos, ahora, requierePassword = true) {
 
 export default class AuthService {
     constructor(db, clock = () => new Date()) { this.db = db; this.clock = clock; this.repository = new UsuarioRepository(db); }
-    async registrar(datos, rol = 'Socio') {
+    async registrar(datos, rol = 'Socio', { asociacion = false, invitacion = false } = {}) {
         objeto(datos, campos);
-        const limpio = validarUsuario(datos, this.clock());
+        const limpio = validarUsuario(datos, this.clock(), !invitacion);
+        if (asociacion) {
+            exigir(Boolean(limpio.tipoPlan), 'Elegi un plan habilitado para asociarte.');
+            exigir(['Efectivo','Transferencia'].includes(datos.metodoPago), 'Elegi efectivo o transferencia para pagar.');
+        }
+        if (datos.metodoPago !== undefined) exigir(rol === 'Socio' && ['Efectivo','Transferencia'].includes(datos.metodoPago), 'El metodo de pago solicitado no es valido.');
+        limpio.metodoPago = datos.metodoPago;
+        limpio.solicitadoEn = limpio.tipoPlan ? this.clock() : null;
+        limpio.accesoPendiente = invitacion;
         if (rol === 'Instructor') exigir(Boolean(limpio.especialidad), 'La especialidad del instructor es obligatoria.');
+        const passwordHash = await hashPassword(invitacion ? randomBytes(32).toString('hex') : datos.password);
+        return this.db.transaction(async tx => {
+            if (limpio.tipoPlan) {
+                const plan = await new PlanRepository(this.db).find(limpio.tipoPlan, tx);
+                if (!plan?.habilitado) throw new ConflictError('El plan no esta disponible para nuevas contrataciones.');
+                if (asociacion && plan.precioCentavos === null) throw new ConflictError('El plan necesita un precio configurado antes de asociarte.');
+            }
+            return this.repository.create(limpio, rol, passwordHash, tx);
+        });
+    }
+    crearSocio(datos) {
+        objeto(datos, campos);
+        return this.registrar(datos, 'Socio', { invitacion: datos.password === undefined });
+    }
+    crearInvitacion(usuarioId, administrador, datos = {}) {
+        objeto(datos, []);
+        return this.db.transaction(async tx => {
+            const usuario = await this.repository.findById(id(usuarioId), tx);
+            if (!usuario || usuario.rol !== 'Socio' || !usuario.accesoPendiente || usuario.estado !== 'activo') throw new ConflictError('La cuenta no admite una invitacion de primer acceso.');
+            const token = randomBytes(32).toString('hex');
+            const expira = new Date(this.clock().getTime() + 48 * 3600000);
+            await tx.query(`INSERT INTO invitaciones_acceso(usuario_id,token_hash,expira,administrador_id)
+            VALUES($1,$2,$3,$4) ON CONFLICT(usuario_id) DO UPDATE SET
+            token_hash=$2,expira=$3,administrador_id=$4,usada_en=NULL`,
+            [usuario.id, createHash('sha256').update(token).digest('hex'), expira, administrador.id]);
+            return { token, expira };
+        });
+    }
+    async activarAcceso(datos, ip) {
+        objeto(datos, ['token','password']);
+        exigir(typeof datos.token === 'string' && /^[a-f0-9]{64}$/.test(datos.token), 'El enlace de acceso no es valido.');
+        validarPassword(datos.password);
+        await this.limitar(ip);
         const passwordHash = await hashPassword(datos.password);
-        return this.db.transaction((tx) => this.repository.create(limpio, rol, passwordHash, tx));
+        return this.db.transaction(async tx => {
+            const invitacion = await una(tx, 'SELECT * FROM invitaciones_acceso WHERE token_hash=$1', [createHash('sha256').update(datos.token).digest('hex')]);
+            const usuario = invitacion ? await this.repository.findById(invitacion.usuario_id, tx) : null;
+            const ahora = this.clock();
+            if (!invitacion || invitacion.usada_en || new Date(invitacion.expira) <= ahora || !usuario?.accesoPendiente || usuario.estado !== 'activo') throw new ConflictError('El enlace vencio, fue utilizado o ya no esta disponible. Pedi una nueva invitacion en el gimnasio.');
+            await tx.query('UPDATE usuarios SET password_hash=$2,acceso_pendiente=FALSE WHERE id=$1', [usuario.id, passwordHash]);
+            await tx.query('UPDATE invitaciones_acceso SET usada_en=$2 WHERE usuario_id=$1', [usuario.id, ahora]);
+            return this.repository.findById(usuario.id, tx);
+        });
     }
     async crearAdministrador(datos) {
         objeto(datos, ['nombre','apellido','email','password']);
@@ -84,7 +134,7 @@ export default class AuthService {
         const usuario = await this.repository.findByEmail(email);
         const [salt, hash] = usuario?.passwordHash?.split(':') ?? ['usuario-inexistente', null];
         const entrada = await scrypt(datos.password, salt, 64, opciones);
-        if (!hash || !timingSafeEqual(entrada, Buffer.from(hash, 'hex')) || usuario.estado === 'baja') throw new UnauthorizedError('Email o contraseña incorrectos.');
+        if (!hash || !timingSafeEqual(entrada, Buffer.from(hash, 'hex')) || usuario.estado === 'baja' || usuario.accesoPendiente) throw new UnauthorizedError('Email o contraseña incorrectos.');
         const { passwordHash, ...seguro } = usuario;
         return seguro;
     }
@@ -102,6 +152,7 @@ export default class AuthService {
             limpio.estado = permitirEstado && datos.estado !== undefined ? datos.estado : actual.estado;
             exigir(['activo','suspendido','baja'].includes(limpio.estado), 'El estado del socio no es valido.');
             const updated = await this.repository.update(idUsuario, limpio, hash, tx);
+            if (hash) await tx.query('UPDATE invitaciones_acceso SET usada_en=$2 WHERE usuario_id=$1', [idUsuario, this.clock()]);
             if (limpio.estado !== 'activo') await tx.query(`UPDATE inscripciones SET estado='Cancelada'
             WHERE socio_id=$1 AND estado IN ('Pendiente','Confirmada') AND clase_id IN (SELECT id FROM clases WHERE inicio>$2)`, [idUsuario, this.clock()]);
             return updated;

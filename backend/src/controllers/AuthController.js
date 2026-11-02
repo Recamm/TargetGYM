@@ -22,7 +22,7 @@ export default class AuthController {
         this.login = responder(async req => abrirSesion(req, await service.login(req.body, req.ip)));
         this.registro = responder(async req => {
             await service.limitar(req.ip);
-            return abrirSesion(req, await service.registrar(req.body));
+            return abrirSesion(req, await service.registrar(req.body, 'Socio', { asociacion: true }));
         }, 201);
         this.logout = responder(async (req, res) => {
             await new Promise((resolve, reject) => req.session.destroy(error => error ? reject(error) : resolve()));
@@ -30,7 +30,8 @@ export default class AuthController {
             return { usuario: null, csrfToken: null };
         });
         this.perfil = responder(req => service.actualizar(req.user.id, req.body));
-        this.crearSocio = responder(req => service.registrar(req.body), 201);
+        this.activarAcceso = responder(async req => abrirSesion(req, await service.activarAcceso(req.body, req.ip)));
+        this.crearSocio = responder(req => service.crearSocio(req.body), 201);
         this.editarSocio = responder(req => service.actualizar(req.params.id, req.body, true));
         this.crearInstructor = responder(req => service.registrar(req.body, 'Instructor'), 201);
     }

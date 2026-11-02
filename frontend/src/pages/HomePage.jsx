@@ -1,4 +1,9 @@
 import { Link } from 'react-router-dom';
+import { useAuth } from '../components/AuthContext.js';
+import ResourceState, { EmptyState } from '../components/ResourceState.jsx';
+import { listarPlanes } from '../services/membresiasService.js';
+import useResource from '../utils/useResource.js';
+import PlanPrice from '../components/PlanPrice.jsx';
 
 const actividades = [
     ['Musculación', 'Pesas y máquinas para trabajar fuerza y construir tu rutina, con acompañamiento en el entrenamiento.'],
@@ -8,6 +13,12 @@ const actividades = [
 ];
 
 export default function HomePage() {
+    const planes = useResource(listarPlanes, 30000);
+    const { usuario } = useAuth();
+    const planAction = !usuario ? ['/asociate', 'Asociate']
+        : usuario.rol === 'Socio' ? ['/mi-membresia', 'Ver mi membresía']
+            : usuario.rol === 'Administrador' ? ['/gestion/planes', 'Configurar planes']
+                : ['/#contacto', 'Consultar en el gimnasio'];
     return <>
         <section className="hero container" aria-labelledby="hero-title">
             <div className="hero-copy">
@@ -18,7 +29,6 @@ export default function HomePage() {
             </div>
             <figure className="hero-photo">
                 <img src="/marca/gimnasio-referencia.webp" alt="Sala de entrenamiento con mancuernas, bancos y máquinas, en un gimnasio de referencia" width="1920" height="1040" fetchPriority="high" />
-                <figcaption>Fotografía de referencia. No corresponde a Target GYM. <a href="https://unsplash.com/photos/woman-standing-surrounded-by-exercise-equipment-CQfNt66ttZM">Danielle Cerullo / Unsplash</a>.</figcaption>
             </figure>
         </section>
 
@@ -36,13 +46,31 @@ export default function HomePage() {
             </div>
         </section>
 
+        <section className="container plans-section" id="planes" tabIndex={-1} aria-labelledby="plans-title">
+            <div className="section-intro">
+                <h2 id="plans-title">Un plan para tu rutina.</h2>
+                <p>Precios en pesos argentinos por el período completo. El pago se coordina en el gimnasio, no se realiza un cobro online.</p>
+            </div>
+            <ResourceState resource={planes}>
+                {planes.data?.length === 0 ? <EmptyState>Todavía no hay planes disponibles. Consultá en el gimnasio.</EmptyState> : <div className="plan-grid">
+                    {planes.data?.map(plan => <article className="plan-card" key={plan.tipo} aria-labelledby={`plan-${plan.tipo}`}>
+                        <h3 id={`plan-${plan.tipo}`}>{plan.nombre}</h3>
+                        <PlanPrice plan={plan} />
+                        <p className="plan-period">Por {plan.meses === 1 ? '1 mes calendario' : `${plan.meses} meses calendario`}</p>
+                        {!usuario && plan.precioCentavos !== null && <Link className="text-link" to={`/asociate?plan=${encodeURIComponent(plan.tipo)}`}>Elegir {plan.nombre}</Link>}
+                    </article>)}
+                </div>}
+                {planes.data?.length > 0 && <Link className="button secondary" to={planAction[0]}>{planAction[1]}</Link>}
+            </ResourceState>
+        </section>
+
         <section className="about-section" id="nosotros" tabIndex={-1} aria-labelledby="about-title">
             <div className="container about-grid">
                 <h2 id="about-title">Un equipo cerca.</h2>
                 <div>
                     <p>Somos un gimnasio de barrio en Florida, Vicente López. Un espacio para entrenar fuerza, moverte y encontrar una rutina que encaje con tu día.</p>
                     <p>Musculación, entrenamiento funcional y actividades grupales, con el acompañamiento de nuestros instructores.</p>
-                    <Link className="text-link" to="/registro">Crear mi cuenta</Link>
+                    <Link className="text-link" to={usuario ? '/clases' : '/asociate'}>{usuario ? 'Ver la agenda' : 'Quiero asociarme'}</Link>
                 </div>
             </div>
         </section>

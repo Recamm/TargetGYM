@@ -22,7 +22,9 @@ CREATE TABLE IF NOT EXISTS planes (
     precio_centavos INTEGER CHECK (precio_centavos > 0),
     descuento_porcentaje INTEGER NOT NULL DEFAULT 0 CHECK (descuento_porcentaje BETWEEN 0 AND 99)
 );
-INSERT INTO planes (tipo, meses) VALUES ('mensual', 1), ('trimestral', 3), ('anual', 12) ON CONFLICT DO NOTHING;
+INSERT INTO planes (tipo, meses)
+SELECT * FROM (VALUES ('mensual', 1), ('trimestral', 3), ('anual', 12)) AS iniciales(tipo,meses)
+WHERE NOT EXISTS (SELECT 1 FROM schema_migrations WHERE version=2) ON CONFLICT DO NOTHING;
 CREATE TABLE IF NOT EXISTS membresias (
     id SERIAL PRIMARY KEY,
     socio_id INTEGER NOT NULL REFERENCES usuarios(id),

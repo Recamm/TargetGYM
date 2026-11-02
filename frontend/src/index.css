@@ -37,12 +37,13 @@ p { margin: 0 0 1rem; max-width: 72ch; }
 a { color: var(--ink); text-underline-offset: .25em; }
 a:hover { text-decoration-thickness: 2px; }
 img { display: block; max-width: 100%; height: auto; }
-button, input, select { font: inherit; }
+button, input, select, textarea { font: inherit; }
 button { cursor: pointer; }
 button:disabled { cursor: not-allowed; }
-input, select { width: 100%; min-width: 0; padding: .7rem .9rem; min-height: 48px; border: 1px solid var(--border); border-radius: 12px; background: var(--paper); color: var(--ink); }
-input:disabled, select:disabled { background: var(--soft); color: var(--muted); }
-input[aria-invalid="true"], select[aria-invalid="true"] { border: 2px solid var(--danger); }
+input, select, textarea { width: 100%; min-width: 0; padding: .7rem .9rem; min-height: 48px; border: 1px solid var(--border); border-radius: 12px; background: var(--paper); color: var(--ink); }
+textarea { resize: vertical; }
+input:disabled, select:disabled, textarea:disabled { background: var(--soft); color: var(--muted); }
+input[aria-invalid="true"], select[aria-invalid="true"], textarea[aria-invalid="true"] { border: 2px solid var(--danger); }
 :focus-visible { outline: 3px solid var(--ink); outline-offset: 4px; }
 [tabindex="-1"]:focus { outline: none; }
 section[id], footer[id], main[id], #horarios { scroll-margin-top: 112px; }

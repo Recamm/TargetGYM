@@ -49,8 +49,8 @@ export async function createDatabase({ mode = 'postgres', dataDir = '.local-data
 }
 
 export async function migrate(db) {
-    const sql = await readFile(new URL('./schema.sql', import.meta.url), 'utf8');
-    try { await db.exec(`BEGIN;\n${sql}\nCOMMIT;`); }
+    const [sql, ...cambios] = await Promise.all(['./schema.sql', './planes.sql', './accesos.sql'].map(path => readFile(new URL(path, import.meta.url), 'utf8')));
+    try { await db.exec(`BEGIN;\n${sql}\nSELECT id FROM sistema_lock WHERE id=1 FOR UPDATE;\n${cambios.join('\n')}\nCOMMIT;`); }
     catch (error) {
         try { await db.exec('ROLLBACK;'); }
         catch (rollbackError) { console.error('Fallo al revertir migracion:', rollbackError.code); }

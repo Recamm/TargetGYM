@@ -8,12 +8,11 @@ import ResourceState, { EmptyState } from '../components/ResourceState.jsx';
 import ClaseCard from '../components/ClaseCard.jsx';
 import Button from '../components/Button.jsx';
 import ConfirmDialog from '../components/ConfirmDialog.jsx';
-import GestionNav from '../components/GestionNav.jsx';
 
 export default function GestionClasesPage() {
     const resource = useResource(listarClases), notices = useNotifications();
     const [operation, setOperation] = useState(null);
-    return <><GestionNav /><PageHeader title="Gestionar clases" description="Organizá actividades, instructores y cupos. Las modificaciones se reflejan en la agenda."><Link className="button primary" to="/gestion/clases/nueva">Nueva clase</Link></PageHeader>
+    return <><PageHeader title="Gestionar clases" description="Organizá actividades, instructores y cupos. Las modificaciones se reflejan en la agenda."><Link className="button primary" to="/gestion/clases/nueva">Nueva clase</Link></PageHeader>
         <ResourceState resource={resource}><h2 className="list-title">Clases registradas</h2>{resource.data?.length === 0 ? <EmptyState>Todavía no hay clases. Agregá un instructor y creá la primera.</EmptyState> : <div className="card-grid">{resource.data?.map(clase => <ClaseCard key={clase.id} clase={clase}>
             {clase.estado === 'Programada' && <Link className="button secondary" to={`/gestion/clases/${clase.id}/editar`}>Editar</Link>}
             <Link className="button quiet" to={`/gestion/clases/${clase.id}/asistencia`}>Asistencia</Link>
