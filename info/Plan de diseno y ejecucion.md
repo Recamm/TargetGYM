@@ -1385,3 +1385,374 @@ Aplicacion local disponible. Sin pasarela, mensajes, servicios externos,
 commits ni despliegue; no se acredita Safari/iPhone ni Neon/Vercel reales.
 
 **Estado:** aplicado, documentado y verificado localmente.
+
+## 25. Metodos de pago, avisos y estabilidad del panel
+
+Alcance confirmado: deshabilitar un metodo impide nuevas solicitudes de
+socios, pero no impide cobros administrativos. Caja debe advertir su estado.
+Conservar solicitudes previas, reportes de transferencia, pagos e historial.
+Tarjeta sigue siendo solo cobro externo en caja, sin pasarela online.
+
+Migracion 4 y catalogos publico/administrativo; cambio protegido por rol y
+CSRF. Validar disponibilidad en la misma transaccion que el alta o renovacion.
+Estados sin metodos, errores y reintentos explicitos.
+
+Avisos: confirmacion 4 s, error 8 s, sin pausa indefinida por puntero o foco;
+cierre manual, temporizadores independientes y retorno de foco al vencer.
+Planes: tarjetas grises con borde, ancho acotado, grupo y filas centrados,
+adaptados a una, dos, tres o muchas opciones. Mantener identidad Cerca.
+
+Reproduccion previa: pruebas de avisos fallaron por permanencia; catalogo
+de metodos inexistente; interfaz seguia ofreciendo metodos apagados.
+En navegador con scrollbar real de 16 px, resumen y secciones largas
+desplazaban el shell/sidebar/contenido 8 px y variaban el ancho del header.
+Reservar espacio estable para la scrollbar y verificar coordenadas.
+
+**Cierre:** implementacion persistida y verificada localmente. Migracion 4
+conserva estados tras reabrir la base y repetir migraciones. Rol, CSRF,
+validacion de entradas, altas/renovaciones y caja con metodos apagados
+comprobados. Las solicitudes anteriores se pueden informar y confirmar;
+no se borran ni duplican pagos. Sin metodos elegibles se informa y bloquea
+el nuevo envio de socios, no caja ni altas administrativas.
+
+28 pruebas backend y 67 frontend aprobadas. Diez flujos de navegador
+verificados entre regresion y ejecuciones focalizadas; el mensaje de
+validacion original del registro se conservo tras detectarlo en regresion.
+Aviso real de logout expira con puntero encima, sin cierre manual.
+Planes comprobados con 1/2/3/4/5/7 tarjetas en 390/760/1024/1600 px;
+sin desborde y grupos centrados, con fondo y ancho acotado.
+Sidebar, contenido, shell y header mantienen coordenadas y ancho entre
+secciones, incluida Metodos de pago, con scrollbar real y alturas distintas.
+
+Axe y responsive comprobados en las pantallas nuevas; restantes flujos
+incluyen teclado, movimiento reducido y zoom Chromium nativo al 200%.
+Build, lint y diff --check correctos. Manual 1.3 regenerado: seis paginas
+A4 etiquetadas, sin desborde. API local y proxy responden correctamente.
+No se acredita Safari/iPhone ni Neon/Vercel reales; no se crearon commits
+ni despliegues. Estado: aplicado, documentado y verificado localmente.
+
+## 26. Accion principal de portada: Ver planes
+
+Por pedido del usuario, el boton principal conserva su estilo y cambia de
+Ver actividades a Ver planes, con destino `/#planes`. Diez pruebas de
+portada aprobadas; clic comprobado en navegador, con foco en la seccion
+de planes. No se modifican actividades, precios ni otros accesos.
+
+## 27. Scroll suave en navegacion interna
+
+Los enlaces dentro de la misma pagina animan el desplazamiento, tambien
+al repetir la misma ancla o volver al inicio sin cambiar la URL. Manejo
+centralizado con navegacion y scroll nativos, sin bibliotecas ni timers
+de animacion propios. El foco acompaña el destino sin saltos extra.
+Otra pagina, entrada directa y movimiento reducido usan scroll inmediato;
+cambiar solo filtros de URL conserva posicion y foco.
+
+Reproduccion previa: cuatro pruebas de navegacion fallaron y el navegador
+no registro posiciones intermedias en el desplazamiento. Tras el cambio:
+14 pruebas focalizadas de portada/navegacion aprobadas; tres flujos
+Playwright comprobados, con muestreo de frames en 390/1440 px, enlaces
+repetidos, menu, regreso desde el pie, movimiento reducido y otra ruta.
+El panel conserva su geometria; responsive, teclado y Axe comprobados.
+Build, lint y diff --check correctos. Manual 1.4 regenerado, seis paginas
+A4 etiquetadas y sin desborde. Sin commits ni despliegue; no acredita
+Safari/iPhone real. Estado: aplicado y verificado localmente.
+
+## 28. Eliminar pagos por error y corregir vigencia
+
+Alcance confirmado por el usuario: anular el pago, conservar auditoria
+y recalcular la membresia desde los pagos validos. No devolver dinero
+automaticamente. Confirmacion administrativa, motivo opcional, permisos
+y CSRF; registro anulado consultable y claramente distinguido.
+
+Migracion 5: conservar fechas originales y duracion contratada por pago.
+Reproducir la secuencia de pagos y cambios administrativos de plan sin
+usar precios/duraciones actuales del catalogo. Conservar movimientos,
+asistencias y clases finalizadas; conciliar reservas futuras con la
+vigencia corregida. Evitar reactivar el mismo pago mediante reintentos.
+
+Secuencia: pruebas de reglas/migracion/permisos; API; interfaz e historiales;
+persistencia, navegador y documentacion.
+
+Aplicado: DELETE administrativo con CSRF, motivo opcional (500 caracteres),
+anulacion idempotente y rechazo del UUID anulado para evitar reactivaciones.
+Recalculo transaccional con duraciones historicas, fin de mes y cambios
+administrativos; sin membresia ficticia si todos los pagos fueron anulados.
+Los planes deshabilitados no admiten renovar por antecedentes anulados.
+Conserva auditoria y periodos originales al reabrir la base y repetir migraciones.
+
+En caja: folio por pago, confirmacion con importe/socio/fecha y consecuencias,
+error persistente y opcion Mostrar pagos anulados. Cancelar devuelve el foco
+al boton; eliminar lo lleva al titulo de la lista, que permanece disponible.
+La ficha administrativa elige la membresia no anulada y conserva fechas
+originales; el historial propio del socio identifica cada pago anulado.
+Recarga catalogo elegible y socios, sin cambiar el UUID de un cobro ambiguo.
+No restaura solicitudes antiguas ni devuelve dinero.
+
+Verificacion: pruebas nuevas vistas fallar antes del arreglo. Suite completa
+de regresion: 32 backend / 73 frontend; cierre focalizado con 5 backend y
+24 frontend, incluyendo anulaciones simultaneas, persistencia de auditoria
+y un contrato adicional de datos. Cuatro recorridos reales de Chromium:
+duplicado/anulacion, circuito de roles, catalogo/renovacion y asociacion por
+transferencia. Vigencia original exacta restaurada, otro pago conservado,
+auditoria visible, socio sin permisos para eliminar. Dialogo e historial
+comprobados a 390/1440 px, sin desborde ni incidencias Axe en esos estados.
+Build, lint sin advertencias y diff --check correctos; API local responde.
+README y FR-028 actualizados. Sin cambios a pagos reales, commits ni despliegue;
+Chromium/PGlite no acreditan Safari/iPhone real ni Neon en produccion.
+Estado: aplicado y verificado localmente.
+
+## 29. Dar mas presencia a la tarjeta de contratacion
+
+Pedido: hacer mas visible el plan para comprar en portada, sin abandonar
+la identidad Cerca ni llenar la pagina de naranja. Aplicado: tarjeta
+Grafito con texto blanco y ayudas claras, precio mas grande y accion
+Mandarina de ancho completo. El foco es blanco dentro de la tarjeta y
+las acciones quedan al pie; se conservan precios, promociones, enlaces
+al plan elegido, permisos y ausencia de cobro online.
+
+Verificacion: 10 pruebas de portada, build, lint y diff --check correctos.
+Chromium comprueba 24 combinaciones de 1/2/3/4/5/7 planes a
+390/760/1024/1600 px, filas centradas, ancho de accion, colores y ausencia
+de desborde. Foco visible y Axe sin incidencias con descuentos generales
+y condicionados en movil y escritorio. Captura de la pagina compartida
+confirma el contraste nuevo. Manual 1.5 sincronizado en Markdown/HTML/PDF:
+seis paginas A4 etiquetadas, fuentes e imagenes cargadas y sin desborde.
+Sin cambios al catalogo real, commits ni despliegue. Estado: aplicado y
+verificado localmente; no acredita Safari/iPhone real.
+
+## 30. Informacion y tarifas confirmadas de Target Gym Florida
+
+Fuente: respuesta del gimnasio por WhatsApp transcrita por el usuario.
+Decisiones aprobadas: integrar los seis planes en portada, asociacion,
+renovacion y caja; pases de 1/7/15 dias corridos desde la confirmacion
+del pago; jubilados mensual y exclusivo; reemplazar la oferta publica
+anterior conservando pagos e historial. No se repite la exploracion de marca.
+
+### Aplicado
+
+- Direccion Av. San Martin 2462, Florida; lunes a viernes 06–22,
+  sabado 08–20, domingo cerrado y feriados 10–18.
+- Profesores de educacion fisica, rutina personalizada desde el primer dia,
+  duchas, vestidores y lockers con candado propio. Pase libre, clases
+  incluidas y sin matricula ni inscripcion.
+- Mensual Libre $88.000 tarjeta/transferencia o $78.000 efectivo;
+  dia $30.000 transferencia/$25.000 efectivo; semanal $50.000/$46.000;
+  quincena $59.000/$53.000; jubilados $62.000 efectivo; FULL $98.000.
+  FULL comunica acceso a todas las sedes, incluidas San Fernando y Tigre,
+  sin inventar sus direcciones ni una integracion digital externa.
+- Migraciones 6–8: meses o dias, promocion monetaria fija exacta,
+  descripciones, requisitos y restricciones de pago. La importacion
+  comercial se ejecuta una sola vez; conserva el historial y no
+  sobrescribe ediciones administrativas posteriores.
+- Cada pago conserva su duracion, descuento monetario y requisitos
+  verificados. Anulacion reconstruye vigencia con esos datos historicos.
+  Renovacion anticipada suma desde el vencimiento vigente.
+- Tarifa fija por metodo aplicada automaticamente, sin porcentajes
+  aproximados. Otras promociones condicionadas mantienen confirmacion.
+  Jubilacion se verifica explicitamente al cobrar o cambiar de plan,
+  sin documentos sensibles ni edad minima inventada.
+- Tarjeta disponible como solicitud de pago presencial para planes
+  compatibles; cuenta/solicitud no activa membresia. Pases cortos no
+  ofrecen tarjeta porque no fue informada; jubilados exige efectivo.
+  Caja conserva su advertencia de metodos globalmente deshabilitados,
+  pero no permite ignorar las restricciones del plan.
+- Editor administrativo, contratos DTO, importes por metodo y mensajes
+  conectados al mismo catalogo. README, FR-029 y fuentes actualizados.
+  Manual 1.6 sincronizado en Markdown/HTML/PDF, sin cambiar la identidad.
+
+### Verificacion y cierre
+
+- Ultima suite completa backend: 37 pruebas correctas. Persistencia
+  ampliada y verificada por separado: cerrar/reabrir PGlite conserva
+  pase de siete dias, precio fijo, descuento monetario e historial.
+- Suite frontend final: 81 pruebas correctas. Se reprodujo y corrigio
+  la perdida del porcentaje visible en pagos historicos al incorporar
+  descuentos monetarios, conservando ambas representaciones.
+- Siete recorridos Chromium correctos entre la regresion de cinco flujos
+  y la repeticion final de los dos corregidos: tarifas reales,
+  anulacion de duplicado, planes adaptables, metodos administrables,
+  flujo administrador/socio/instructor, catalogo y asociacion por transferencia.
+  Incluyen importes exactos, vencimiento diario, jubilados verificados,
+  tarjeta pendiente, permisos, renovacion, historial, responsive y Axe.
+- Se actualizaron expectativas de navegador por tarjeta presencial y
+  se acoto la seleccion del socio a su email para compartir datos de prueba.
+  El catalogo sintetico de regresion permanece exclusivo de pruebas;
+  el nuevo recorrido restaura los seis aranceles comerciales.
+- Build, lint y diff --check correctos. API local saludable y seis planes
+  reales comprobados; pagina compartida muestra direccion, feriados,
+  servicios y aranceles nuevos. PDF de seis A4 etiquetadas, con fuentes
+  e imagenes cargadas y sin desborde.
+
+Estado: aplicado y verificado localmente. Catalogo local actualizado por
+pedido del usuario, sin borrar ni modificar pagos reales. Sin commits,
+mensajes externos ni despliegue. Chromium/PGlite no acreditan Safari/iPhone
+real ni Neon/Vercel en produccion.
+
+## 31. Plan de mejoras a eleccion y propuestas de tarjetas
+
+Pedido: ordenar las oportunidades del relevamiento de `target-gym` para
+decidir cuales implementar, corregir precios responsive y comparar varios
+disenos de tarjetas antes de elegir uno.
+
+### Punto de partida: no volver a implementar lo que ya existe
+
+Las fuentes verificadas estan en `target-gym/FUENTES.md` y
+`target-gym/datos-verificados.json`. Ya estan aplicados direccion, telefono,
+WhatsApp, Instagram, horarios incluidos feriados, profesores/rutinas,
+instalaciones, beneficios y seis planes con aranceles por metodo.
+Catalogo, asociacion, renovacion, caja e historial ya estan conectados.
+Las propuestas de abajo son mejoras de presentacion o funciones nuevas,
+no datos que falten importar de nuevo.
+
+### Matriz de decisiones del usuario
+
+Cada opcion es independiente y admite **Si / No / Mas adelante**.
+Ninguna de estas ampliaciones queda aprobada por crear este plan.
+
+| ID | Propuesta | Que cambiaria | Datos y dependencias | Esfuerzo | Recomendacion |
+| --- | --- | --- | --- | --- | --- |
+| P1 | Beneficios mas claros | Bloque breve con rutina guiada, instalaciones, clases incluidas y sin inscripcion, en vez de dispersar toda la informacion | Ya confirmados; evitar repetirlos en cada tarjeta | Bajo | Primera etapa |
+| P2 | Preguntas frecuentes | Respuestas breves sobre primer dia, candado, pagos y alcance de cada pase; enlaces a contacto cuando falte un dato | Usar solo informacion confirmada; no inventar requisitos de ingreso | Bajo | Primera etapa |
+| P3 | Consulta de plan por WhatsApp | Enlace contextual que prepara nombre del plan y pregunta; no envia mensajes automaticamente ni agrega un boton flotante permanente | Numero confirmado; validar que no incluya datos personales | Bajo | Primera etapa |
+| P4 | Ampliar actividades | Presentar Indoor Bike, Localizada, Pilates Mat, Stretching, Aerobox y Zumba junto a las actuales | Observadas en Instagram; confirmar vigencia y nombres antes de anunciarlas como actuales. Agenda solo con dias, instructor y cupos confirmados | Medio | Despues de confirmar |
+| P5 | Fotos reales del gimnasio | Reemplazar la fotografia de referencia y, si conviene, mostrar instalaciones | El gimnasio debe aportar fotos autorizadas y permiso de las personas reconocibles | Bajo/medio | Prioritario al recibir material |
+| P6 | Explicar FULL y sedes | Comparar alcance Florida/FULL y enlazar datos utiles de San Fernando y Tigre | Acceso confirmado; faltan direcciones, horarios/contactos y condiciones concretas de otras sedes | Medio | Cuando se reciban esos datos |
+| P7 | Llegar y contactar mas facilmente | Dar mayor presencia a direccion, horarios y acciones Maps/WhatsApp en una seccion de contacto, sin duplicar todo el pie | Datos existentes; enlace Maps sin mapa externo embebido por defecto | Bajo | Opcional; evaluar si el pie basta |
+| P8 | Administrar informacion institucional | Editar contacto, horarios, beneficios e instalaciones desde gestion, en vez de cambiar el JSON | Nueva persistencia, permisos, validacion, auditoria y migracion; no confundir con el editor de planes ya disponible | Medio/alto | Segunda etapa si se actualiza con frecuencia |
+
+Orden sugerido si se aprueban: P1/P2/P3; luego P5 cuando haya material;
+P4/P6 despues de confirmar datos. P7 segun necesidad real de navegacion.
+P8 solo si se justifica mantener contenido sin editar codigo.
+No se presupone que FULL tenga integracion digital entre sedes.
+No copiar reseñas, puntuaciones o seguidores como prueba social propia.
+
+### Tarjetas: reparacion autorizada y cuatro propuestas separadas
+
+La correccion responsive si esta solicitada: a 1440 px, la tipografia
+dependiente del viewport llegaba a 48 px en tarjetas de unos 236 px utiles,
+partiendo el importe. La prueba reproduce el defecto tambien con cinco
+planes. Se adapta el precio al ancho de su propio contenedor, sin dividir
+simbolo/cifra/decimales, recortar, ocultar ni achicar por debajo de 20 px.
+Se conserva el diseno Grafito actual, sus destinos y reglas monetarias.
+La correccion compartida alcanza portada, asociacion, renovacion y editor.
+
+Muestra aislada: `marca/planes.html`, con enlaces directos por variante.
+Lee el catalogo y los metodos de la API; no guarda cambios ni sustituye
+la portada. Los importes se expresan sin decimales innecesarios, pero
+conservan centavos si existen. Cada precio indica su metodo: el valor en
+efectivo nunca se presenta como una tarifa universal.
+
+| Opcion | Composicion | Donde concentra el caracter |
+| --- | --- | --- |
+| A. Clara | Tarjeta blanca: nombre/duracion, precio principal etiquetado, otras tarifas y accion Mandarina | Aire, borde sobrio y jerarquia tipografica |
+| B. Grafito | Superficie oscura, dos columnas de precios por metodo y accion Mandarina | Contraste, continuidad con la web actual |
+| C. Comparativa | Filas horizontales con identidad, precios y accion; apiladas en movil | Comparar rapidamente seis planes sin seis bloques altos |
+| D. Ficha | Gris claro, cabecera compacta y banda Mandarina solo en el primer precio | Color funcional localizado, no toda la pagina naranja |
+
+Tokens: blanco #FFFFFF, Grafito #2C3035, Mandarina #F48335, gris secundario
+#5C636B, gris claro #F5F6F7, linea #D8DDE2. Outfit 500 para nombres/precios;
+DM Sans para condiciones y controles. Sin sombras decorativas, gradientes,
+rankings inventados o etiquetas de "mas elegido" sin datos.
+
+Recomendacion de diseno: A para recuperar el predominio blanco pedido;
+B si se prefiere conservar la presencia oscura. C prioriza comparacion;
+D hace mas evidente el precio con un acento localizado.
+La eleccion final, combinaciones y despliegue de cualquiera quedan
+pendientes de la decision del usuario. No se actualiza aun la identidad
+aprobada ni su manual a una de estas propuestas.
+
+### Validacion
+
+Completado:
+
+- Prueba de precios inicialmente roja a 1440 px; verde tras la correccion.
+  54 combinaciones de 1/2/3/5/6/7 tarjetas y nueve anchos de 320 a 1600 px,
+  incluidos importes de hasta $1.000.000. Se comprueba una sola linea,
+  contenido dentro de la tarjeta y fuente de al menos 20 px, no solo
+  ausencia de scrollbar horizontal.
+- Regresion adicional de filas centradas y acciones: 24 combinaciones.
+  Precio seleccionado de asociacion comprobado a 320/390/760/1024/1440 px.
+  28 pruebas de los cuatro componentes/paginas afectados y recorrido
+  completo de tarifas, asociacion, jubilados y caja correctos.
+- Propuestas: 24 combinaciones de cuatro disenos y seis anchos de
+  320 a 1440 px con los seis planes reales. Precios completos, sin
+  desborde; Axe sin incidencias en las cuatro variantes a 390 y 1440 px.
+  Ocho capturas de escritorio/movil y revision visual comparada.
+- Carga, HTTP 503, contrato invalido, reintento, catalogo vacio, metodos
+  apagados, precio sin configurar, texto que no se interpreta como HTML,
+  navegacion por teclado y enlaces directos comprobados. Una promocion
+  inexistente no se muestra si falta el precio.
+- Build, lint y diff --check correctos. Comparador abierto en una pestana
+  separada; la portada conserva el diseno actual con precios corregidos.
+
+Estado: reparacion responsive aplicada; plan y cuatro propuestas entregados
+para elegir. P1–P8 y el diseno definitivo siguen pendientes de aprobacion.
+Sin cambios a datos comerciales, cobros, permisos o historial; sin commits
+ni despliegue. Verificacion en Chromium; no acredita Safari/iPhone real.
+
+## 32. Clara aprobada, hover de botones y alternativas para la foto
+
+Decision del usuario: aplicar **A. Clara** de la seccion 31, animar el
+cambio de fondo de los botones y preparar variantes de la foto de inicio
+sin su parte superior circular. La foto definitiva sigue pendiente de
+eleccion; P1–P8 no se aprueban por este pedido.
+
+### Aplicado
+
+- Tarjetas blancas, texto/foco Grafito, borde perceptible, duracion sobre
+  gris claro, descripcion y tarifas por metodo. Efectivo primero; medios
+  con el mismo importe agrupados. Accion Mandarina completa y al pie.
+  Ancho maximo 440 px, padding 28/24 px y filas centradas.
+- Se consulta la disponibilidad real de metodos con carga/error/reintento.
+  No se anuncian medios incompatibles o apagados ni se ofrece elegir un
+  plan sin medios disponibles. Se conservan rol y destino de las acciones.
+- Agrupacion y formato compartidos con la muestra de tarjetas, reutilizando
+  el calculo monetario existente. No se cambia ningun importe ni vigencia.
+  Se omiten decimales cero en las tarjetas; se conservan centavos reales,
+  promociones generales/condicionadas y el formato de caja/historial.
+- Principales: Mandarina a #FFAD73; secundarios/discretos, menu y cierres:
+  fondo a #E8EBEE. Transicion de 220 ms cubic-bezier(.2,.7,.2,1), sin mover
+  ni escalar controles y con texto Grafito durante toda la transicion.
+  Foco visible, deshabilitados sin cambios, hover solo con puntero compatible
+  y sin transicion al preferir movimiento reducido.
+- Manual 1.7 sincronizado en Markdown/HTML/PDF. La muestra anterior registra
+  A como aprobada; B/C/D quedan como antecedentes.
+
+### Propuestas de foto, sin sustituir la portada
+
+Muestra aislada `marca/portada.html`, con seleccion por radio y enlaces
+directos. Misma foto licenciada para comparar forma, recorte y posicion:
+
+| Opcion | Proporcion y composicion | Intencion |
+| --- | --- | --- |
+| A. Rectangulo suave | Imagen 4:3 a la izquierda, radio 24 px, texto a la derecha | Continuidad serena con Clara; recomendacion principal |
+| B. Retrato vertical | Imagen 4:5, radio 24 px, texto lateral | Mayor presencia fotografica sin arco |
+| C. Panoramica | Texto arriba, imagen 21:9 abajo; 16:10 en movil | Mostrar mas espacio y una entrada mas visual |
+| D. Editorial recta | Texto izquierdo, imagen derecha, esquinas rectas | Composicion directa, sin curvas ni marco decorativo |
+
+En movil se apilan sin ocultar imagen, titulo o accion. Ninguna agrega
+carrusel, movimiento automatico o material falsamente atribuido al gimnasio.
+La foto actual de la aplicacion conserva su arco hasta la eleccion.
+La referencia se puede reemplazar por una foto propia autorizada mas adelante.
+
+### Evidencia
+
+- Se reprodujeron en rojo expectativas de la presentacion por metodo;
+  despues, 31 pruebas focalizadas y suite completa frontend de 84 correctas.
+- Seis recorridos Chromium correctos: tarjetas adaptables, precios sin
+  cortes, hover, interfaz publica/teclado/Axe, catalogo y tarifas/caja.
+  Incluyen 54 combinaciones de precios y 24 de centrado. El hover comprueba
+  fondo final, duracion, geometria estable, deshabilitados y movimiento reducido.
+  Se amplio y repitio correctamente ese recorrido para menu y cierre de avisos.
+- Las cuatro fotos se verificaron en 20 combinaciones a 320/390/760/1024/
+  1440 px, sin desborde; Axe correcto en las cuatro a 390 y 1440 px.
+  Teclado, enlaces directos e imagenes cargadas comprobados. Ocho capturas
+  y una lamina comparativa, con revision visual.
+- Build, lint y sintaxis de las muestras correctos. Manual: seis A4
+  etiquetadas, fuentes e imagenes completas y sin desbordes. La pagina
+  compartida muestra los importes Clara reales y la muestra fotografica
+  esta abierta en la pestana del comparador.
+
+Estado: Clara y hover aplicados localmente; cuatro alternativas fotograficas
+entregadas para elegir. Sin cambios a pagos, catalogo, permisos ni datos
+comerciales, sin commits o despliegue. No acredita Safari/iPhone real.

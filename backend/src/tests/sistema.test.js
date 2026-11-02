@@ -1,12 +1,14 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createDatabase, migrate } from '../database/Database.js';
+import { catalogoMensualDePrueba } from './catalogo-pruebas.js';
 import { createApp } from '../app.js';
 import AuthService from '../services/AuthService.js';
 
 test('sistema completo: permisos, membresia, ultimo cupo, cancelacion e historial', async () => {
     const db = await createDatabase({ mode: 'local', dataDir: 'memory://' });
     await migrate(db);
+    await catalogoMensualDePrueba(db);
     let ahora = new Date('2030-01-31T12:00:00-03:00');
     const auth = new AuthService(db, () => ahora);
     const base = { nombre: 'Prueba', apellido: 'Sintetica', password: 'PruebaSegura123!', dni: '90000001', telefono: '1100000000', fechaNacimiento: '2000-01-01' };

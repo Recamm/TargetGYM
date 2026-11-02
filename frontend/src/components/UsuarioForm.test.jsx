@@ -1,11 +1,40 @@
-import { expect, test, vi } from 'vitest';
+import { beforeEach, expect, test, vi } from 'vitest';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import UsuarioForm from './UsuarioForm.jsx';
 import NotificationProvider from './NotificationProvider.jsx';
-import { listarPlanes } from '../services/membresiasService.js';
+import { listarPlanes, listarMetodosPago } from '../services/membresiasService.js';
 
-vi.mock('../services/membresiasService.js', () => ({ listarPlanes: vi.fn() }));
+vi.mock('../services/membresiasService.js', () => ({ listarPlanes: vi.fn(), listarMetodosPago: vi.fn() }));
+beforeEach(() => listarMetodosPago.mockResolvedValue([
+    { codigo: 'Efectivo', habilitado: true, permiteSocio: true },
+    { codigo: 'Transferencia', habilitado: true, permiteSocio: true },
+]));
+
+test('no ofrece métodos apagados ni envía una asociación sin métodos disponibles', async () => {
+    listarPlanes.mockResolvedValue([{ tipo: 'mensual', nombre: 'Plan mensual', meses: 1, precioCentavos: 1500000, descuentoPorcentaje: 0, condicionesDescuento: '', metodoDescuento: null }]);
+    listarMetodosPago.mockResolvedValue([]);
+    const submit = vi.fn();
+    const initial = { nombre: 'Prueba', apellido: 'Sintetica', email: 'test@example.test', dni: '90000001', telefono: '1100000000', fechaNacimiento: '2000-01-01', password: 'Segura123!', tipoPlan: 'mensual', metodoPago: 'Efectivo' };
+    render(<NotificationProvider><UsuarioForm elegirPlan asociacion initial={initial} onSubmit={submit} /></NotificationProvider>);
+    await screen.findByRole('option', { name: 'Plan mensual' });
+    expect(screen.queryByRole('option', { name: 'Transferencia' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('option', { name: 'Efectivo' })).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Guardar' }));
+    expect(submit).not.toHaveBeenCalled();
+    expect(screen.getByText(/No hay métodos de pago habilitados/)).toBeVisible();
+});
+
+test('un error del catálogo impide el envío y permite reintentar sin perder datos', async () => {
+    listarPlanes.mockResolvedValue([]);
+    listarMetodosPago.mockRejectedValueOnce(new Error('No pudimos cargar los métodos.'));
+    render(<NotificationProvider><UsuarioForm elegirPlan asociacion initial={{ nombre: 'Prueba' }} onSubmit={vi.fn()} /></NotificationProvider>);
+    expect(await screen.findByText('No pudimos cargar los métodos.')).toBeVisible();
+    expect(screen.getByRole('button', { name: 'Guardar' })).toBeDisabled();
+    fireEvent.click(screen.getByRole('button', { name: 'Reintentar' }));
+    expect(await screen.findByRole('option', { name: 'Efectivo', exact: true })).toBeInTheDocument();
+    expect(screen.getByLabelText('Nombre')).toHaveValue('Prueba');
+});
 
 test('no envia registro invalido y conserva datos tras error del servidor', async () => {
     const submit = vi.fn().mockRejectedValue(new Error('Email ya registrado'));
@@ -53,7 +82,23 @@ test('asociación requiere método manual y muestra precio antes de enviar', asy
     fireEvent.change(screen.getByLabelText('Cómo vas a pagar'), { target: { value: 'Transferencia' } });
     fireEvent.click(screen.getByRole('button', { name: 'Guardar' }));
     await waitFor(() => expect(submit).toHaveBeenCalledWith(expect.objectContaining({ tipoPlan: 'mensual', metodoPago: 'Transferencia' })));
-    expect(screen.getByText(/15\.000/)).toBeVisible();
+    expect(screen.getByRole('status')).toHaveTextContent(/Importe a pagar en recepción:.*15\.000/);
+});
+
+test('jubilados solo ofrece efectivo y bloquea la asociación si ese método está apagado', async () => {
+    listarPlanes.mockResolvedValue([{ tipo: 'jubilados', nombre: 'Promo jubilados', meses: 1, precioCentavos: 6200000,
+        descuentoPorcentaje: 0, condicionesDescuento: '', metodoDescuento: null, metodoExclusivo: 'Efectivo',
+        requisitosAcceso: 'Exclusivo para jubilados.' }]);
+    listarMetodosPago.mockResolvedValue([
+        { codigo: 'Efectivo', habilitado: false, permiteSocio: true },
+        { codigo: 'Transferencia', habilitado: true, permiteSocio: true },
+        { codigo: 'Tarjeta', habilitado: true, permiteSocio: true },
+    ]);
+    render(<NotificationProvider><UsuarioForm elegirPlan asociacion initial={{ tipoPlan: 'jubilados' }} onSubmit={vi.fn()} /></NotificationProvider>);
+    await screen.findByText('Exclusivo para jubilados.');
+    expect(screen.queryByRole('option', { name: 'Transferencia', exact: true })).not.toBeInTheDocument();
+    expect(screen.queryByRole('option', { name: 'Tarjeta', exact: true })).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Guardar' })).toBeDisabled();
 });
 
 test('alta administrativa por invitación no pide ni envía una contraseña', async () => {

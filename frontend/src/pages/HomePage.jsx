@@ -1,9 +1,12 @@
 import { Link } from 'react-router-dom';
 import { useAuth } from '../components/AuthContext.js';
 import ResourceState, { EmptyState } from '../components/ResourceState.jsx';
-import { listarPlanes } from '../services/membresiasService.js';
+import { listarPlanes, listarMetodosPago } from '../services/membresiasService.js';
 import useResource from '../utils/useResource.js';
 import PlanPrice from '../components/PlanPrice.jsx';
+import { PlanConditions } from '../components/PlanDetails.jsx';
+import { periodoPlan, tarifasPlan } from '../utils/planes.js';
+import gimnasio from '../../../info/target-gym/datos-verificados.json';
 
 const actividades = [
     ['Musculación', 'Pesas y máquinas para trabajar fuerza y construir tu rutina, con acompañamiento en el entrenamiento.'],
@@ -14,6 +17,7 @@ const actividades = [
 
 export default function HomePage() {
     const planes = useResource(listarPlanes, 30000);
+    const metodos = useResource(listarMetodosPago, 30000);
     const { usuario } = useAuth();
     const planAction = !usuario ? ['/asociate', 'Asociate']
         : usuario.rol === 'Socio' ? ['/mi-membresia', 'Ver mi membresía']
@@ -25,7 +29,7 @@ export default function HomePage() {
                 <p className="location-line">Tu gimnasio de barrio, en Florida.</p>
                 <h1 id="hero-title" tabIndex={-1}>Qué bueno<br /> que viniste.</h1>
                 <p className="hero-description">Musculación, cardio y clases grupales. Con acompañamiento, desde tu primer día.</p>
-                <Link className="button primary" to="/#servicios">Ver actividades</Link>
+                <Link className="button primary" to="/#planes">Ver planes</Link>
             </div>
             <figure className="hero-photo">
                 <img src="/marca/gimnasio-referencia.webp" alt="Sala de entrenamiento con mancuernas, bancos y máquinas, en un gimnasio de referencia" width="1920" height="1040" fetchPriority="high" />
@@ -51,15 +55,17 @@ export default function HomePage() {
                 <h2 id="plans-title">Un plan para tu rutina.</h2>
                 <p>Precios en pesos argentinos por el período completo. El pago se coordina en el gimnasio, no se realiza un cobro online.</p>
             </div>
+            <ul className="gym-benefits">{gimnasio.beneficios.map(beneficio => <li key={beneficio}>{beneficio}</li>)}</ul>
             <ResourceState resource={planes}>
-                {planes.data?.length === 0 ? <EmptyState>Todavía no hay planes disponibles. Consultá en el gimnasio.</EmptyState> : <div className="plan-grid">
+                {planes.data?.length === 0 ? <EmptyState>Todavía no hay planes disponibles. Consultá en el gimnasio.</EmptyState> : <ResourceState resource={metodos}><div className="plan-grid">
                     {planes.data?.map(plan => <article className="plan-card" key={plan.tipo} aria-labelledby={`plan-${plan.tipo}`}>
-                        <h3 id={`plan-${plan.tipo}`}>{plan.nombre}</h3>
-                        <PlanPrice plan={plan} />
-                        <p className="plan-period">Por {plan.meses === 1 ? '1 mes calendario' : `${plan.meses} meses calendario`}</p>
-                        {!usuario && plan.precioCentavos !== null && <Link className="text-link" to={`/asociate?plan=${encodeURIComponent(plan.tipo)}`}>Elegir {plan.nombre}</Link>}
+                        <header><h3 id={`plan-${plan.tipo}`}>{plan.nombre}</h3><p className="plan-period">Por {periodoPlan(plan)}</p></header>
+                        {plan.descripcion && <p className="plan-description">{plan.descripcion}</p>}
+                        <PlanPrice plan={plan} metodos={metodos.data} />
+                        <PlanConditions plan={plan} />
+                        {!usuario && plan.precioCentavos !== null && metodos.data && tarifasPlan(plan, metodos.data).length > 0 && <Link className="button primary" to={`/asociate?plan=${encodeURIComponent(plan.tipo)}`}>Elegir {plan.nombre}</Link>}
                     </article>)}
-                </div>}
+                </div></ResourceState>}
                 {planes.data?.length > 0 && <Link className="button secondary" to={planAction[0]}>{planAction[1]}</Link>}
             </ResourceState>
         </section>
@@ -69,7 +75,8 @@ export default function HomePage() {
                 <h2 id="about-title">Un equipo cerca.</h2>
                 <div>
                     <p>Somos un gimnasio de barrio en Florida, Vicente López. Un espacio para entrenar fuerza, moverte y encontrar una rutina que encaje con tu día.</p>
-                    <p>Musculación, entrenamiento funcional y actividades grupales, con el acompañamiento de nuestros instructores.</p>
+                    <p>{gimnasio.acompanamiento}</p>
+                    <p>{gimnasio.instalaciones}</p>
                     <Link className="text-link" to={usuario ? '/clases' : '/asociate'}>{usuario ? 'Ver la agenda' : 'Quiero asociarme'}</Link>
                 </div>
             </div>

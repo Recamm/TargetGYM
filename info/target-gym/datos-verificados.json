@@ -2,7 +2,7 @@
   "nombre": "Target gym",
   "consultadoEl": "2026-11-02",
   "direccion": {
-    "calle": "Gral. José de San Martín 2462",
+    "calle": "Av. San Martín 2462",
     "localidad": "Florida, Vicente López",
     "provincia": "Buenos Aires",
     "pais": "Argentina"
@@ -19,8 +19,11 @@
     "lunesAViernes": "6 a 22 h",
     "sabados": "8 a 20 h",
     "domingos": "Cerrado",
-    "feriados": "Consultá en el gimnasio."
+    "feriados": "10 a 18 h"
   },
+  "beneficios": ["Pase libre y clases incluidas.", "Sin matrícula ni inscripción."],
+  "acompanamiento": "Profesores de educación física te acompañan con una rutina personalizada desde el primer día y te ayudan con tus consultas durante el entrenamiento.",
+  "instalaciones": "Duchas, vestidores y lockers. Traé tu candado.",
   "actividadesObservadas": [
     "Musculación",
     "Clases fitness grupales",
@@ -37,14 +40,16 @@
     "publicacionClases": "https://www.instagram.com/targetgym_florida/p/DcbZzz5IY9P/?hl=en",
     "maps": "https://maps.app.goo.gl/fyNL18dV3umtNDJx8",
     "mapsExpandido": "https://www.google.com/maps/place/Target+GYM/data=!4m2!3m1!1s0x95bcb132c61946ab:0x3e8fabd972889e5f?hl=es",
-    "usuarioWhatsapp": "Número 1168244559 confirmado directamente por el usuario el 2026-11-02."
+    "usuarioWhatsapp": "Número 1168244559 confirmado directamente por el usuario el 2026-11-02.",
+    "respuestaWhatsapp": "Información de Target Gym Florida recibida por WhatsApp y transcrita por el usuario el 2026-11-02. Aranceles, feriados, instalaciones y beneficios confirmados."
   },
   "verificaciones": [
-    { "dato": "direccion", "fuentes": ["maps", "perfilInstagram"], "estado": "observado_en_fuentes_publicas" },
+    { "dato": "direccion", "fuentes": ["respuestaWhatsapp", "maps", "perfilInstagram"], "estado": "confirmado_por_el_gimnasio_via_usuario" },
     { "dato": "contacto.telefono", "fuentes": ["maps"], "estado": "observado_en_fuente_publica" },
     { "dato": "contacto.instagram", "fuentes": ["perfilInstagram"], "estado": "perfil_aportado_por_usuario" },
     { "dato": "contacto.whatsapp", "fuentes": ["usuarioWhatsapp"], "estado": "confirmado_por_usuario" },
-    { "dato": "horarios", "fuentes": ["maps"], "estado": "horario_semanal_observado_feriados_por_confirmar" },
+    { "dato": "horarios", "fuentes": ["respuestaWhatsapp"], "estado": "confirmado_por_el_gimnasio_via_usuario" },
+    { "dato": "beneficios_instalaciones_acompanamiento", "fuentes": ["respuestaWhatsapp"], "estado": "confirmado_por_el_gimnasio_via_usuario" },
     { "dato": "actividadesObservadas", "fuentes": ["perfilInstagram", "publicacionClases"], "estado": "referencia_no_crea_clases_en_agenda" }
   ]
 }

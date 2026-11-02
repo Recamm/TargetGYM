@@ -1,5 +1,9 @@
 import { BadRequestError } from '../exceptions/AppError.js';
 
+export function sumarDuracion(fecha, periodo) {
+    return periodo.dias != null ? new Date(fecha.getTime() + periodo.dias * 86400000) : sumarMeses(fecha, periodo.meses);
+}
+
 export function exigir(condicion, mensaje) {
     if (!condicion) throw new BadRequestError(mensaje);
 }

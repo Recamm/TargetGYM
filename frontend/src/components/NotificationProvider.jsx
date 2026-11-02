@@ -1,19 +1,24 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { NotificationContext } from './NotificationContext.js';
 
 function Notice({ notice, dismiss }) {
-    const [hovered, setHovered] = useState(false), [focused, setFocused] = useState(false);
+    const element = useRef(null), previousFocus = useRef(null);
     const { id, type, message } = notice;
+    const close = useCallback(() => {
+        if (element.current?.contains(document.activeElement)) {
+            const target = previousFocus.current?.isConnected ? previousFocus.current : document.getElementById('contenido');
+            target?.focus({ preventScroll: true });
+        }
+        dismiss(id);
+    }, [id, dismiss]);
     useEffect(() => {
-        if (hovered || focused) return;
-        const timer = setTimeout(() => dismiss(id), type === 'error' ? 10000 : 6000);
+        const timer = setTimeout(close, type === 'error' ? 8000 : 4000);
         return () => clearTimeout(timer);
-    }, [id, type, hovered, focused, dismiss]);
-    return <div className={`notice ${type}`} role={type === 'error' ? 'alert' : 'status'}
-        onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}
-        onFocusCapture={() => setFocused(true)} onBlurCapture={event => { if (!event.currentTarget.contains(event.relatedTarget)) setFocused(false); }}>
+    }, [type, close]);
+    return <div ref={element} className={`notice ${type}`} role={type === 'error' ? 'alert' : 'status'}
+        onFocusCapture={event => { if (!event.currentTarget.contains(event.relatedTarget)) previousFocus.current = event.relatedTarget; }}>
         <span>{type === 'error' ? 'Atención: ' : 'Listo: '}{message}</span>
-        <button type="button" className="notice-close" aria-label="Cerrar notificación" onClick={() => dismiss(id)}>×</button>
+        <button type="button" className="notice-close" aria-label="Cerrar notificación" onClick={close}>×</button>
     </div>;
 }
 

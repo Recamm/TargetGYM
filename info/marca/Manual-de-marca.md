@@ -1,6 +1,6 @@
 # Target GYM — Manual de marca
 
-**Versión 1.2 · Identidad aprobada el 2 de noviembre de 2026**
+**Versión 1.7 · Identidad aprobada el 2 de noviembre de 2026**
 
 **Dirección:** Cerca. **Logo:** Mancuerna. **Paleta:** blanco y grafito
 con acentos Mandarina. **Tipografía:** Outfit + DM Sans.
@@ -191,6 +191,11 @@ son referencias RGB para pantalla; no se certificaron CMYK ni Pantone.
 Las acciones principales usan Mandarina con texto Grafito. Las secundarias
 son blancas con borde; las discretas, texto subrayado. Mantener al menos
 44 × 44 px en controles principales y foco Grafito visible de 3 px.
+Hover y foco: fondo Mandarina suave `#FFAD73` para principales, gris
+`#E8EBEE` para secundarias/discretas, menú y cierres. Transición de fondo/borde de
+220 ms con `cubic-bezier(.2, .7, .2, 1)`, sin mover ni escalar controles.
+Texto Grafito durante toda la transición. Deshabilitados no cambian.
+Sin transición con movimiento reducido; en táctil no se fuerza un hover.
 No ocultar datos o acciones importantes solo para reducir densidad.
 
 La cabecera fija reserva su altura y las anclas dejan margen de lectura.
@@ -214,21 +219,51 @@ El menú móvil entra con opacidad y desplazamiento vertical de 12 px durante
 lo cierran. Cerrado, sus enlaces no son enfocables. Sin animación si se
 prefiere movimiento reducido.
 
-Los avisos transitorios se cierran a los **6 s** para confirmaciones y
-**10 s** para errores, cada uno con su propio temporizador. Pasar el puntero
-o enfocar el aviso pausa el cierre; al salir se reinicia su plazo completo.
+Los enlaces a secciones de la misma página y el regreso al inicio usan
+scroll suave nativo, incluso al repetir un enlace. El foco acompaña el
+destino sin un salto adicional. Sin animación cuando se prefiere movimiento
+reducido o se cambia a otra página; los cambios de filtros conservan la
+posición y el foco.
+
+Los avisos transitorios se cierran a los **4 s** para confirmaciones y
+**8 s** para errores, cada uno con su propio temporizador. El puntero y el
+foco no pausan ni reinician el plazo. Al cerrar un aviso enfocado, devolver
+el foco al control anterior disponible o al contenido principal.
 Siempre se permite cierre manual. Los errores junto a campos o paneles
 permanecen visibles hasta su corrección o reintento.
 
+Las tarjetas de planes usan **A. Clara**, aprobada el 2 de noviembre de 2026:
+superficie blanca, texto/foco Grafito, ayudas gris secundario y borde
+`#737B85`. Nombre y duración (esta sobre gris claro) preceden a descripción y
+tarifas etiquetadas por método. Efectivo primero; otros medios con el mismo
+importe se agrupan, sin ofrecer medios deshabilitados o incompatibles.
+Precio protagonista y botón Mandarina de ancho completo para elegir el plan.
+Sin sombras ni relleno naranja general. Radio 24 px, separación 24 px y
+padding 28 px (24 px en móvil). Ancho flexible, máximo 440 px en portada;
+centrar el grupo y las filas incompletas, desde una tarjeta hasta muchas,
+y alinear las acciones al pie aunque haya distintas promociones.
+El panel reserva el espacio de su scrollbar para no cambiar de posición
+horizontal entre secciones. Caja identifica métodos deshabilitados con
+texto, no solo color; no se quitan métodos ni pagos históricos.
+
 Los planes de portada consultan los precios configurados y se actualizan
 cada 30 s; solo se publican planes habilitados. Mostrar el total en ARS
-por el período completo. En descuentos generales, usar precio anterior y
-porcentaje. En promociones condicionadas, mantener el precio base principal,
+por el período completo, indicando meses calendario o días corridos.
+En Clara, omitir decimales que sean cero; conservar centavos cuando existan.
+La tipografía se adapta al contenedor, no al viewport, y el importe no se
+divide entre líneas. No cambiar el formato del historial o los comprobantes.
+En descuentos generales, usar precio anterior y porcentaje o importe fijo exacto.
+No aproximar una tarifa fija mediante un porcentaje. En promociones condicionadas, mantener la tarifa base de cada método,
 mostrar la oferta aparte y explicar método/condiciones y confirmación
 presencial. Nunca tachar el precio base como si la rebaja fuera universal.
+Si el único requisito de una tarifa fija es el método de pago, el importe
+se calcula automáticamente al seleccionarlo. Otros requisitos se verifican
+por separado en recepción. Mostrar descripción y restricciones de cada plan.
 Un precio sin configurar dice «Consultá el precio», nunca cero inventado.
 La acción lleva al registro, membresía, configuración o consulta según
-el rol; no cobra online. Carga, vacío y error con reintento son explícitos.
+el rol; no cobra online. Tarjeta significa pago presencial pendiente, nunca
+un checkout ni un pedido de datos de tarjeta.
+Carga, vacío y error con reintento son explícitos.
 
 Administración permite crear/editar planes y confirmar su deshabilitación
 o eliminación con consecuencias claras. Los nombres históricos no son

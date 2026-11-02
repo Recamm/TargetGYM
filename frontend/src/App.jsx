@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import Header from './components/Header.jsx';
 import Footer from './components/Footer.jsx';
@@ -16,6 +16,7 @@ import ClaseFormPage from './pages/ClaseFormPage.jsx';
 import SociosPage from './pages/SociosPage.jsx';
 import SocioFormPage from './pages/SocioFormPage.jsx';
 import PlanesPage from './pages/PlanesPage.jsx';
+import MetodosPagoPage from './pages/MetodosPagoPage.jsx';
 import PagosPage from './pages/PagosPage.jsx';
 import InstructoresPage from './pages/InstructoresPage.jsx';
 import InstructorPage from './pages/InstructorPage.jsx';
@@ -30,19 +31,25 @@ import ActivarAccesoPage from './pages/ActivarAccesoPage.jsx';
 import './App.css';
 
 export default function App() {
-    const { pathname, hash, search } = useLocation(), { usuario } = useAuth();
+    const location = useLocation(), { pathname, search } = location, { usuario } = useAuth();
+    const previousLocation = useRef(null);
     const equipo = pathname === '/equipo' || pathname.startsWith('/gestion') || pathname.startsWith('/instructor')
         || (pathname === '/mi-cuenta' && usuario && usuario.rol !== 'Socio');
     useEffect(() => {
+        const { pathname, hash } = location, previous = previousLocation.current;
+        previousLocation.current = location;
+        if (previous?.pathname === pathname && previous.hash === hash && previous.search !== location.search) return;
+        const samePage = previous?.pathname === pathname && previous.key !== location.key;
         const frame = requestAnimationFrame(() => {
+            const behavior = samePage && !window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'smooth' : 'instant';
             const target = (hash && document.getElementById(hash.slice(1))) || document.querySelector('main h1') || document.getElementById('contenido');
             target?.focus({ preventScroll: true });
-            if (hash) target?.scrollIntoView(); else window.scrollTo(0, 0);
+            if (hash) target?.scrollIntoView({ behavior }); else window.scrollTo({ top: 0, left: 0, behavior });
             const title = document.querySelector('main h1')?.textContent;
             document.title = title ? `${title} | Target GYM` : 'Target GYM';
         });
         return () => cancelAnimationFrame(frame);
-    }, [pathname, hash]);
+    }, [location]);
     const contenido = <main id="contenido" tabIndex={-1} className={equipo ? 'equipo-content page-content' : pathname === '/' ? 'home-main' : 'container page-content'}>
         <Routes>
             <Route path="/" element={<HomePage />} /><Route path="/clases" element={<ClasesPage />} />
@@ -56,6 +63,7 @@ export default function App() {
             </Route>
             <Route element={<ProtectedRoute roles={['Administrador']} loginPath="/equipo" />}>
                 <Route path="/gestion" element={<GestionInicioPage />} />
+                <Route path="/gestion/metodos-pago" element={<MetodosPagoPage />} />
                 <Route path="/gestion/clases" element={<GestionClasesPage />} /><Route path="/gestion/clases/nueva" element={<ClaseFormPage />} />
                 <Route path="/gestion/clases/:id/editar" element={<ClaseFormPage />} /><Route path="/gestion/clases/:id/asistencia" element={<AsistenciaPage />} />
                 <Route path="/gestion/socios" element={<SociosPage />} /><Route path="/gestion/socios/nuevo" element={<SocioFormPage />} /><Route path="/gestion/socios/:id" element={<SocioFormPage />} />

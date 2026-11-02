@@ -7,6 +7,8 @@
   --paper: #fff;
   --brand: #f48335;
   --action: #f48335;
+  --action-hover: #ffad73;
+  --secondary-hover: #e8ebee;
   --muted: #5c636b;
   --soft: #f5f6f7;
   --line: #d8dde2;
@@ -25,7 +27,8 @@
   -webkit-font-smoothing: antialiased;
 }
 * { box-sizing: border-box; }
-html { scroll-padding-top: 112px; }
+html { scroll-padding-top: 112px; scrollbar-gutter: stable; scroll-behavior: smooth; }
+@supports not (scrollbar-gutter: stable) { html { overflow-y: scroll; } }
 body { margin: 0; padding-top: 88px; }
 #root { min-height: calc(100svh - 88px); display: flex; flex-direction: column; }
 main { flex: 1; min-width: 0; }

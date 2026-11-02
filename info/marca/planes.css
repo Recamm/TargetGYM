@@ -1,0 +1,116 @@
+@font-face { font-family: Outfit; src: url("fonts/outfit.woff2") format("woff2"); font-weight: 100 900; font-display: swap; }
+@font-face { font-family: "DM Sans"; src: url("fonts/dm-sans.woff2") format("woff2"); font-weight: 100 900; font-display: swap; }
+:root { color-scheme: light; --ink: #2c3035; --paper: #fff; --muted: #5c636b; --soft: #f5f6f7; --line: #d8dde2; --border: #737b85; --accent: #f48335; font: 400 16px/1.6 "DM Sans", sans-serif; color: var(--ink); background: var(--paper); font-synthesis: none; }
+* { box-sizing: border-box; }
+body { margin: 0; }
+h1, h2, h3, p, dl, dd { margin: 0; }
+h1, h2, h3 { font-family: Outfit, sans-serif; font-weight: 500; letter-spacing: -.035em; line-height: 1.1; }
+a { color: inherit; text-underline-offset: .25em; }
+button, input { font: inherit; }
+button, label { cursor: pointer; }
+[hidden] { display: none !important; }
+:focus-visible { outline: 3px solid var(--ink); outline-offset: 4px; }
+.shell { width: min(1200px, calc(100% - 96px)); margin-inline: auto; }
+.skip { position: absolute; top: 8px; left: 16px; padding: 12px; background: white; transform: translateY(-180%); }
+.skip:focus { transform: none; }
+.masthead { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; min-height: 96px; border-bottom: 1px solid var(--line); font-size: .9rem; }
+.masthead a { display: inline-flex; align-items: center; min-height: 44px; }
+.brand { font: 500 1.8rem Outfit, sans-serif; letter-spacing: -.04em; text-decoration: none; }
+.masthead > span, .muted { color: var(--muted); }
+.intro { display: grid; grid-template-columns: 1.15fr 1fr; gap: 64px; align-items: end; padding-block: 64px 48px; }
+h1 { font-size: clamp(2.6rem, 5vw, 4.5rem); letter-spacing: -.05em; }
+.intro p + p { margin-top: 16px; font-size: .9rem; }
+.variants { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; border: 0; padding: 0; margin: 0 0 52px; min-width: 0; }
+.variants legend { padding: 0; margin-bottom: 16px; font-size: .9rem; }
+.variants label { display: flex; gap: 12px; padding: 18px; border: 1px solid var(--border); border-radius: 16px; align-items: start; }
+.variants label:has(input:checked) { border-color: var(--ink); background: var(--soft); box-shadow: inset 0 0 0 1px var(--ink); }
+.variants input { accent-color: var(--ink); width: 20px; height: 20px; flex-shrink: 0; margin: 3px 0 0; }
+.variants label:has(:focus-visible) { outline: 3px solid var(--ink); outline-offset: 4px; }
+.variants strong { display: block; font-weight: 500; }
+.variants small { display: block; color: var(--muted); margin-top: 6px; line-height: 1.5; }
+.design-intro { display: flex; justify-content: space-between; gap: 48px; margin-bottom: 28px; }
+.design-intro h2 { font-size: 2rem; margin-bottom: 12px; }
+.design-intro p { max-width: 56ch; color: var(--muted); font-size: .95rem; }
+.design-intro .benefits { flex-shrink: 0; color: var(--ink); }
+.samples { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; }
+.sample { display: flex; flex-direction: column; flex: 1 1 300px; max-width: 440px; min-width: 0; padding: 28px; border: 1px solid var(--border); border-radius: 24px; background: var(--paper); color: var(--ink); overflow-wrap: anywhere; }
+.sample h3 { font-size: 1.65rem; margin-bottom: 12px; }
+.period { display: inline-block; font-size: .85rem; color: var(--muted); }
+.description { color: var(--muted); font-size: .9rem; margin-top: 20px; }
+.quotes { margin-block: 28px; display: grid; gap: 18px; }
+.quote { min-width: 0; }
+.quote dt { font-size: .85rem; color: var(--muted); margin-bottom: 6px; }
+.quote dd { container-type: inline-size; min-width: 0; }
+.amount { font: 500 clamp(1rem, 12cqi, 2.75rem)/1.15 Outfit, sans-serif; letter-spacing: -.035em; white-space: nowrap; overflow-wrap: normal; }
+.amount.is-unpriced { white-space: normal; }
+.quote + .quote { border-top: 1px solid var(--line); padding-top: 16px; }
+.quote + .quote .amount { font-size: clamp(1rem, 9cqi, 1.75rem); }
+.notes { font-size: .85rem; margin-bottom: 24px; }
+.choose, #reintentar { display: flex; justify-content: center; align-items: center; min-height: 48px; padding: 12px 18px; border-radius: 14px; border: 1px solid transparent; background: var(--accent); color: var(--ink); font-size: .95rem; font-weight: 500; text-decoration: none; text-align: center; }
+.choose { margin-top: auto; }
+.choose, #reintentar { transition: background-color 220ms cubic-bezier(.2, .7, .2, 1); }
+.choose:focus-visible { background: #ffad73; }
+@media (hover: hover) {
+  .choose:hover { background: #ffad73; }
+  .samples[data-design="comparativa"] .choose:hover, .samples[data-design="ficha"] .choose:hover, #reintentar:hover { background: #e8ebee; }
+}
+#reintentar { margin-block: 16px; border-color: var(--border); background: white; }
+.samples[data-design="clara"] .period { padding: 4px 10px; background: var(--soft); border-radius: 8px; }
+.samples[data-design="grafito"] .sample { background: var(--ink); color: white; border-color: var(--ink); }
+.samples[data-design="grafito"] .period, .samples[data-design="grafito"] .description, .samples[data-design="grafito"] dt { color: var(--line); }
+.samples[data-design="grafito"] .quotes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.samples[data-design="grafito"] .quote:only-child { grid-column: 1 / -1; }
+.samples[data-design="grafito"] .quote + .quote { border-top: 0; padding-top: 0; }
+.samples[data-design="grafito"] .quote dt { min-height: 3.2em; }
+.samples[data-design="grafito"] .quote .amount { font-size: clamp(1rem, 16cqi, 2.5rem); }
+.samples[data-design="grafito"] .quote:first-child { border-bottom: 2px solid var(--accent); padding-bottom: 20px; }
+.samples[data-design="grafito"] :focus-visible { outline-color: white; }
+.samples[data-design="comparativa"] { display: grid; gap: 16px; }
+.samples[data-design="comparativa"] .sample { max-width: none; width: 100%; display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.3fr) 170px; grid-template-areas: "head prices action" "description prices action" "notes notes notes"; gap: 0 32px; border-radius: 20px; align-items: center; }
+.samples[data-design="comparativa"] header { grid-area: head; }
+.samples[data-design="comparativa"] .description { grid-area: description; margin-top: 12px; }
+.samples[data-design="comparativa"] .quotes { grid-area: prices; grid-template-columns: repeat(2, minmax(0, 1fr)); margin: 0; gap: 20px; }
+.samples[data-design="comparativa"] .quote:only-child { grid-column: 1 / -1; }
+.samples[data-design="comparativa"] .quote + .quote { border: 0; padding: 0; }
+.samples[data-design="comparativa"] .quote .amount { font-size: clamp(1rem, 15cqi, 2.3rem); }
+.samples[data-design="comparativa"] .notes { grid-area: notes; margin: 16px 0 0; }
+.samples[data-design="comparativa"] .choose { grid-area: action; margin: 0; background: white; border-color: var(--border); }
+.samples[data-design="ficha"] .sample { background: var(--soft); border-color: var(--line); padding: 0; overflow: hidden; }
+.samples[data-design="ficha"] header { padding: 28px 28px 0; }
+.samples[data-design="ficha"] .description { padding-inline: 28px; }
+.samples[data-design="ficha"] .quotes { gap: 0; }
+.samples[data-design="ficha"] .quote { padding: 16px 28px; }
+.samples[data-design="ficha"] .quote:first-child { background: var(--accent); }
+.samples[data-design="ficha"] .quote:first-child dt { color: var(--ink); }
+.samples[data-design="ficha"] .quote + .quote { border: 0; }
+.samples[data-design="ficha"] .notes { padding-inline: 28px; }
+.samples[data-design="ficha"] .choose { margin: auto 28px 28px; background: white; border-color: var(--border); }
+.preview-note { margin-block: 48px; padding-block: 28px; border-block: 1px solid var(--line); }
+.preview-note h2 { font-size: 1.4rem; margin-bottom: 16px; }
+.preview-note p { max-width: 80ch; color: var(--muted); font-size: .9rem; margin-top: 12px; }
+footer { display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap; padding-bottom: 32px; font-size: .85rem; color: var(--muted); }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; scroll-behavior: auto !important; } }
+@media (max-width: 980px) {
+  .variants { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .intro { gap: 32px; }
+  .samples[data-design="comparativa"] .sample { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); grid-template-areas: "head head" "description description" "prices prices" "notes notes" "action action"; }
+  .samples[data-design="comparativa"] .quotes { margin-block: 24px; }
+  .samples[data-design="comparativa"] .choose { margin-top: 24px; }
+}
+@media (max-width: 640px) {
+  .shell { width: calc(100% - 40px); }
+  .masthead { min-height: 84px; gap: 8px; }
+  .masthead > span { display: none; }
+  .intro { grid-template-columns: minmax(0, 1fr); gap: 24px; padding-block: 40px 32px; }
+  .variants { gap: 10px; margin-bottom: 36px; }
+  .variants label { padding: 12px; gap: 8px; }
+  .variants small { font-size: .75rem; }
+  .design-intro { flex-direction: column; gap: 16px; }
+  .sample { padding: 24px; }
+  .samples[data-design="grafito"] .quotes { gap: 12px; }
+  .samples[data-design="comparativa"] .sample { padding: 24px; }
+  .samples[data-design="ficha"] header { padding: 24px 24px 0; }
+  .samples[data-design="ficha"] .description, .samples[data-design="ficha"] .notes { padding-inline: 24px; }
+  .samples[data-design="ficha"] .quote { padding-inline: 24px; }
+  .samples[data-design="ficha"] .choose { margin: auto 24px 24px; }
+}

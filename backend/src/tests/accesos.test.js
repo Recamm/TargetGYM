@@ -3,11 +3,13 @@ import assert from 'node:assert/strict';
 import { createDatabase, migrate } from '../database/Database.js';
 import { createApp } from '../app.js';
 import AuthService from '../services/AuthService.js';
+import { catalogoMensualDePrueba } from './catalogo-pruebas.js';
 
 const base = { nombre: 'Socio', apellido: 'Sintetico', email: 'socio@example.test', password: 'Segura123!', dni: '90006001', telefono: '1100000000', fechaNacimiento: '2000-01-01' };
 async function escenario(t) {
     const db = await createDatabase({ mode: 'local', dataDir: 'memory://' });
     await migrate(db);
+    await catalogoMensualDePrueba(db);
     let ahora = new Date('2030-01-01T12:00:00-03:00');
     const auth = new AuthService(db, () => ahora);
     const admin = await auth.crearAdministrador({ nombre: 'Admin', apellido: 'Sintetico', email: 'admin@example.test', password: 'Administrador123!' });
@@ -36,13 +38,62 @@ async function escenario(t) {
 
 test('asociarse exige plan con precio y método manual en el servidor', async t => {
     const { s, db } = await escenario(t);
-    for (const datos of [base, { ...base, tipoPlan: 'mensual' }, { ...base, tipoPlan: 'mensual', metodoPago: 'Tarjeta' }]) {
+    for (const datos of [base, { ...base, tipoPlan: 'mensual' }, { ...base, tipoPlan: 'mensual', metodoPago: 'Inventado' }]) {
         assert.equal((await s('/auth/registro', 'POST', datos)).status, 400);
     }
     assert.equal((await s('/auth/registro', 'POST', { ...base, tipoPlan: 'trimestral', metodoPago: 'Efectivo' })).status, 409);
     await db.query("UPDATE planes SET habilitado=FALSE WHERE tipo='mensual'");
     assert.equal((await s('/auth/registro', 'POST', { ...base, tipoPlan: 'mensual', metodoPago: 'Efectivo' })).status, 409);
     assert.equal((await db.query("SELECT COUNT(*)::INTEGER AS total FROM usuarios WHERE rol='Socio'")).rows[0].total, 0);
+});
+
+test('solo administración configura métodos; el catálogo público respeta el estado', async t => {
+    const { a, s, db, cliente } = await escenario(t);
+    const catalogo = await a('/gestion/metodos-pago');
+    assert.equal(catalogo.status, 200);
+    assert.deepEqual(catalogo.data.map(item => item.codigo), ['Efectivo', 'Transferencia', 'Tarjeta']);
+    assert.equal((await s('/gestion/metodos-pago')).status, 401);
+    assert.equal((await s('/metodos-pago/Efectivo', 'PUT', { habilitado: false })).status, 401);
+    const instructor = await new AuthService(db).registrar({ ...base, dni: '90006020', email: 'equipo-metodos@example.test', especialidad: 'Funcional' }, 'Instructor');
+    const i = cliente();
+    await i('/auth/sesion');
+    await i('/auth/login', 'POST', { email: instructor.email, password: base.password });
+    assert.equal((await i('/gestion/metodos-pago')).status, 403);
+    assert.equal((await i('/metodos-pago/Transferencia', 'PUT', { habilitado: false })).status, 403);
+    for (const datos of [{}, { habilitado: 'false' }, { habilitado: false, permiteSocio: true }]) {
+        assert.equal((await a('/metodos-pago/Transferencia', 'PUT', datos)).status, 400);
+    }
+    assert.equal((await a('/metodos-pago/Inventado', 'PUT', { habilitado: false })).status, 404);
+    assert.equal((await a('/metodos-pago/Transferencia', 'PUT', { habilitado: false })).data.habilitado, false);
+    assert.deepEqual((await s('/metodos-pago')).data.map(item => item.codigo), ['Efectivo','Tarjeta']);
+    assert.equal((await s('/auth/registro', 'POST', { ...base, tipoPlan: 'mensual', metodoPago: 'Transferencia' })).status, 409);
+    assert.equal((await a('/metodos-pago/Efectivo', 'PUT', { habilitado: false })).status, 200);
+    assert.equal((await a('/metodos-pago/Tarjeta', 'PUT', { habilitado: false })).status, 200);
+    assert.deepEqual((await s('/metodos-pago')).data, []);
+    assert.equal((await s('/auth/registro', 'POST', { ...base, tipoPlan: 'mensual', metodoPago: 'Efectivo' })).status, 409);
+    assert.equal((await a('/metodos-pago/Tarjeta', 'PUT', { habilitado: false })).status, 200);
+    assert.equal((await a('/metodos-pago/Tarjeta', 'PUT', { habilitado: true })).status, 200);
+    assert.deepEqual((await s('/metodos-pago')).data.map(item => item.codigo), ['Tarjeta']);
+    assert.equal((await a('/metodos-pago/Transferencia', 'PUT', { habilitado: true })).status, 200);
+    assert.deepEqual((await s('/metodos-pago')).data.map(item => item.codigo), ['Tarjeta','Transferencia']);
+});
+
+test('apagar un método conserva solicitudes anteriores y caja, pero bloquea nuevas renovaciones', async t => {
+    const { a, s } = await escenario(t);
+    const socio = (await s('/auth/registro', 'POST', { ...base, tipoPlan: 'mensual', metodoPago: 'Transferencia' })).data.usuario;
+    assert.equal((await a('/metodos-pago/Transferencia', 'PUT', { habilitado: false })).status, 200);
+    assert.equal((await s('/auth/sesion')).data.usuario.metodoPagoSolicitado, 'Transferencia');
+    assert.equal((await s('/mi-membresia/pago-reportado', 'POST', {})).status, 200);
+    const pago = { socioId: socio.id, tipoPlan: 'mensual', metodoPago: 'Transferencia', operacionId: crypto.randomUUID() };
+    assert.equal((await a('/pagos', 'POST', pago)).status, 201);
+    assert.equal((await a('/pagos', 'POST', pago)).status, 201);
+    assert.equal((await s('/mis-pagos')).data.length, 1);
+    assert.equal((await s('/mi-membresia/solicitud', 'POST', { tipoPlan: 'mensual', metodoPago: 'Transferencia' })).status, 409);
+    assert.equal((await s('/mi-membresia/solicitud', 'POST', { tipoPlan: 'mensual' })).status, 400);
+    assert.equal((await s('/mi-membresia/solicitud', 'POST', { tipoPlan: 'mensual', metodoPago: 'Efectivo' })).status, 201);
+    assert.equal((await s('/metodos-pago/Efectivo', 'PUT', { habilitado: false })).status, 403);
+    assert.equal((await s('/gestion/metodos-pago')).status, 403);
+    assert.equal((await s('/mi-membresia')).data.estado, 'activa');
 });
 
 test('cuenta por transferencia queda pendiente; declarar pago no activa y confirmar sí', async t => {

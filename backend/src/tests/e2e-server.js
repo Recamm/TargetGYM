@@ -2,9 +2,11 @@ import express from 'express';
 import { createDatabase, migrate } from '../database/Database.js';
 import { createApp } from '../app.js';
 import AuthService from '../services/AuthService.js';
+import { catalogoMensualDePrueba } from './catalogo-pruebas.js';
 if (process.env.NODE_ENV !== 'test' || process.env.VERCEL) throw new Error('El servidor de pruebas solo se ejecuta localmente con NODE_ENV=test.');
 const db = await createDatabase({ mode: 'local', dataDir: 'memory://' });
 await migrate(db);
+await catalogoMensualDePrueba(db);
 let ahora = new Date('2030-01-01T12:00:00-03:00');
 await new AuthService(db, () => ahora).registrar({
     nombre: 'Admin', apellido: 'Sintetico', email: 'admin@example.test', password: 'PruebaSegura123!',

@@ -8,4 +8,6 @@ test('muestra WhatsApp confirmado con formato móvil argentino sin cambiar el te
     expect(screen.getByRole('link', { name: 'WhatsApp: 11 6824-4559' })).toHaveAttribute('href', 'https://wa.me/5491168244559');
     expect(screen.getByRole('link', { name: 'Llamar: 011 4795-5087' })).toHaveAttribute('href', 'tel:+541147955087');
     expect(screen.getByRole('link', { name: 'Instagram: @targetgym_florida' })).toHaveAttribute('href', 'https://www.instagram.com/targetgym_florida/');
+    expect(screen.getByText('10 a 18 h')).toBeVisible();
+    expect(screen.getByText(/Av. San Martín 2462/)).toBeVisible();
 });

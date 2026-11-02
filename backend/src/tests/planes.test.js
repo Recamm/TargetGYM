@@ -6,12 +6,14 @@ import MembresiaService from '../services/MembresiaService.js';
 import EstadoService from '../services/EstadoService.js';
 import { createApp } from '../app.js';
 import { readFile } from 'node:fs/promises';
+import { catalogoMensualDePrueba } from './catalogo-pruebas.js';
 
 const datosPlan = { nombre: 'Plan flexible', meses: 2, precioCentavos: 100001, descuentoPorcentaje: 15, condicionesDescuento: 'Abonando en mostrador.', metodoDescuento: 'Efectivo', habilitado: true };
 async function setup(t) {
     const db = await createDatabase({ mode: 'local', dataDir: 'memory://' });
     t.after(() => db.close());
     await migrate(db);
+    await catalogoMensualDePrueba(db);
     const clock = () => new Date('2030-01-31T12:00:00-03:00');
     const auth = new AuthService(db, clock);
     const admin = await auth.crearAdministrador({ nombre: 'Admin', apellido: 'Prueba', email: 'admin@example.test', password: 'PruebaSegura123!' });
@@ -56,9 +58,9 @@ test('deshabilitar permite renovar a anteriores; eliminar conserva historia; cam
     assert.ok((await service.planesParaSocio(socio.id)).some(item => item.tipo === plan.tipo));
     const nuevo = await auth.registrar({ ...persona, email: 'nuevo@example.test', dni: '90004002' });
     await assert.rejects(async () => auth.registrar({ ...persona, email: 'otro@example.test', dni: '90004003', tipoPlan: plan.tipo }), { statusCode: 409 });
-    await assert.rejects(async () => service.solicitar({ tipoPlan: plan.tipo }, nuevo), { statusCode: 409 });
+    await assert.rejects(async () => service.solicitar({ tipoPlan: plan.tipo, metodoPago: 'Efectivo' }, nuevo), { statusCode: 409 });
     await assert.rejects(async () => pagar(plan.tipo, { socioId: nuevo.id }), { statusCode: 409 });
-    await service.solicitar({ tipoPlan: plan.tipo }, socio);
+    await service.solicitar({ tipoPlan: plan.tipo, metodoPago: 'Efectivo' }, socio);
     await pagar(plan.tipo);
     const anterior = await service.actual(socio.id);
     const otro = await service.crearPlan({ ...datosPlan, nombre: 'Plan nuevo', descuentoPorcentaje: 0, condicionesDescuento: '', metodoDescuento: null });
@@ -127,11 +129,25 @@ test('las nuevas operaciones y el catálogo completo requieren administrador y C
     assert.equal((await s('/gestion/planes')).status, 403);
     assert.equal((await s('/planes', 'POST', datosPlan)).status, 403);
     assert.equal((await a('/planes', 'POST', datosPlan, false)).status, 403);
+    assert.equal((await a('/metodos-pago/Efectivo', 'PUT', { habilitado: false }, false)).status, 403);
+    assert.equal((await a('/metodos-pago')).data.some(metodo => metodo.codigo === 'Efectivo'), true);
     const creado = await a('/planes', 'POST', datosPlan);
     assert.equal(creado.status, 201);
     assert.equal((await s(`/planes/${creado.data.tipo}`, 'DELETE')).status, 403);
     assert.equal((await s(`/socios/${socio.id}/plan`, 'PUT', { tipoPlan: creado.data.tipo })).status, 403);
+    const pago = (await a('/pagos', 'POST', { socioId: socio.id, tipoPlan: creado.data.tipo, metodoPago: 'Efectivo', operacionId: crypto.randomUUID() })).data;
+    assert.ok(pago.id);
     assert.equal((await a(`/planes/${creado.data.tipo}`, 'DELETE')).status, 200);
+    assert.equal((await a('/pagos/1', 'DELETE', {}, false)).status, 403);
+    assert.equal((await s('/pagos/1', 'DELETE', {})).status, 403);
+    await anon('/auth/sesion');
+    assert.equal((await anon('/pagos/1', 'DELETE', {})).status, 401);
+    assert.equal((await a('/pagos/invalido', 'DELETE', {})).status, 400);
+    assert.equal((await a('/pagos/999999', 'DELETE', {})).status, 404);
+    assert.equal((await a('/pagos/1', 'DELETE', { socioId: socio.id })).status, 400);
+    assert.equal((await a('/pagos/1', 'DELETE', { motivo: 123 })).status, 400);
+    assert.equal((await a('/pagos/1', 'DELETE', { motivo: 'x'.repeat(501) })).status, 400);
+    assert.equal((await a(`/pagos/${pago.id}`, 'DELETE', { motivo: 'Duplicado' })).status, 200);
 });
 
 test('migra una base anterior sin modificar pagos ni vencimientos existentes', async t => {
@@ -152,5 +168,5 @@ test('migra una base anterior sin modificar pagos ni vencimientos existentes', a
     const membresia = (await db.query('SELECT * FROM membresias')).rows[0];
     assert.equal(membresia.nombre_plan, 'Plan mensual');
     assert.equal(membresia.fecha_vencimiento.toISOString(), '2030-02-28T15:00:00.000Z');
-    assert.equal((await db.query('SELECT * FROM planes')).rows.length, 3);
+    assert.equal((await db.query('SELECT * FROM planes')).rows.length, 8);
 });

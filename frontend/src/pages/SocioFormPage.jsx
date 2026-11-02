@@ -11,6 +11,8 @@ import ConfirmDialog from '../components/ConfirmDialog.jsx';
 import { listarPlanes, cambiarPlanSocio } from '../services/membresiasService.js';
 import FormField from '../components/FormField.jsx';
 import Button from '../components/Button.jsx';
+import PagoAnulado from '../components/PagoAnulado.jsx';
+import PagoDescuento from '../components/PagoDescuento.jsx';
 
 function InvitacionSocio({ socioId }) {
     const notices = useNotifications(), [enlace, setEnlace] = useState(null), [busy, setBusy] = useState(false);
@@ -45,20 +47,25 @@ function InvitacionSocio({ socioId }) {
 function CambioPlan({ socioId, actual, reload }) {
     const planes = useResource(listarPlanes), notices = useNotifications();
     const [tipoPlan, setTipoPlan] = useState(''), [error, setError] = useState(''), [confirmar, setConfirmar] = useState(false);
+    const [requisitosVerificados, setRequisitosVerificados] = useState(false);
     const disponibles = (planes.data ?? []).filter(plan => plan.tipo !== actual.tipoPlan && plan.precioCentavos !== null);
+    const seleccionado = disponibles.find(plan => plan.tipo === tipoPlan);
     return <section className="form-panel" aria-labelledby="cambio-plan-title"><h2 id="cambio-plan-title">Cambiar plan vigente</h2>
         <p>Plan actual: {actual.nombrePlan}. Se mantienen las fechas de inicio y vencimiento, sin registrar un cobro ni modificar pagos anteriores.</p>
         <ResourceState resource={planes}><form onSubmit={event => {
             event.preventDefault();
             if (!disponibles.some(plan => plan.tipo === tipoPlan)) { setError('Elegí un plan habilitado diferente.'); event.currentTarget.elements.namedItem('nuevoPlan')?.focus(); return; }
             setConfirmar(true);
-        }}><FormField name="nuevoPlan" label="Nuevo plan del socio" value={tipoPlan} onChange={event => { setTipoPlan(event.target.value); setError(''); }} error={error}
+        }}><FormField name="nuevoPlan" label="Nuevo plan del socio" value={tipoPlan} onChange={event => { setTipoPlan(event.target.value); setRequisitosVerificados(false); setError(''); }} error={error}
             options={[{ value: '', label: 'Seleccionar plan' }, ...disponibles.map(plan => ({ value: plan.tipo, label: plan.nombre }))]} disabled={!disponibles.length} />
             <Button type="submit" variant="secondary" disabled={!disponibles.length}>Cambiar plan</Button>
         </form></ResourceState>
         {confirmar && <ConfirmDialog title="¿Cambiar el plan del socio?" onClose={() => setConfirmar(false)} onConfirm={async () => {
-            await cambiarPlanSocio(socioId, { tipoPlan }); notices.notify('Plan cambiado. La vigencia y los pagos anteriores se conservan.'); setConfirmar(false); reload();
-        }}><p>Nuevo plan: {disponibles.find(plan => plan.tipo === tipoPlan)?.nombre}. El vencimiento seguirá siendo {fechaHora(actual.fechaVencimiento)}. No se realizará un cobro.</p></ConfirmDialog>}
+            if (seleccionado?.requisitosAcceso && !requisitosVerificados) throw new Error('Verificá los requisitos de acceso antes de cambiar el plan.');
+            await cambiarPlanSocio(socioId, { tipoPlan, confirmarRequisitos: requisitosVerificados }); notices.notify('Plan cambiado. La vigencia y los pagos anteriores se conservan.'); setConfirmar(false); reload();
+        }}><p>Nuevo plan: {seleccionado?.nombre}. El vencimiento seguirá siendo {fechaHora(actual.fechaVencimiento)}. No se realizará un cobro.</p>
+            {seleccionado?.requisitosAcceso && <><p>{seleccionado.requisitosAcceso}</p><label className="check-field"><input type="checkbox" checked={requisitosVerificados} onChange={event => setRequisitosVerificados(event.target.checked)} />Confirmo que verifiqué los requisitos de acceso del plan</label></>}
+        </ConfirmDialog>}
     </section>;
 }
 export default function SocioFormPage() {
@@ -66,6 +73,7 @@ export default function SocioFormPage() {
     const [pendiente, setPendiente] = useState(null);
     const loader = useCallback(async signal => id ? Promise.all([obtenerSocio(id, signal), historialSocio(id, signal)]) : [null, []], [id]);
     const resource = useResource(loader);
+    const actual = resource.data?.[0]?.membresias.find(item => !item.anulada);
     async function guardar(body) {
         const result = await (id ? actualizarSocio(id, body) : crearSocio(body));
         notices.notify(id ? 'Socio actualizado.' : 'Socio creado.');
@@ -78,11 +86,13 @@ export default function SocioFormPage() {
             }} />
             {id && <>{resource.data[0].accesoPendiente && resource.data[0].estado === 'activo' && <InvitacionSocio socioId={id} />}
                 {resource.data[0].nombrePlanSolicitado && <p className="help-text">Plan solicitado: {resource.data[0].nombrePlanSolicitado}. {resource.data[0].metodoPagoSolicitado ?? 'Método por coordinar'}.{resource.data[0].pagoReportadoEn && ' El socio informó una transferencia; verificá el dinero recibido antes de activar.'}</p>}
-                {resource.data[0].membresias[0]?.estado === 'activa' && <CambioPlan key={resource.data[0].membresias[0].id} socioId={id} actual={resource.data[0].membresias[0]} reload={resource.reload} />}
+                {actual?.estado === 'activa' && <CambioPlan key={actual.id} socioId={id} actual={actual} reload={resource.reload} />}
                 <h2>Historial de membresías y pagos</h2><Link className="button secondary" to={`/gestion/pagos?socio=${id}`}>Registrar pago de este socio</Link>
-                <ul className="records">{resource.data[0].membresias.map(item => <li key={item.id}>{item.nombrePlan} · {item.estado} · {fechaHora(item.fechaInicio)} a {fechaHora(item.fechaVencimiento)}</li>)}</ul>
-                <ul className="records">{resource.data[0].pagos.map(item => <li key={item.id}>{item.nombrePlan} · {dinero(item.montoCentavos)} · {item.metodoPago} · {fechaHora(item.fecha)}{item.descuentoPorcentaje > 0 && <p>{item.descuentoPorcentaje}% de descuento aplicado. {item.condicionesDescuento}</p>}</li>)}</ul>
-                {resource.data[0].cambiosPlan.length > 0 && <><h3>Cambios administrativos de plan</h3><ul className="records">{resource.data[0].cambiosPlan.map(item => <li key={item.id}>{item.planAnterior} a {item.planNuevo}<p>{fechaHora(item.fecha)} · {item.administrador}. Sin cobro ni cambio de vigencia.</p></li>)}</ul></>}
+                <ul className="records">{resource.data[0].membresias.map(item => <li key={item.id}>{item.nombrePlan} · {item.anulada ? 'Anulada' : item.estado} · {fechaHora(item.fechaInicio)} a {fechaHora(item.fechaVencimiento)}
+                    {(item.fechaInicio !== item.fechaInicioOriginal || item.fechaVencimiento !== item.fechaVencimientoOriginal) && <p>Período original: {fechaHora(item.fechaInicioOriginal)} a {fechaHora(item.fechaVencimientoOriginal)}. Vigencia corregida por anulación de pagos.</p>}
+                </li>)}</ul>
+                <ul className="records">{resource.data[0].pagos.map(item => <li key={item.id}>{item.nombrePlan} · {dinero(item.montoCentavos)} · {item.metodoPago} · {fechaHora(item.fecha)}<PagoDescuento pago={item} /><PagoAnulado pago={item} administrador /></li>)}</ul>
+                {resource.data[0].cambiosPlan.length > 0 && <><h3>Cambios administrativos de plan</h3><ul className="records">{resource.data[0].cambiosPlan.map(item => <li key={item.id}>{item.planAnterior} a {item.planNuevo}<p>{fechaHora(item.fecha)} · {item.administrador}. Sin cobro ni cambio de vigencia.</p>{item.requisitosVerificados && <p>Requisitos verificados: {item.requisitosVerificados}</p>}</li>)}</ul></>}
                 <h2>Asistencia registrada</h2><ul className="records">{resource.data[1].map(item => <li key={item.id}>{item.nombre} · {item.fecha} · {item.horaInicio} h</li>)}</ul>
             </>}
         </>}</ResourceState>

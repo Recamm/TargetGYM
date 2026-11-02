@@ -85,7 +85,7 @@ test('flujo completo administrador, socio e instructor con datos reales', async 
     await logout(page);
     await login(page, 'admin@example.test');
     await page.getByRole('link', { name: 'Socios', exact: true }).click();
-    await page.getByRole('link', { name: 'Ver y editar socio' }).click();
+    await page.locator('li').filter({ hasText: 'socio@example.test' }).getByRole('link', { name: 'Ver y editar socio' }).click();
     await expect(page.getByLabel('Email', { exact: true })).toHaveValue('socio@example.test');
     await page.getByRole('link', { name: 'Registrar pago de este socio' }).click();
     await page.getByLabel('Plan', { exact: true }).selectOption('mensual');
@@ -173,9 +173,16 @@ test('interfaz publica: responsive, teclado, errores y accesibilidad', async ({ 
     const planes = await page.request.get('/api/planes').then(response => response.json());
     for (const plan of planes.data) {
         const card = page.getByRole('article', { name: plan.nombre, exact: true });
-        const total = plan.precioCentavos === null ? 'Consultá el precio' : new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS' }).format((plan.condicionesDescuento || plan.metodoDescuento ? plan.precioCentavos : Math.round(plan.precioCentavos * (100 - plan.descuentoPorcentaje) / 100)) / 100);
-        await expect(card.locator('.plan-price')).toHaveText(total);
-        await expect(card.locator('.plan-period')).toHaveText(`Por ${plan.meses} ${plan.meses === 1 ? 'mes' : 'meses'} calendario`);
+        if (plan.precioCentavos === null) await expect(card.locator('.plan-price')).toHaveText('Consultá el precio');
+        else {
+            const base = plan.condicionesDescuento || plan.metodoDescuento ? plan.precioCentavos
+                : plan.precioDescuentoCentavos ?? Math.round(plan.precioCentavos * (100 - plan.descuentoPorcentaje) / 100);
+            const total = new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', minimumFractionDigits: 0, maximumFractionDigits: 2 }).format(base / 100);
+            await expect(card.locator('.plan-price').last()).toHaveText(total);
+        }
+        await expect(card.locator('.plan-period')).toHaveText(plan.dias === null
+            ? `Por ${plan.meses} ${plan.meses === 1 ? 'mes' : 'meses'} calendario`
+            : `Por ${plan.dias} ${plan.dias === 1 ? 'día corrido' : 'días corridos'}`);
     }
     for (const width of [320, 360, 390, 768, 1024, 1440, 1920]) {
         await page.setViewportSize({ width, height: 900 });
@@ -259,7 +266,7 @@ test('catálogo: crear, promoción presencial, deshabilitar, renovar, cambiar y 
     await logout(page);
     await page.goto('/');
     const publicCard = page.getByRole('article', { name: plan.nombre, exact: true });
-    await expect(publicCard.locator('.plan-price')).toHaveText('$ 20.000,00');
+    await expect(publicCard.locator('.plan-price')).toHaveText('$ 20.000');
     await expect(publicCard.getByText('Con descuento: $ 17.000,00')).toBeVisible();
     await expect(publicCard.getByText(/Pago en mostrador/)).toBeVisible();
     await page.goto('/registro');

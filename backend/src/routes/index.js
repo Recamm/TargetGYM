@@ -19,6 +19,9 @@ export default function routes({ auth, clases, membresias, inscripciones }) {
     router.put('/mi-cuenta', conectado, controller.perfil);
     router.use('/clases', claseRoutes(clases, auth.repository));
     router.get('/planes', responder(() => membresias.planesDisponibles()));
+    router.get('/metodos-pago', responder(() => membresias.metodosPagoDisponibles()));
+    router.get('/gestion/metodos-pago', admin, responder(() => membresias.metodosPagoGestion()));
+    router.put('/metodos-pago/:codigo', admin, responder(req => membresias.configurarMetodoPago(req.params.codigo, req.body)));
     router.get('/gestion/planes', admin, responder(() => membresias.planesGestion()));
     router.post('/planes', admin, responder(req => membresias.crearPlan(req.body), 201));
     router.put('/planes/:tipo', admin, responder(req => membresias.configurar(req.params.tipo, req.body)));
@@ -39,6 +42,7 @@ export default function routes({ auth, clases, membresias, inscripciones }) {
     router.post('/instructores', admin, controller.crearInstructor);
     router.get('/pagos', admin, responder(() => membresias.pagos(null)));
     router.post('/pagos', admin, responder(req => membresias.registrarPago(req.body, req.user), 201));
+    router.delete('/pagos/:id', admin, responder(req => membresias.anularPago(req.params.id, req.body, req.user)));
     router.get('/inscripciones', socio, responder(req => inscripciones.list(req.user.id)));
     router.post('/inscripciones', socio, responder(req => inscripciones.reservar(req.body, req.user), 201));
     router.post('/inscripciones/:id/cancelar', socio, responder(req => inscripciones.cancelar(req.params.id, req.user)));

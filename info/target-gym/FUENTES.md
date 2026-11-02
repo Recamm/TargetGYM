@@ -1,7 +1,8 @@
 # Información de Target gym
 
 Consulta: **2 de noviembre de 2026**. Datos públicos para incorporar a la
-web, no una confirmación telefónica con el establecimiento.
+web. Se incorpora también la respuesta del gimnasio por WhatsApp
+transcrita directamente por el usuario en esa fecha.
 
 [datos-verificados.json](./datos-verificados.json) es la fuente de contenido
 del pie de la aplicación. Mantener fecha, procedencia y estado de cada dato.
@@ -25,12 +26,39 @@ No almacenar aquí datos de socios, contraseñas ni credenciales.
    - Lunes a viernes: **06:00–22:00**.
    - Sábados: **08:00–20:00**.
    - Domingos: **cerrado**.
-   - Feriados: sin horario confirmado; consultar al gimnasio.
+   - Feriados: inicialmente sin confirmar; actualizados con la respuesta de WhatsApp.
 4. **Confirmación directa del usuario, 2 de noviembre de 2026:**
    WhatsApp **11 6824-4559** (número informado: `1168244559`).
    Enlace: [WhatsApp](https://wa.me/5491168244559), en formato internacional
    móvil de Argentina (`54` + `9` + número sin prefijos `0` o `15`).
    Este contacto es distinto del teléfono fijo publicado en Maps.
+5. **Respuesta de Target Gym Florida por WhatsApp, transcrita por el usuario:**
+   - Dirección: Av. San Martín 2462, Florida.
+   - Lunes a viernes 06:00–22:00; sábado 08:00–20:00; domingo cerrado;
+     **feriados 10:00–18:00**.
+   - Profesores de educación física, rutina personalizada desde el primer día
+     y ayuda durante el entrenamiento.
+   - Duchas, vestidores y lockers; cada persona trae su candado.
+   - Pase libre y clases incluidas. Ningún plan cobra matrícula ni inscripción.
+
+   | Plan | Efectivo | Transferencia | Tarjeta presencial |
+   | --- | ---: | ---: | ---: |
+   | Mensual Libre | $78.000 | $88.000 | $88.000 |
+   | Semanal | $46.000 | $50.000 | No informada; no se ofrece |
+   | Quincena | $53.000 | $59.000 | No informada; no se ofrece |
+   | Por un día | $25.000 | $30.000 | No informada; no se ofrece |
+   | Jubilados | $62.000 | No se ofrece | No se ofrece |
+
+   **FULL Target mensual: $98.000**, sin medio de pago particular informado.
+   Incluye acceso a todas las sedes: Florida, San Fernando y Tigre.
+   No se agregan direcciones, horarios ni una integración digital con otras
+   sedes porque no fueron informados.
+
+   **Aclaraciones aprobadas por el usuario:** pases de 1, 7 y 15 días corridos
+   desde la confirmación del pago; jubilados mensual y exclusivo para
+   jubilados; reemplazar la oferta pública anterior conservando el historial.
+   Recepción verifica la condición de jubilado, sin inferirla de la edad
+   ni almacenar documentación previsional.
 
 ## Pendientes y límites
 
@@ -41,14 +69,20 @@ No almacenar aquí datos de socios, contraseñas ni credenciales.
   una cuenta ni se eludieron restricciones.
 - Maps enlaza `http://www.targetgym.net/`; la consulta redirigió a HTTPS y
   devolvió HTTP 404. No se usa como contacto activo ni como fuente de datos.
-- No se trasladan calificaciones, reseñas personales, seguidores o precios
-  de redes sociales a la web. Los precios provienen exclusivamente del
-  catálogo configurado por administración.
+- No se trasladan calificaciones, reseñas personales ni seguidores.
+  Los aranceles de WhatsApp inicializan el catálogo una sola vez mediante
+  la migración 7; luego administración puede actualizarlos. La web y caja
+  consultan ese catálogo, no una tabla de precios duplicada en la portada.
+- Los medios del FULL no fueron detallados: usa los medios habilitados
+  por administración, sin anunciar una promoción ni una restricción adicional.
+- Elegir tarjeta en la web es una solicitud de pago presencial; no se
+  solicitan datos de tarjeta ni se implementó una pasarela.
 - La fotografía de portada sigue siendo una referencia licenciada, no una
   foto acreditada del establecimiento. Este relevamiento no cambia su origen.
 
 ## Uso en la aplicación
 
 Se incorporan teléfono fijo, WhatsApp confirmado por el usuario, Instagram,
-dirección, enlace a Maps y horario semanal. Los horarios de feriados
-requieren confirmación independiente.
+dirección, enlace a Maps, horarios incluidos feriados, instalaciones y
+beneficios. Planes, duraciones y aranceles se integran al catálogo,
+asociación, renovación y caja. Se conserva el teléfono fijo de Maps.

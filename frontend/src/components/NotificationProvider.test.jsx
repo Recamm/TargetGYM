@@ -15,12 +15,12 @@ function setup() {
 const advance = milliseconds => act(() => vi.advanceTimersByTime(milliseconds));
 afterEach(() => vi.useRealTimers());
 
-test('cierra cada confirmación a los 6 segundos sin reiniciar otras notificaciones', () => {
+test('cierra confirmaciones en 4 segundos y errores en 8, sin reiniciar otros avisos', () => {
     setup();
     fireEvent.click(screen.getByText('Notificar'));
     advance(3000);
     fireEvent.click(screen.getByText('Error', { exact: true }));
-    advance(2999);
+    advance(999);
     expect(screen.getByRole('status')).toBeVisible();
     advance(1);
     expect(screen.queryByRole('status')).not.toBeInTheDocument();
@@ -30,22 +30,22 @@ test('cierra cada confirmación a los 6 segundos sin reiniciar otras notificacio
     expect(screen.queryByRole('complementary', { name: 'Notificaciones' })).not.toBeInTheDocument();
 });
 
-test('no desaparece mientras se lee con puntero o foco, y permite cierre manual', () => {
+test('vence aun con puntero y foco sostenidos, devuelve el foco y permite cierre manual', () => {
     setup();
-    fireEvent.click(screen.getByText('Notificar'));
+    const trigger = screen.getByText('Notificar');
+    trigger.focus();
+    fireEvent.click(trigger);
     fireEvent.mouseEnter(screen.getByRole('status'));
-    advance(10000);
+    act(() => screen.getByRole('button', { name: 'Cerrar notificación' }).focus());
+    advance(3999);
     expect(screen.getByRole('status')).toBeVisible();
-    fireEvent.focus(screen.getByRole('button', { name: 'Cerrar notificación' }));
-    fireEvent.mouseLeave(screen.getByRole('status'));
-    advance(10000);
-    expect(screen.getByRole('status')).toBeVisible();
-    fireEvent.blur(screen.getByRole('button', { name: 'Cerrar notificación' }));
-    advance(6000);
+    advance(1);
     expect(screen.queryByRole('status')).not.toBeInTheDocument();
+    expect(trigger).toHaveFocus();
     fireEvent.click(screen.getByText('Error', { exact: true }));
     fireEvent.click(screen.getByRole('button', { name: 'Cerrar notificación' }));
     expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+    advance(1);
     expect(vi.getTimerCount()).toBe(0);
 });
 

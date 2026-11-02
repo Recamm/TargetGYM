@@ -227,8 +227,8 @@ verificando que muestra las clases finalizadas a las que asistio.
 ### Functional Requirements
 
 - **FR-001**: El sistema MUST permitir a un visitante registrarse como socio
-  eligiendo un plan habilitado con precio y metodo de pago (efectivo o
-  transferencia) del catalogo administrable, validando nombre,
+  eligiendo un plan habilitado con precio y metodo de pago compatible (efectivo,
+  transferencia o tarjeta presencial) del catalogo administrable, validando nombre,
   apellido, email, contraseña, DNI, telefono y fecha de nacimiento (16 años o mas).
 - **FR-002**: El sistema MUST validar que el email sea unico y tenga formato
   `usuario@dominio.com` antes de aceptar un registro o actualizacion.
@@ -243,13 +243,18 @@ verificando que muestra las clases finalizadas a las que asistio.
   nuevos planes: duracion configurada entre 1 y 120 meses), venciendo el mismo dia
   del mes de inicio N meses despues (ej. contratada el 20 de enero, un plan mensual
   vence el 20 de febrero). La suspension/baja pertenece al socio y bloquea sus
-  reservas aunque aun tenga una membresia no vencida.
+  reservas aunque aun tenga una membresia no vencida. Ampliacion aprobada:
+  cada plan configura meses calendario o dias corridos, nunca ambos.
+  Los pases de dia, semana y quincena duran 1, 7 y 15 periodos de 24 horas
+  desde el pago confirmado, o desde el vencimiento vigente si se renueva antes.
 - **FR-006**: El sistema MUST permitir al administrador registrar pagos de cuotas y
   mostrar alertas de membresias vencidas o que vencen dentro de los proximos 7 dias.
 - **FR-007**: El sistema MUST aplicar el descuento configurado unicamente al
   plan contratado y al momento del pago, sin trasladarlo a otros planes ni
   modificar pagos historicos. Si tiene condiciones o metodo especifico,
-  requiere confirmacion del administrador y metodo compatible.
+  requiere confirmacion del administrador y metodo compatible, excepto
+  tarifas promocionales fijas condicionadas solo al metodo: se calculan
+  automaticamente al elegirlo. Precio fijo y porcentaje son excluyentes.
 - **FR-008**: El sistema MUST permitir al administrador crear, editar, cancelar y
   eliminar clases grupales, asignando instructor, horario y cupo maximo.
 - **FR-009**: El sistema MUST rechazar la creacion o edicion de una clase con cupo
@@ -309,6 +314,44 @@ verificando que muestra las clases finalizadas a las que asistio.
   su contraseña. Su primer acceso usa una invitacion personal de un uso,
   valida durante 48 horas, almacenada como hash y revocada al reemplazarla.
   Activar acceso no modifica pagos, membresias ni permisos.
+- **FR-026**: Solo el administrador MUST habilitar/deshabilitar metodos de
+  pago. Deshabilitados no se ofrecen ni aceptan en nuevas asociaciones
+  publicas o renovaciones de socios. El administrador puede seguir
+  registrando cobros con ellos y la interfaz advierte su estado.
+  Solicitudes anteriores, transferencias informadas, pagos e historial
+  se conservan. Sin metodos habilitados se informa al socio y se bloquea
+  el envio, no las operaciones administrativas. Tarjeta sigue siendo
+  cobro externo en caja, sin pasarela online.
+- **FR-027**: Los avisos transitorios MUST vencer automaticamente a los
+  4 s (confirmacion) u 8 s (error), sin pausa indefinida por puntero/foco,
+  conservando cierre manual y foco util. Errores de campos/paneles persisten.
+  Las tarjetas de planes MUST adaptarse a una, dos, tres o muchas opciones.
+  El panel MUST mantener su geometria horizontal al navegar entre secciones
+  con distinta altura.
+- **FR-028**: El administrador MUST poder eliminar un pago registrado por
+  error mediante anulacion auditable, confirmacion y motivo opcional de
+  hasta 500 caracteres. Se conservan importe, metodo, fecha, UUID, autor
+  y fecha de anulacion y periodos originales. La vigencia MUST recalcularse
+  desde los pagos validos y sus duraciones historicas, conservando cambios
+  administrativos de plan y conciliando reservas sin borrar asistencias.
+  Repetir la anulacion no altera su auditoria ni reactiva el pago.
+  Los anulados MUST distinguirse en historiales y ser consultables en caja.
+  La operacion requiere rol administrador y CSRF, es atomica con los cobros
+  y no devuelve dinero automaticamente ni restaura solicitudes anteriores.
+- **FR-029**: El sistema MUST incorporar la informacion comercial de Florida
+  transmitida por el usuario desde WhatsApp: direccion, horarios incluidos
+  feriados, profesores/rutina personalizada, duchas, vestidores, lockers con
+  candado propio, pase libre, clases incluidas y ausencia de matricula/inscripcion.
+  MUST publicar y permitir contratar/cobrar los seis planes confirmados
+  (mensual, dia, semanal, quincena, jubilados y FULL) con importes exactos
+  segun metodo, sin aproximar las tarifas mediante porcentajes.
+  La importacion MUST reemplazar una sola vez la oferta publica anterior,
+  preservando pagos, duraciones historicas, vigencias y cambios posteriores
+  del administrador. Jubilados es mensual, solo efectivo y requiere
+  verificacion administrativa explicita al cobrar o cambiar de plan.
+  Las restricciones de cada plan MUST validarse en el servidor tambien en
+  caja, asociacion y renovacion. Tarjeta solo solicita pago presencial
+  pendiente; no crea una membresia ni procesa un cobro online.
 
 ### Key Entities *(include if feature involves data)*
 
@@ -318,14 +361,17 @@ verificando que muestra las clases finalizadas a las que asistio.
 - **Socio**: usuario registrado con membresia; tiene fecha de alta y estado (activo,
   suspendido, dado de baja); se relaciona con Membresia (1 a muchas, historial de
   planes) e Inscripcion (1 a muchas).
-- **Plan**: identificador estable, nombre, duracion en meses calendario, precio,
-  descuento, condiciones y metodo opcionales, habilitado y eliminacion logica.
+- **Plan**: identificador estable, nombre, duracion en meses calendario o dias
+  corridos, precio, porcentaje o precio promocional fijo, descripcion,
+  condiciones, requisitos de acceso y restricciones de metodo, habilitado
+  y eliminacion logica.
 - **Membresia**: plan contratado por un socio con nombre historico,
-  fecha de inicio, fecha de vencimiento calculada en meses
-  calendario desde el inicio, estado (activa/vencida) y precio; se relaciona con
+  fecha de inicio, fecha de vencimiento calculada con la duracion contratada
+  desde el inicio, estado (activa/vencida) y precio; se relaciona con
   Pago (1 a muchas).
 - **Pago**: registro de un pago de cuota o membresia, con fecha, monto y metodo de
-  pago; pertenece a una Membresia.
+  pago, duracion historica en meses o dias, descuento monetario y
+  requisitos verificados; pertenece a una Membresia.
 - **Clase**: actividad grupal con nombre, tipo, fecha, hora de inicio, cupo maximo y
   cupo disponible; dictada por un Instructor; recibe muchas Inscripciones.
 - **Inscripcion**: vinculo entre un Socio y una Clase, con fecha de inscripcion y

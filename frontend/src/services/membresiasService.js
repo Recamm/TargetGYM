@@ -1,5 +1,8 @@
 import { request } from './api.js';
-import { lista, precio, membresia, membresiaNullable, solicitud, pago, pagoRegistrado, planEliminado, usuario } from './contratos.js';
+import { lista, precio, membresia, membresiaNullable, solicitud, pago, pagoRegistrado, pagoAnulado, planEliminado, usuario, metodoPago } from './contratos.js';
+export const listarMetodosPago = signal => request('/metodos-pago', { signal, validate: lista(metodoPago) });
+export const listarMetodosPagoGestion = signal => request('/gestion/metodos-pago', { signal, validate: lista(metodoPago) });
+export const configurarMetodoPago = (codigo, body) => request(`/metodos-pago/${encodeURIComponent(codigo)}`, { method: 'PUT', body, validate: metodoPago });
 export const listarPlanes = signal => request('/planes', { signal, validate: lista(precio) });
 export const listarPlanesGestion = signal => request('/gestion/planes', { signal, validate: lista(precio) });
 export const listarPlanesRenovacion = signal => request('/mi-membresia/planes', { signal, validate: lista(precio) });
@@ -13,4 +16,5 @@ export const solicitarPlan = body => request('/mi-membresia/solicitud', { method
 export const misPagos = signal => request('/mis-pagos', { signal, validate: lista(pago) });
 export const listarPagos = signal => request('/pagos', { signal, validate: lista(pago) });
 export const registrarPago = body => request('/pagos', { method: 'POST', body, validate: pagoRegistrado });
+export const eliminarPago = (id, body) => request(`/pagos/${id}`, { method: 'DELETE', body, validate: pagoAnulado });
 export const informarTransferencia = () => request('/mi-membresia/pago-reportado', { method: 'POST', body: {}, validate: usuario });

@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Cuatro propuestas de tarjetas de planes para Target gym. Mismo catálogo, distintas formas de presentarlo.">
+  <title>Elegí las tarjetas · Target gym</title>
+  <link rel="icon" href="../../frontend/public/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="planes.css">
+  <script type="module" src="planes.js"></script>
+</head>
+<body>
+  <a class="skip" href="#propuestas">Saltar a los diseños</a>
+  <div class="shell">
+    <header class="masthead">
+      <a class="brand" href="/">Target gym</a>
+      <span>Estudio de tarjetas</span>
+      <a href="/#planes">Volver a la web</a>
+    </header>
+    <main>
+      <section class="intro" aria-labelledby="titulo">
+        <h1 id="titulo">El mismo plan.<br>Otra forma de verlo.</h1>
+        <div>
+          <p>Cuatro propuestas para elegir con calma. Blanco, grafito y un poco de Mandarina. Sin cambiar la identidad del gimnasio.</p>
+          <p class="muted">Comparan el mismo catálogo actual, en pesos por el período completo. A. Clara fue aprobada y aplicada a la web; las otras opciones quedan como referencia.</p>
+        </div>
+      </section>
+      <fieldset class="variants">
+        <legend>Elegí una propuesta para verla con todos los planes</legend>
+        <label><input type="radio" name="diseno" value="clara" checked><span><strong>A. Clara</strong><small>Blanco y precio protagonista.</small></span></label>
+        <label><input type="radio" name="diseno" value="grafito"><span><strong>B. Grafito</strong><small>Oscura, dos precios bien separados.</small></span></label>
+        <label><input type="radio" name="diseno" value="comparativa"><span><strong>C. Comparativa</strong><small>Filas amplias, lectura de un vistazo.</small></span></label>
+        <label><input type="radio" name="diseno" value="ficha"><span><strong>D. Ficha</strong><small>Compacta, con una banda de precio.</small></span></label>
+      </fieldset>
+      <section id="propuestas" aria-labelledby="design-title" aria-busy="true">
+        <div class="design-intro">
+          <div><h2 id="design-title">A. Clara</h2><p id="design-description" aria-live="polite">Más aire y fondo blanco. La tarifa en efectivo se identifica siempre, no se presenta como un precio universal.</p></div>
+          <p class="benefits">Pase libre y clases incluidas.<br>Sin matrícula ni inscripción.</p>
+        </div>
+        <p id="estado" role="status">Cargando el catálogo del gimnasio…</p>
+        <button id="reintentar" type="button" hidden>Reintentar carga</button>
+        <div id="tarjetas" class="samples" data-design="clara"></div>
+      </section>
+      <aside class="preview-note" aria-labelledby="nota-title">
+        <h2 id="nota-title">Qué estás comparando</h2>
+        <p>Las cuatro opciones mantienen importes, duración y condiciones. Los botones llevan al formulario real; no registran compras. Tarjeta significa pago presencial pendiente, nunca un cobro online.</p>
+        <p>A. Clara es la opción aprobada. Las variantes B, C y D se conservan como antecedentes, no se aplican automáticamente.</p>
+      </aside>
+    </main>
+    <footer><span>Target gym · Cerca / Mandarina</span><span>A. Clara aprobada · otras opciones de referencia</span></footer>
+  </div>
+</body>
+</html>

@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useNotifications } from './NotificationContext.js';
 import Button from './Button.jsx';
 
-export default function ConfirmDialog({ title, children, onConfirm, onClose, confirmLabel = 'Confirmar' }) {
+export default function ConfirmDialog({ title, children, onConfirm, onClose, confirmLabel = 'Confirmar', getReturnFocus }) {
     const dialog = useRef(null), cancel = useRef(null);
     const [busy, setBusy] = useState(false), [error, setError] = useState(null);
     const notices = useNotifications();
@@ -12,10 +12,12 @@ export default function ConfirmDialog({ title, children, onConfirm, onClose, con
         element.showModal(); cancel.current.focus();
         return () => {
             element.close();
-            if (previous?.isConnected) previous.focus();
+            const target = getReturnFocus?.();
+            if (target?.isConnected) target.focus();
+            else if (previous?.isConnected) previous.focus();
             else document.querySelector('main h1')?.focus();
         };
-    }, []);
+    }, [getReturnFocus]);
     async function confirm() {
         setBusy(true); setError(null);
         try { await onConfirm(); }

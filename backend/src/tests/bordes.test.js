@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createDatabase, migrate } from '../database/Database.js';
+import { catalogoMensualDePrueba } from './catalogo-pruebas.js';
 import { createApp } from '../app.js';
 import AuthService from '../services/AuthService.js';
 import EstadoService from '../services/EstadoService.js';
@@ -11,6 +12,7 @@ const base = { nombre: 'Prueba', apellido: 'Sintetica', password: 'PruebaSegura1
 test('limites: gracia, renovacion, suspension, precios e idempotencia', async () => {
     const db = await createDatabase({ mode: 'local', dataDir: 'memory://' });
     await migrate(db);
+    await catalogoMensualDePrueba(db);
     let ahora = new Date('2030-01-01T12:00:00-03:00');
     const auth = new AuthService(db, () => ahora), estados = new EstadoService(db, () => ahora);
     const membresias = new MembresiaService(db, estados), clases = new ClaseService(db, estados), reservas = new InscripcionService(db, estados);
@@ -61,6 +63,7 @@ test('limites: gracia, renovacion, suspension, precios e idempotencia', async ()
 test('payload de contraseña invalido produce 400; historial valida id y existencia', async () => {
     const db = await createDatabase({ mode: 'local', dataDir: 'memory://' });
     await migrate(db);
+    await catalogoMensualDePrueba(db);
     const auth = new AuthService(db);
     const admin = await auth.registrar({ ...base, email: 'a@example.test', dni: '90002000' }, 'Administrador');
     const app = createApp({ db, sessionSecret: 'secreto-sintetico-solo-pruebas-longitud-suficiente' });
@@ -87,6 +90,7 @@ test('payload de contraseña invalido produce 400; historial valida id y existen
 test('gracia termina a los tres dias exactos o al inicio de la clase, sin doble liberacion', async () => {
     const db = await createDatabase({ mode: 'local', dataDir: 'memory://' });
     await migrate(db);
+    await catalogoMensualDePrueba(db);
     let ahora = new Date('2030-01-01T12:00:00-03:00');
     const auth = new AuthService(db, () => ahora), estados = new EstadoService(db, () => ahora);
     const membresias = new MembresiaService(db, estados), clases = new ClaseService(db, estados), reservas = new InscripcionService(db, estados);

@@ -2,6 +2,8 @@ import { randomBytes, scrypt as scryptCallback, timingSafeEqual, createHash } fr
 import { promisify } from 'node:util';
 import UsuarioRepository from '../repositories/UsuarioRepository.js';
 import PlanRepository from '../repositories/PlanRepository.js';
+import MetodoPagoRepository from '../repositories/MetodoPagoRepository.js';
+import { metodoAdmitido } from '../../../shared/planes.js';
 import { una } from '../repositories/query.js';
 import { objeto, texto, exigir, fechaValida, id } from '../utils/validation.js';
 import { UnauthorizedError, NotFoundError, ConflictError, TooManyRequestsError } from '../exceptions/AppError.js';
@@ -54,19 +56,21 @@ export default class AuthService {
         const limpio = validarUsuario(datos, this.clock(), !invitacion);
         if (asociacion) {
             exigir(Boolean(limpio.tipoPlan), 'Elegi un plan habilitado para asociarte.');
-            exigir(['Efectivo','Transferencia'].includes(datos.metodoPago), 'Elegi efectivo o transferencia para pagar.');
+            exigir(['Efectivo','Transferencia','Tarjeta'].includes(datos.metodoPago), 'Elegi un metodo de pago valido.');
         }
-        if (datos.metodoPago !== undefined) exigir(rol === 'Socio' && ['Efectivo','Transferencia'].includes(datos.metodoPago), 'El metodo de pago solicitado no es valido.');
+        if (datos.metodoPago !== undefined) exigir(rol === 'Socio' && ['Efectivo','Transferencia','Tarjeta'].includes(datos.metodoPago), 'El metodo de pago solicitado no es valido.');
         limpio.metodoPago = datos.metodoPago;
         limpio.solicitadoEn = limpio.tipoPlan ? this.clock() : null;
         limpio.accesoPendiente = invitacion;
         if (rol === 'Instructor') exigir(Boolean(limpio.especialidad), 'La especialidad del instructor es obligatoria.');
         const passwordHash = await hashPassword(invitacion ? randomBytes(32).toString('hex') : datos.password);
         return this.db.transaction(async tx => {
+            if (asociacion) await new MetodoPagoRepository(this.db).exigirDisponible(datos.metodoPago, tx);
             if (limpio.tipoPlan) {
                 const plan = await new PlanRepository(this.db).find(limpio.tipoPlan, tx);
                 if (!plan?.habilitado) throw new ConflictError('El plan no esta disponible para nuevas contrataciones.');
                 if (asociacion && plan.precioCentavos === null) throw new ConflictError('El plan necesita un precio configurado antes de asociarte.');
+                if (datos.metodoPago !== undefined && !metodoAdmitido(plan, datos.metodoPago)) throw new ConflictError('El plan solo admite el metodo de pago indicado en sus condiciones.');
             }
             return this.repository.create(limpio, rol, passwordHash, tx);
         });

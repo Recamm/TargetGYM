@@ -14,7 +14,7 @@ export default class EstadoService {
         const reservas = await filas(tx, `SELECT i.id,i.estado,c.inicio,c.duracion_minutos,c.estado AS clase_estado,
         u.estado AS socio_estado,m.fecha_inicio,m.fecha_vencimiento FROM inscripciones i JOIN clases c ON c.id=i.clase_id
         JOIN usuarios u ON u.id=i.socio_id LEFT JOIN LATERAL
-        (SELECT fecha_inicio,fecha_vencimiento FROM membresias WHERE socio_id=i.socio_id ORDER BY id DESC LIMIT 1) m ON TRUE
+        (SELECT fecha_inicio,fecha_vencimiento FROM membresias WHERE socio_id=i.socio_id AND NOT anulada ORDER BY id DESC LIMIT 1) m ON TRUE
         WHERE i.estado IN ('Pendiente','Confirmada','En curso')`);
         for (const reserva of reservas) {
             const inicio = new Date(reserva.inicio);

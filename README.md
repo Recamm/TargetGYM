@@ -75,6 +75,8 @@ un servidor compartido entre procesos. Las pruebas usan otra base aislada.
 - Efectivo: confirmar el cobro en recepción. Transferencia: coordinar datos por
   WhatsApp y verificar dinero recibido. El aviso **Ya realicé la transferencia**
   crea una tarea de revisión, nunca un pago ni una membresía.
+- Tarjeta: se puede solicitar cuando el plan y administración lo permiten;
+  se abona presencialmente y queda pendiente hasta la confirmación de recepción.
 - No hay pasarela online, datos bancarios inventados, archivos de comprobantes
   ni doble factor en esta etapa. «Tarjeta» en pagos administrativos continúa
   siendo el registro de un cobro externo, no un checkout web.
@@ -90,13 +92,27 @@ Detalle y evidencia en el [informe de cambios](info/Informe-de-asociacion-y-acce
 
 - Registro desde **16 años inclusive**, email/DNI únicos y contraseña de 8 a 128
   caracteres, con mayúscula y número.
-- Catálogo administrable de planes de **1 a 120 meses calendario**, ajustando al último día válido.
-  Los planes iniciales de 1/3/12 meses se conservan; se pueden crear otros.
+- Catálogo administrable de planes de **1 a 120 meses calendario**, ajustando al último día válido,
+  o **1 a 3660 días corridos**; cada plan utiliza una sola unidad.
+  Los identificadores anteriores se conservan, incluso fuera de la oferta pública.
   La renovación anticipada se suma al vencimiento vigente.
 - El servidor calcula el importe y el descuento de cada plan sin trasladarlo a otros.
-  Las condiciones/método del descuento requieren confirmación del administrador
-  al registrar el pago presencial. Cambiar el método reinicia esa confirmación.
+  Admite porcentaje o precio promocional fijo exacto, nunca ambos.
+  Las tarifas fijas condicionadas solo al método se aplican automáticamente al
+  elegirlo; otras promociones condicionadas requieren confirmación administrativa.
+  Cambiar el método reinicia las confirmaciones. Los requisitos de acceso
+  se verifican por separado, también al cambiar administrativamente de plan.
   Un UUID identifica cada operación de pago para que reintentar no duplique la renovación.
+- **Gestión → Pagos → Eliminar pago** permite corregir un duplicado con confirmación
+  y motivo opcional. Se anula, no se destruye: conserva importe, método, fecha,
+  autor/fecha de anulación y períodos originales. La membresía se recalcula
+  usando las duraciones contratadas y los pagos válidos, no el catálogo actual;
+  las reservas se ajustan a la vigencia resultante sin borrar asistencias.
+  Los anulados se ocultan en caja salvo **Mostrar pagos anulados**, y se
+  identifican en los historiales del socio y administración.
+  No se devuelve dinero automáticamente ni se restauran solicitudes anteriores.
+  Repetir una anulación no modifica su auditoría; reusar el UUID de un pago
+  anulado se rechaza, no lo reactiva.
 - Deshabilitar oculta el plan de portada/registro y bloquea nuevos contratantes,
   permitiendo renovar a quienes ya tuvieron una membresía de ese plan.
   Eliminar impide también renovar, sin borrar historial ni vigencias actuales.
@@ -154,7 +170,49 @@ cuentas y membresías existentes, sin activaciones retroactivas. Nuevas rutas:
 `POST /api/auth/activar-acceso` (token personal, contraseña, CSRF y límite de
 autenticación), `POST /api/mi-membresia/pago-reportado` (socio, solicitud propia).
 
-Todos los recursos están bajo `/api`: `auth`, `clases`, `planes`, `socios`,
+Migración 4 en `backend/src/database/metodos-pago.sql`: estados persistentes
+de Efectivo, Transferencia y Tarjeta. **Gestión → Métodos de pago** permite
+habilitar/deshabilitar. Apagarlos impide nuevas asociaciones y renovaciones
+de socios, pero conserva solicitudes anteriores, transferencias informadas
+e historial. El administrador puede seguir cobrando con todos; caja muestra
+un aviso si el seleccionado está deshabilitado. Esto no permite ignorar
+restricciones del plan (por ejemplo, jubilados solo en efectivo).
+Tarjeta permite solicitar un pago presencial, sin pasarela online.
+Si no hay métodos habilitados, el socio recibe un aviso para consultar en
+recepción y no puede enviar una nueva asociación/solicitud. El alta
+administrativa y caja siguen disponibles.
+Catálogo elegible: `GET /api/metodos-pago`. Catálogo administrativo:
+`GET /api/gestion/metodos-pago`. Configuración:
+`PUT /api/metodos-pago/:codigo` con `{habilitado:boolean}`, administrador y
+CSRF. Altas públicas y renovaciones validan disponibilidad dentro de su
+transacción; la solicitud de renovación exige un método, no admite omitirlo.
+
+Migración 5 en `backend/src/database/anulaciones.sql`: conserva los períodos
+originales, la duración contratada y la auditoría de anulación. En pagos previos
+infiere los meses calendario desde sus períodos históricos, sin usar la
+duración actual del catálogo; un historial incompatible falla explícitamente.
+`DELETE /api/pagos/:id`, con `{motivo?:string}` de hasta 500 caracteres,
+requiere administrador y CSRF; devuelve `data:{anulado:true}`. Registro,
+anulación y recálculo comparten la transacción serializada. No borra el pago
+ni permite anular pagos desde una cuenta de socio.
+
+Migraciones 6–8: `tarifas.sql`, `catalogo-florida.sql` y
+`condiciones-tarifas.sql`. Agregan días, precios promocionales fijos,
+descripciones, requisitos y restricciones de método, con snapshots de
+duración, descuento monetario y verificación en el historial.
+La migración 7 importa **una sola vez** los seis planes confirmados por
+WhatsApp, deshabilitando la oferta anterior sin borrar pagos ni membresías.
+Reiniciar o migrar nuevamente no sobrescribe cambios posteriores del administrador.
+Pases de día/semana/quincena: 1/7/15 períodos de 24 horas desde la
+confirmación, o desde el vencimiento vigente al renovar anticipadamente.
+Jubilados: mensual, efectivo y verificación manual de recepción; no se
+almacenan documentos ni se supone una edad mínima.
+FULL Target: mensual, acceso anunciado a todas las sedes, incluidas
+San Fernando y Tigre; no implica integración con sistemas de otras sedes.
+Precios, horarios, instalaciones y procedencia:
+[fuentes verificadas](info/target-gym/FUENTES.md).
+
+Todos los recursos están bajo `/api`: `auth`, `clases`, `planes`, `metodos-pago`, `socios`,
 `instructores`, `pagos`, `inscripciones`, `mi-cuenta`, `mi-membresia`,
 `mis-pagos`, `mi-historial`, `reportes`, `health` y `maintenance`.
 Éxito: `{success:true,data:...}`. Error: `{success:false,message:...}`.
@@ -232,12 +290,21 @@ licencias OFL. Se aplica a portada, agenda, formularios y paneles por rol.
 Los errores y confirmaciones conservan colores semánticos y texto explícito.
 Temporalmente, la cabecera y el pie usan solo **Target gym** en Outfit,
 sin símbolo; los maestros Mancuerna se conservan. El favicon usa una T.
-Los avisos transitorios se cierran a los 6 s (confirmación) o 10 s (error)
-y se pausan con puntero/foco. Los errores en campos/paneles no se ocultan.
+Los avisos transitorios se cierran a los 4 s (confirmación) o 8 s (error),
+sin pausa por puntero/foco; conservan cierre manual y devuelven el foco si
+estaba en el aviso. Los errores en campos/paneles no se ocultan.
 Inicio muestra precios configurados en ARS por período, descuentos reales
-y pago manual; se actualizan cada 30 s. Navegación reducida a Inicio,
+y pago manual; se actualizan cada 30 s. Las tarjetas grises con borde
+se centran y adaptan a cualquier cantidad; las filas incompletas también
+quedan centradas. El panel reserva espacio para la barra de desplazamiento
+para no moverse lateralmente entre secciones. Navegación reducida a Inicio,
 Clases, Planes y accesos de sesión/rol. El menú móvil entra en 220 ms y
 respeta movimiento reducido.
+
+Los enlaces dentro de la misma página usan scroll suave, también al volver
+al inicio o repetir la misma ancla. El foco acompaña el destino sin provocar
+otro salto. Cambiar de página o preferir movimiento reducido usa navegación
+inmediata; cambiar solo filtros de URL conserva posición y foco.
 
 [Manual final de marca](info/marca/Manual-de-marca.md) ·
 [Manual visual PDF](info/marca/Manual-de-marca.pdf) ·

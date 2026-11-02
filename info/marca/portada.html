@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Cuatro propuestas para la fotografía de inicio de Target gym, sin el arco circular.">
+  <title>La foto de inicio · Target gym</title>
+  <link rel="icon" href="../../frontend/public/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="planes.css">
+  <link rel="stylesheet" href="portada.css">
+  <script type="module" src="portada.js"></script>
+</head>
+<body>
+  <a class="skip" href="#propuestas">Saltar a las propuestas</a>
+  <div class="shell">
+    <header class="masthead">
+      <a class="brand" href="/">Target gym</a>
+      <span>Estudio de portada</span>
+      <a href="/#planes">Ver las tarjetas aplicadas</a>
+    </header>
+    <main>
+      <section class="intro" aria-labelledby="titulo">
+        <h1 id="titulo">La foto,<br>sin el arco.</h1>
+        <div>
+          <p>Cuatro maneras de recibirte. Cambian la proporción, el recorte y la posición de la imagen, no la identidad del gimnasio.</p>
+          <p class="muted">Usamos la misma fotografía de referencia para comparar el diseño. Ninguna propuesta se aplica a la portada hasta que elijas una.</p>
+        </div>
+      </section>
+      <fieldset class="variants">
+        <legend>Elegí una composición para verla en contexto</legend>
+        <label><input type="radio" name="portada" value="suave" checked><span><strong>A. Rectángulo suave</strong><small>Horizontal, simple y equilibrada.</small></span></label>
+        <label><input type="radio" name="portada" value="vertical"><span><strong>B. Retrato vertical</strong><small>Más altura y presencia de la foto.</small></span></label>
+        <label><input type="radio" name="portada" value="panoramica"><span><strong>C. Panorámica</strong><small>Texto arriba, imagen a todo el ancho.</small></span></label>
+        <label><input type="radio" name="portada" value="editorial"><span><strong>D. Editorial recta</strong><small>Texto a la izquierda, foto sin curvas.</small></span></label>
+      </fieldset>
+      <section id="propuestas" aria-labelledby="design-title">
+        <div class="design-intro">
+          <div><h2 id="design-title">A. Rectángulo suave</h2><p id="design-description" aria-live="polite">La opción más cercana al estilo Clara: fotografía horizontal, esquinas suaves y espacio para leer.</p></div>
+        </div>
+        <div class="photo-demo" data-design="suave">
+          <div class="demo-header"><span class="brand">Target gym</span><span>Florida, Vicente López</span></div>
+          <div class="photo-hero">
+            <div class="photo-copy">
+              <p class="photo-location">Tu gimnasio de barrio, en Florida.</p>
+              <h2>Qué bueno<br>que viniste.</h2>
+              <p class="photo-description">Musculación, cardio y clases grupales. Con acompañamiento, desde tu primer día.</p>
+              <a class="choose photo-action" href="/#planes">Ver planes</a>
+            </div>
+            <figure class="photo-figure">
+              <img src="imagenes/gimnasio-referencia.webp" alt="Fotografía de referencia de un gimnasio con pesas y máquinas; no corresponde a Target gym" width="1920" height="1040" fetchpriority="high">
+            </figure>
+          </div>
+        </div>
+      </section>
+      <aside class="preview-note" aria-labelledby="nota-title">
+        <h2 id="nota-title">Qué cambia y qué se conserva</h2>
+        <p>Se conservan blanco, grafito, Mandarina, Outfit y DM Sans. Todas las opciones evitan el arco circular y se adaptan al móvil. No agregan carruseles, efectos automáticos ni fotografías inventadas del gimnasio.</p>
+        <p>La foto sigue siendo una referencia licenciada de Danielle Cerullo / Unsplash. Estas composiciones también sirven para colocar una foto propia autorizada cuando el gimnasio la aporte.</p>
+        <p>Las tarjetas A. Clara y los nuevos estados de botones ya están aplicados. La composición de esta foto queda pendiente de elección.</p>
+      </aside>
+    </main>
+    <footer><span>Target gym · Cerca / Mandarina</span><a href="planes.html">Estudio de tarjetas · Clara aprobada</a></footer>
+  </div>
+</body>
+</html>
