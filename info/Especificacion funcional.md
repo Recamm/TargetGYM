@@ -260,7 +260,9 @@ verificando que muestra las clases finalizadas a las que asistio.
   instructores solo pueden ver sus clases asignadas y confirmar asistencia.
 - **FR-020**: El sistema MUST presentar la interfaz publica (paginas de presentacion,
   calendario y panel de disponibilidad) respetando la identidad visual definida
-  (paleta negro/blanco/rojo y tipografias Oswald/Nunito Sans).
+  (Cerca: blanco/grafito, acentos Mandarina, Outfit/DM Sans y logo Mancuerna;
+  identidad aprobada por el usuario el 2026-11-02, que reemplaza la paleta
+  negro/blanco/rojo y Oswald/Nunito Sans sin cambiar las reglas funcionales).
 
 ### Key Entities *(include if feature involves data)*
 

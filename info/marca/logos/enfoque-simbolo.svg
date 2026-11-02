@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" role="img" aria-labelledby="title">
+  <title id="title">Target GYM — símbolo Enfoque</title>
+  <path d="M68 40a28 28 0 1 1-28-28" fill="none" stroke="#2450e8" stroke-width="10" stroke-linecap="round"/>
+  <path d="M54 40a14 14 0 1 1-14-14" fill="none" stroke="#2450e8" stroke-width="6" stroke-linecap="round"/>
+  <circle cx="40" cy="40" r="5" fill="#2450e8"/>
+</svg>

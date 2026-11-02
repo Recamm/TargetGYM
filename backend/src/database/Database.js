@@ -1,10 +1,12 @@
-import { readFile } from 'node:fs/promises';
+import { mkdir, readFile } from 'node:fs/promises';
+import { dirname } from 'node:path';
 import { Pool } from 'pg';
 
 export async function createDatabase({ mode = 'postgres', dataDir = '.local-data/postgres', url = process.env.DATABASE_URL } = {}) {
     if (mode === 'local') {
         if (process.env.VERCEL || process.env.NODE_ENV === 'production') throw new Error('La base local no esta permitida en produccion.');
         const { PGlite } = await import('@electric-sql/pglite');
+        await mkdir(dirname(dataDir), { recursive: true });
         const engine = await PGlite.create(dataDir);
         return {
             mode,

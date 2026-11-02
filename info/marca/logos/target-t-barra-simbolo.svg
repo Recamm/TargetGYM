@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" role="img" aria-labelledby="title">
+  <title id="title">Target GYM — T barra, símbolo</title>
+  <g fill="#2c3035"><path d="M8 22h64v10H46v36H34V32H8z"/><rect x="14" y="12" width="10" height="30" rx="3"/><rect x="56" y="12" width="10" height="30" rx="3"/></g>
+  <path d="M30 22h20v10H30z" fill="#f48335"/>
+</svg>

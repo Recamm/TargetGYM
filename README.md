@@ -153,15 +153,20 @@ npm run test:e2e
 npm audit
 ```
 
-Verificado: **15 pruebas backend, 25 frontend y 3 recorridos Playwright**;
-lint sin advertencias, build de producción y auditoría sin vulnerabilidades.
-Las pruebas cubren roles, último cupo concurrente, renovaciones/gracia, asistencia,
-persistencia en disco, errores, formularios, móvil y zoom nativo de Chromium al 200%.
+Validación del rediseño: **26 pruebas frontend y 3 recorridos Playwright**,
+lint y build de producción correctos. Los recorridos verifican administración,
+socio e instructor, pagos, reservas/cancelaciones, asistencia, responsive,
+accesibilidad automatizada y zoom nativo de Chromium al 200%.
+La entrega funcional previa verificó además 15 pruebas backend y auditoría de
+dependencias; no se repitieron para este cambio exclusivamente visual.
 
 Playwright levanta procesos aislados en **3011/5174**, usa solo datos sintéticos y
 cierra los procesos al terminar. Si falta Chromium, ejecutar
 `npx playwright install chromium` y reintentar. No poblar la base local del usuario
 para probar. Las capturas y trazas quedan excluidas de Git.
+Si el puerto frontend está ocupado, definir `E2E_FRONTEND_PORT` con otro puerto
+libre. Se puede usar un Chromium existente con
+`PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH` apuntando a su ejecutable.
 
 Los umbrales de disponibilidad <10 s y reserva <60 s se comprobaron localmente;
 no son garantías para cualquier red. Axe no reemplaza una auditoría manual
@@ -169,10 +174,21 @@ completa. No se acreditan Safari/WebKit ni Neon/Vercel reales sin probarlos.
 
 ## Diseño y herramientas
 
-Identidad: negro `#1A1A1A`, blanco humo `#F5F5F5`, rojo marca `#E63946`
-y rojo accesible `#B52B38` para acciones con texto claro. Oswald/Nunito Sans
-se sirven localmente. Se conserva navbar fija, hero, nosotros, servicios y footer.
-La ilustración es propia: no se simulan fotografías, cifras ni testimonios reales.
+Identidad **Cerca**, aprobada el 2 de noviembre de 2026: blanco `#FFFFFF`,
+grafito `#2C3035` y Mandarina `#F48335` como acento, logo **Mancuerna**,
+Outfit para titulares y DM Sans para lectura/controles, ambas locales y con
+licencias OFL. Se aplica a portada, agenda, formularios y paneles por rol.
+Los errores y confirmaciones conservan colores semánticos y texto explícito.
+
+[Manual final de marca](info/marca/Manual-de-marca.md) ·
+[Manual visual PDF](info/marca/Manual-de-marca.pdf) ·
+[Manual visual HTML](info/marca/manual.html).
+
+La fotografía de portada es una referencia de Danielle Cerullo / Unsplash,
+identificada junto a la imagen. **No corresponde a Target GYM** y debe
+reemplazarse por una foto autorizada real antes de representar sus instalaciones.
+Autor/licencia en [ORIGEN.txt](frontend/public/marca/ORIGEN.txt).
+No se inventan cifras ni testimonios reales.
 Dirección: Gral. José de San Martín 2462, Florida, Vicente López.
 No se inventan contactos/redes ausentes en las fuentes.
 

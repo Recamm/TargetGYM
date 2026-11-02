@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 328 84" role="img" aria-labelledby="title">
+  <title id="title">Target GYM — logo Ritmo</title>
+  <g fill="#20283f" transform="translate(0 5) scale(.92)"><path d="m8 26 16-10v48L8 74z"/><path d="m32 18 16-10v48L32 66z"/><path d="M56 10 72 0v48L56 58z"/></g>
+  <g fill="none" stroke="#20283f" stroke-width="6" stroke-linecap="square" stroke-linejoin="miter">
+    <path d="M94 21h29m-14.5 0v32M133 53l13-32 13 32m-21-10h16M174 53V21h15a8 8 0 0 1 0 16h-15m15 0 12 16M242 26a16 16 0 1 0 0 22V37h-12M278 21h-22v32h22m-22-16h18M292 21h28m-14 0v32"/>
+  </g>
+  <g fill="none" stroke="#20283f" stroke-width="2" stroke-linecap="square" stroke-linejoin="miter">
+    <path d="M104 67a5 5 0 1 0 0 7v-4h-4M114 63l5 7 5-7m-5 7v7M134 77V63l6 8 6-8v14"/>
+  </g>
+</svg>

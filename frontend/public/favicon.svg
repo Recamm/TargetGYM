@@ -1,1 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="12" fill="#1A1A1A"/><path d="M14 16h36v9H37v26H27V25H14z" fill="#E63946"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" role="img" aria-labelledby="title">
+  <title id="title">Target GYM — Mancuerna, símbolo</title>
+  <g fill="#2c3035"><rect x="8" y="24" width="8" height="32" rx="3"/><rect x="18" y="14" width="12" height="52" rx="4"/><path d="M30 34h20v12H30z"/><rect x="50" y="14" width="12" height="52" rx="4"/><rect x="64" y="24" width="8" height="32" rx="3"/></g>
+  <rect x="50" y="14" width="6" height="52" rx="3" fill="#f48335"/>
+</svg>

@@ -1,0 +1,163 @@
+.logo-study { --book-ink: #2c3035; --book-muted: #5c636b; --book-paper: #fff; --book-line: #d8dde2; background: var(--book-paper); color: var(--book-ink); }
+.logo-study a:focus-visible { outline-color: #2c3035; }
+.logo-study .book-name, .logo-study h1, .logo-study h2, .logo-study h3 { font-family: Outfit, sans-serif; font-weight: 500; }
+.logo-study .book-name span { border-color: #d8dde2; }
+.logo-intro { padding-top: 56px; }
+.logo-intro h1 { font-size: clamp(3rem, 5.5vw, 5rem); line-height: 1.02; letter-spacing: -.05em; }
+.logo-intro .intro-bottom { align-items: start; margin-block: 28px 40px; }
+.logo-intro .intro-bottom > p { max-width: 62ch; font-size: 1rem; }
+.neutral-palette { display: grid; grid-template-columns: 1fr 1.2fr; gap: 64px; padding-block: 32px; border-block: 1px solid var(--book-line); }
+.neutral-palette h2 { font-size: 1.7rem; line-height: 1.15; letter-spacing: -.035em; margin-bottom: 12px; }
+.neutral-palette p { color: var(--book-muted); font-size: .85rem; max-width: 48ch; }
+.neutral-swatches { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+.neutral-swatches > div { min-width: 0; }
+.neutral-swatches span { display: block; height: 48px; border: 1px solid #d8dde2; border-radius: 6px; }
+.swatch-white { background: #fff; }
+.swatch-charcoal { background: #2c3035; }
+.swatch-grey { background: #f5f6f7; }
+.swatch-orange { background: #f48335; }
+.neutral-swatches strong { display: block; font-size: .75rem; font-weight: 500; margin-top: 8px; }
+.application { padding-block: 48px 56px; }
+.application-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 24px; margin-bottom: 20px; }
+.application-heading h2 { font-size: 1.35rem; letter-spacing: -.025em; }
+.application-heading > p { color: var(--book-muted); font-size: .8rem; }
+.gym-preview { border: 1px solid var(--book-line); border-radius: 12px; overflow: hidden; background: #fff; }
+.gym-preview-nav { min-height: 82px; margin-inline: 32px; border-bottom: 1px solid var(--book-line); display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+.gym-preview-nav > span { font-size: .75rem; }
+.gym-preview-nav > a { display: inline-flex; align-items: center; min-height: 44px; gap: 16px; font-size: .8rem; text-decoration: none; }
+.gym-preview-nav > a:hover { text-decoration: underline; }
+.gym-preview-hero { padding: 40px 32px; display: grid; grid-template-columns: 1.15fr 1fr; gap: 80px; align-items: center; }
+.gym-location { font-size: .75rem; margin-bottom: 20px; display: flex; align-items: center; gap: 8px; }
+.gym-location > span { width: 6px; height: 6px; border-radius: 50%; background: #f48335; }
+.gym-preview-hero h3 { font-size: clamp(2.8rem, 4vw, 4rem); line-height: 1.03; letter-spacing: -.045em; }
+.gym-preview-hero > div > p:not(.gym-location) { max-width: 44ch; color: var(--book-muted); font-size: .9rem; margin-top: 20px; }
+.gym-primary { min-height: 46px; display: inline-flex; align-items: center; gap: 32px; padding: 10px 20px; background: #f48335; color: #2c3035; font-size: .85rem; font-weight: 500; border-radius: 24px; text-decoration: none; margin-top: 24px; }
+.gym-primary:hover { text-decoration: underline; }
+.gym-facts { border-left: 1px solid var(--book-line); padding-left: 32px; }
+.gym-facts h4 { font-size: 1rem; font-weight: 500; margin-bottom: 20px; }
+.gym-facts dl { margin: 0; }
+.gym-facts dl > div { display: flex; justify-content: space-between; align-items: baseline; gap: 24px; font-size: .8rem; padding-block: 12px; border-bottom: 1px solid var(--book-line); }
+.gym-facts dt { color: var(--book-muted); }
+.gym-facts dd { margin: 0; text-align: right; }
+.gym-preview-hero .gym-facts > p { font-size: .75rem; max-width: 48ch; }
+.gym-agenda { padding: 24px 32px; background: #f5f6f7; border-top: 1px solid var(--book-line); }
+.gym-agenda-heading { display: flex; align-items: center; justify-content: space-between; gap: 24px; margin-bottom: 16px; }
+.gym-agenda-heading h4 { font-size: .95rem; font-weight: 500; }
+.gym-agenda-heading p { color: var(--book-muted); font-size: .7rem; }
+.gym-class { display: flex; align-items: center; gap: 24px; background: #fff; border: 1px solid var(--book-line); border-radius: 8px; padding: 16px 20px; }
+.gym-time { font-size: 1.3rem; font-variant-numeric: tabular-nums; line-height: 1.2; padding-right: 20px; border-right: 1px solid var(--book-line); }
+.gym-time small { display: block; color: var(--book-muted); font-size: .7rem; margin-top: 4px; }
+.gym-class strong { font-size: .9rem; font-weight: 500; }
+.gym-class p { font-size: .7rem; color: var(--book-muted); margin-top: 2px; }
+.gym-capacity { margin-left: auto; font-size: .75rem; }
+.gym-reserve { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 8px 18px; border: 1px solid #737b85; border-radius: 24px; font-size: .8rem; }
+.logo-section { padding-top: 40px; padding-bottom: 32px; border-top: 1px solid var(--book-line); }
+.logo-section-heading { display: flex; justify-content: space-between; align-items: end; gap: 48px; margin-bottom: 28px; }
+.logo-section-heading h2 { font-size: clamp(1.9rem, 3vw, 2.8rem); line-height: 1.1; letter-spacing: -.04em; }
+.logo-section-heading > p { max-width: 40ch; color: var(--book-muted); font-size: .85rem; }
+.logo-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+.logo-card { min-width: 0; border: 1px solid var(--book-line); border-radius: 12px; padding: 24px; }
+.logo-card-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.logo-card-heading h3 { font-size: 1.2rem; letter-spacing: -.025em; }
+.logo-card-heading > span { font-size: .65rem; color: var(--book-muted); text-align: right; }
+.logo-stage { min-height: 150px; display: flex; align-items: center; justify-content: center; }
+.logo-stage > img { width: 100%; max-width: 328px; }
+.logo-card > p { font-size: .8rem; color: var(--book-muted); min-height: 78px; }
+.logo-tests { display: grid; grid-template-columns: 1.15fr 1fr; gap: 12px; margin-top: 20px; }
+.logo-dark { display: flex; justify-content: center; align-items: center; padding: 16px 12px; min-height: 76px; background: #2c3035; border-radius: 6px; }
+.logo-dark img { filter: brightness(0) invert(1); }
+.icon-sizes { display: flex; justify-content: center; align-items: center; gap: 16px; min-height: 76px; background: #f5f6f7; border-radius: 6px; }
+.icon-sizes img { flex-shrink: 0; }
+.logo-downloads { display: flex; flex-wrap: wrap; column-gap: 20px; margin-top: 12px; }
+.logo-downloads a { display: inline-flex; align-items: center; min-height: 44px; font-size: .7rem; }
+.logo-endnote { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; margin-top: 32px; }
+.logo-endnote p { color: var(--book-muted); font-size: .85rem; }
+.logo-endnote strong { color: var(--book-ink); font-weight: 500; }
+.logo-study .book-footer a { display: inline-flex; align-items: center; min-height: 44px; }
+
+@media (max-width: 1100px) {
+  .neutral-palette { gap: 32px; }
+  .neutral-swatches { gap: 12px; }
+  .gym-preview-nav > span { display: none; }
+  .gym-preview-hero { gap: 40px; }
+  .gym-facts dl > div { gap: 16px; }
+  .logo-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 760px) {
+  .logo-intro { padding-top: 36px; }
+  .logo-intro h1 { font-size: clamp(2.8rem, 8vw, 4rem); }
+  .logo-intro .intro-bottom { margin-block: 24px 32px; }
+  .logo-intro .intro-bottom > p { font-size: .9rem; }
+  .neutral-palette { grid-template-columns: 1fr; gap: 24px; }
+  .neutral-swatches { gap: 8px; }
+  .neutral-swatches strong { font-size: .65rem; }
+  .neutral-swatches code { font-size: .7rem; }
+  .application { padding-block: 32px 40px; }
+  .application-heading, .logo-section-heading { display: block; }
+  .application-heading > p { margin-top: 8px; font-size: .75rem; }
+  .gym-preview-nav { margin-inline: 20px; min-height: 72px; }
+  .gym-preview-nav > img { width: 144px; }
+  .gym-preview-nav > a { font-size: .7rem; gap: 8px; }
+  .gym-preview-hero { grid-template-columns: 1fr; padding: 28px 20px; gap: 28px; }
+  .gym-preview-hero h3 { font-size: clamp(2.7rem, 8vw, 3.8rem); }
+  .gym-facts { border: 0; border-top: 1px solid var(--book-line); padding: 24px 0 0; }
+  .gym-agenda { padding: 20px; }
+  .gym-agenda-heading { display: block; }
+  .gym-agenda-heading p { margin-top: 6px; }
+  .gym-class { display: grid; grid-template-columns: auto 1fr; gap: 16px; padding: 16px; }
+  .gym-time { padding-right: 16px; }
+  .gym-class strong { font-size: .8rem; }
+  .gym-class p { font-size: .65rem; }
+  .gym-capacity { margin: 0; font-size: .65rem; }
+  .gym-reserve { justify-self: end; padding-inline: 16px; }
+  .logo-section-heading > p { margin-top: 16px; font-size: .8rem; }
+  .logo-section { padding-top: 32px; }
+  .logo-grid { gap: 16px; }
+  .logo-card { padding: 20px; }
+  .logo-card-heading { align-items: start; flex-direction: column; gap: 4px; }
+  .logo-card > p { min-height: 104px; }
+  .logo-tests { grid-template-columns: 1fr; }
+  .logo-dark { min-height: 64px; }
+  .icon-sizes { min-height: 64px; }
+  .logo-endnote { grid-template-columns: 1fr; gap: 16px; }
+}
+@media (max-width: 540px) {
+  .logo-grid { grid-template-columns: 1fr; }
+  .logo-card-heading { flex-direction: row; align-items: center; }
+  .logo-card > p { min-height: 0; }
+  .logo-stage { min-height: 140px; }
+  .logo-tests { grid-template-columns: 1.15fr 1fr; gap: 10px; }
+  .logo-downloads { justify-content: space-between; gap: 12px; }
+  .icon-sizes { gap: 12px; }
+}
+@media print {
+  .logo-study { font-size: 10pt; }
+  .logo-intro { padding-top: 16px; }
+  .logo-intro h1 { font-size: 34pt; }
+  .logo-intro .intro-bottom { margin-block: 20px 24px; }
+  .neutral-palette { gap: 32px; padding-block: 24px; }
+  .neutral-palette h2 { font-size: 18pt; }
+  .neutral-swatches strong { font-size: 8pt; }
+  .application { padding-block: 28px 0; }
+  .gym-preview-hero { padding-block: 28px; gap: 40px; }
+  .gym-preview-hero h3 { font-size: 32pt; }
+  .gym-preview-hero > div > p:not(.gym-location) { font-size: 9pt; }
+  .gym-facts dl > div { font-size: 8pt; }
+  .logo-section { break-before: page; padding-top: 16px; border: 0; }
+  .logo-section-heading { margin-bottom: 24px; }
+  .logo-section-heading h2 { font-size: 26pt; }
+  .logo-section-heading > p { font-size: 9pt; }
+  .logo-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+  .logo-card { break-inside: avoid; padding: 20px; }
+  .logo-card-heading h3 { font-size: 14pt; }
+  .logo-stage { min-height: 100px; }
+  .logo-stage > img { max-width: 280px; }
+  .logo-card > p { font-size: 8pt; min-height: 40px; }
+  .logo-tests { margin-top: 12px; }
+  .logo-dark, .icon-sizes { min-height: 56px; }
+  .logo-dark { padding-block: 8px; }
+  .logo-downloads { margin-top: 4px; }
+  .logo-downloads a { min-height: 28px; font-size: 8pt; }
+  .logo-endnote { margin-top: 24px; gap: 32px; }
+  .logo-endnote p { font-size: 8pt; }
+}

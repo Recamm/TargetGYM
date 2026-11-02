@@ -14,7 +14,7 @@
   "parallel": false,
   "design": "existing",
   "database": "postgres",
-  "goal": "Target GYM: sistema completo implementado con React/Vite, JavaScript/JSX, CSS propio y Express 4 por capas. PostgreSQL Neon para produccion preparada para Vercel; PGlite explicito para desarrollo y pruebas locales. Sesiones persistidas, CSRF, roles Administrador/Socio/Instructor, socios, planes configurables, pagos manuales, membresias, clases, reservas, asistencia y reportes. Superpowers local mediante ca-workflow es el unico coordinador. Mantener el plan y requisitos de info, la identidad negro/blanco/rojo, Oswald y Nunito Sans. Sin subagentes, worktrees, commits, cuentas externas ni publicacion automaticos. Verificar reglas, permisos, persistencia, UI y errores. No confundir preparacion con despliegue verificado en Neon/Vercel.",
+  "goal": "Target GYM: sistema completo implementado con React/Vite, JavaScript/JSX, CSS propio y Express 4 por capas. PostgreSQL Neon para produccion preparada para Vercel; PGlite explicito para desarrollo y pruebas locales. Sesiones persistidas, CSRF, roles Administrador/Socio/Instructor, socios, planes configurables, pagos manuales, membresias, clases, reservas, asistencia y reportes. Superpowers local mediante ca-workflow es el unico coordinador. Mantener el plan y requisitos de info y la identidad Cerca aprobada el 2026-11-02: blanco/grafito, acentos Mandarina, Outfit/DM Sans y logo Mancuerna; normas en info/marca/Manual-de-marca.md. Sin subagentes, worktrees, commits, cuentas externas ni publicacion automaticos. Verificar reglas, permisos, persistencia, UI y errores. No confundir preparacion con despliegue verificado en Neon/Vercel.",
   "skills": [
     "browser-test",
     "performance",

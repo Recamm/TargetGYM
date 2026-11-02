@@ -1,0 +1,15 @@
+Imagen: gimnasio-referencia.webp
+Autor: Danielle Cerullo (@dncerullo)
+Pagina original: https://unsplash.com/photos/woman-standing-surrounded-by-exercise-equipment-CQfNt66ttZM
+Imagen original: https://images.unsplash.com/photo-1534438327276-14e5300c3a48
+Licencia: Unsplash License, imagen gratuita, no Unsplash+
+Condiciones: https://unsplash.com/license
+Consulta y descarga: 2026-11-02
+
+Uso: fotografia de referencia para un preview local de diseno.
+No representa el interior de Target GYM. El preview lo indica junto a la foto.
+Se descarga una version WebP reducida y se presenta en escala de grises.
+Dimension descargada: 1920 x 1040 px. La imagen sustituye a la referencia
+anterior de Samuel Girven; no se mantiene esa foto en el preview actual.
+Reemplazar por fotografia autorizada del gimnasio antes de presentar la imagen
+como parte de sus instalaciones. No se afirma exclusividad ni autoria propia.

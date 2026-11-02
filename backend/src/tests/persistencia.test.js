@@ -12,9 +12,10 @@ import ClaseService from '../services/ClaseService.js';
 import InscripcionService from '../services/InscripcionService.js';
 test('usuarios y sesiones persisten tras cerrar y reabrir PostgreSQL embebido', async () => {
     const directory = await mkdtemp(join(tmpdir(), 'targetgym-persistencia-'));
+    const dataDir = join(directory, '.local-data', 'postgres');
     let db;
     try {
-        db = await createDatabase({ mode: 'local', dataDir: directory });
+        db = await createDatabase({ mode: 'local', dataDir });
         await migrate(db);
         const datos = { nombre: 'Prueba', apellido: 'Sintetica', email: 'persistencia@example.test', password: 'PruebaSegura123!', dni: '90004000', telefono: '1100000000', fechaNacimiento: '2000-01-01' };
         const auth = new AuthService(db), user = await auth.registrar(datos);
@@ -28,7 +29,7 @@ test('usuarios y sesiones persisten tras cerrar y reabrir PostgreSQL embebido', 
         const session = { userId: user.id, csrfToken: 'token-sintetico', cookie: { expires: new Date(Date.now() + 3600000).toISOString() } };
         await new Promise((resolve, reject) => new SessionStore(db).set('sid-sintetico', session, error => error ? reject(error) : resolve()));
         await db.close(); db = null;
-        db = await createDatabase({ mode: 'local', dataDir: directory });
+        db = await createDatabase({ mode: 'local', dataDir });
         await migrate(db);
         assert.equal((await new AuthService(db).repository.findById(user.id)).email, user.email);
         const estadosRestaurados = new EstadoService(db), membresiasRestauradas = new MembresiaService(db, estadosRestaurados);

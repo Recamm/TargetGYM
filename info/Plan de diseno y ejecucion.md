@@ -791,3 +791,418 @@ concurrencia multiinstancia en Neon. PGlite no acredita por si solo ese entorno.
 Chromium/Axe y las capturas no acreditan Safari/WebKit ni una auditoria manual
 completa de accesibilidad. No se recuperaron fotos/contactos ausentes en las fuentes.
 Los procesos de prueba se cerraron y la base local del usuario no se poblo.
+
+## 14. Exploracion de identidad y rediseno - 2026-11-02
+
+### Alcance acordado
+
+El usuario solicito mejorar el diseno con referencias Hozon, Linear,
+Still / Form y YAAS; antes de modificar la web, generar un manual de marca,
+logos y multiples variantes. Consultado sobre el alcance, eligio
+**renovacion total**: las tres propuestas pueden cambiar colores y tipografias.
+Se conserva el nombre Target GYM y todos los requisitos funcionales.
+
+Esta autorizacion habilita la exploracion; no equivale a elegir una identidad.
+La paleta y fuentes existentes siguen vigentes en la aplicacion hasta que
+se apruebe una propuesta. No se modifican React, backend, configuracion
+CreateApp ni las decisiones funcionales por presentar variantes.
+
+### Entregables de esta etapa
+
+- [Estudio visual navegable](./marca/index.html): tres portadas y muestras
+  de agenda responsive, comparacion, normas y descargas.
+- [Manual de marca](./marca/Manual-de-marca.md): estrategia, tres sistemas
+  de color/tipo, logos, espacio de proteccion, voz, fotografia, movimiento,
+  accesibilidad y aplicaciones previstas.
+- [Dossier visual PDF](./marca/Dossier-visual.pdf): seis paginas A3,
+  texto seleccionable, etiquetado y fuentes incrustadas.
+- Nueve SVG: logo principal, simbolo y monocromo de Enfoque, Cerca y Ritmo.
+- Fuentes locales WOFF2 y sus licencias SIL OFL, sin servicios externos
+  necesarios para abrir la lamina.
+
+**Direcciones:** Enfoque (azul, preciso y luminoso, recomendado), Cerca
+(bosque/lavanda, amable y comunitario), Ritmo (noche/coral, grafico y activo).
+Los nombres identifican propuestas, no reemplazan el nombre del gimnasio.
+
+### Secuencia y limite
+
+1. Investigar contexto y referencias; preservar trabajo previo ajeno.
+2. Preparar manual, logos y comparador independiente de la aplicacion.
+3. Comprobar recursos, contraste, teclado, responsive e impresion.
+4. Presentar resultados y solicitar eleccion de identidad.
+5. Solo despues de aprobar el diseno: aplicar el sistema elegido a portada,
+   agenda, acceso y paneles, verificando los flujos funcionales afectados.
+
+YAAS pudo visualizarse en navegador. Las otras referencias fallaron en
+el navegador integrado; se recuperaron contenido/CSS de Hozon y HTML parcial
+de Linear/Still / Form. No se presenta esto como revision visual completa
+ni se reutilizan sus imagenes, logos o codigo.
+
+### Comprobaciones de esta etapa
+
+- Chromium 156 instalado en el sistema, mediante Playwright existente:
+  recursos, nueve SVG validos sin fuentes externas, enlaces internos,
+  descargas y las cuatro familias tipograficas cargadas.
+- 320, 360, 390, 768, 1024, 1440 y 1920 px: sin desbordamiento de pagina
+  y acciones principales con altura minima de 44 px.
+- Navegacion por teclado, enlace de salto con foco en el contenido,
+  enlaces de propuestas y apertura/cierre de apartados con Enter.
+- Axe en 360 y 1440 px, con todos los apartados abiertos: sin infracciones
+  detectadas. No equivale a una auditoria manual completa.
+- Contrastes de las combinaciones principales medidos: todos superan 4,5:1.
+- Preferencia de movimiento reducido respetada; sin peticiones externas
+  al abrir la lamina y sin errores JavaScript.
+- Capturas revisadas de las tres propuestas; PDF de seis paginas generado,
+  texto comprobado y paginas de propuesta/manual renderizadas e inspeccionadas.
+- No se ejecutan pruebas funcionales de React/API porque no se modificaron.
+  Safari/WebKit y la reproduccion fisica de los logos no se comprobaron.
+
+Se corrigio durante la validacion el foco del enlace de salto y se habilito
+el acceso por teclado al contenedor desplazable de la tabla comparativa.
+Se eliminaron unicamente los archivos de cache creados por la consulta UX.
+Los cambios previos del usuario en backend permanecen intactos.
+
+**Estado de la primera exploracion:** entregada y verificada. El usuario
+eligio Cerca en el siguiente intercambio; ver la continuacion.
+
+## 15. Cerca en paletas naranjas - 2026-11-02
+
+### Alcance solicitado
+
+El usuario manifesto su preferencia por Cerca y solicito varias versiones
+con mas naranja y naranja rojizo para comparar antes de implementar.
+Se conserva el logo, la geometria de arcos, Outfit/DM Sans, composicion
+y contenido. Solo se explora el sistema cromatico.
+
+### Entregables
+
+- [Comparativa de cuatro paletas](./marca/cerca-colores.html):
+  Mandarina, Terracota, Coral y Brasa, con portada, colores y agenda.
+- [PDF de la comparativa](./marca/Cerca-paletas.pdf): cinco paginas A3,
+  una introduccion y una pagina por paleta.
+- Cuatro SVG del logo Cerca en sus nuevos colores, descargables.
+- Manual actualizado: Cerca es la direccion elegida; paleta pendiente.
+  La comparativa original conserva las propuestas previas y enlaza la nueva.
+
+Se recomienda Coral por su equilibrio entre naranja rojizo, energia y
+cercania; Mandarina es la alternativa mas naranja y luminosa.
+Brasa explora portada oscura, manteniendo clara la agenda.
+
+### Verificacion
+
+- Playwright con Chromium del sistema: logo conserva los mismos trazados,
+  portada y agenda tienen contenido y dimensiones identicos entre paletas.
+- 320, 360, 390, 768, 1024, 1440 y 1920 px: sin desbordamiento de pagina,
+  acciones principales de al menos 44 px y composicion uniforme.
+- Contrastes medidos del CSS renderizado: portada, accion, franja de apoyo,
+  tarjeta, cupos y muestra de reserva superan 4,5:1 en las cuatro versiones.
+- Navegacion, salto al contenido con foco, anclas y descargas comprobados.
+- Axe en 360 y 1440 px: sin infracciones detectadas. Preferencia de
+  movimiento reducido respetada; sin errores ni peticiones externas.
+- Capturas de las cuatro portadas en movil/escritorio; PDF comprobado
+  como cinco paginas con texto seleccionable.
+
+Sin cambios en React/API, dependencias, datos ni configuracion de agentes.
+No se ejecutan pruebas funcionales ajenas a estas laminas.
+Safari/WebKit e impresion fisica no comprobados.
+
+**Estado de esta exploracion:** el usuario eligio Mandarina y luego preciso
+su aplicacion sobre blanco y gris oscuro; ver la siguiente seccion.
+
+## 16. Mandarina como acento y seis logos de gimnasio - 2026-11-02
+
+### Decision y alcance
+
+El usuario eligio Mandarina, con blanco y gris oscuro como base, y aclaro
+que no quiere una pagina invadida de color que parezca mas diseno que
+gimnasio. Solicito nuevas variantes de logo con T, pesas u otras referencias
+de entrenamiento. Se conserva el trato cercano y Outfit/DM Sans.
+
+### Entregables
+
+- [Estudio actual](./marca/cerca-logos.html): paleta neutra, muestra de
+  aplicacion y comparativa de T esencial, T barra, Mancuerna, Monograma TG,
+  Disco y Pesa rusa.
+- [Dossier PDF](./marca/Cerca-logos.pdf): dos paginas A3 con la aplicacion
+  neutra y las seis rutas de logo.
+- Dieciocho SVG: principal, monocromo y simbolo de cada ruta; sin fuentes,
+  imagenes raster ni dependencias.
+- Manual actualizado a 0.3. Las exploraciones anteriores conservan sus
+  documentos y enlazan el estado actual. No se regeneran los PDF historicos.
+
+Se recomienda T barra por unir la inicial del nombre y el entrenamiento.
+La eleccion final del logo sigue pendiente; usarlo en la muestra no implica
+aprobacion del usuario.
+
+### Verificacion
+
+- Los 18 SVG son XML valido, con titulos accesibles, solo grafito/Mandarina
+  en los principales y una tinta en los monocromos.
+- 320, 360, 390, 768, 1024, 1440 y 1920 px: sin desbordamiento de pagina,
+  enlaces con altura minima 44 px y simbolos realmente a 24/48 px.
+- Contrastes medidos: texto principal 13,28:1; boton Mandarina 5,15:1;
+  agenda neutra 12,27:1.
+- Medicion de pixeles de la muestra de aplicacion: naranja 0,85 % y
+  neutros claros 94,04 % en escritorio; naranja 2,17 % y neutros claros
+  88,39 % en movil. Demuestra contencion del color en esa muestra,
+  no impone una cuota de superficie al producto final.
+- Teclado, salto con foco, navegacion, enlaces y recursos comprobados.
+- Axe en 360 y 1440 px: sin infracciones tras corregir la semantica de
+  los grupos de simbolos. Movimiento reducido respetado; sin errores ni
+  peticiones externas.
+- Capturas de aplicacion/comparativa y pagina de logos del PDF revisadas.
+
+Sin cambios en React/API, datos, dependencias o configuracion de agentes.
+No se ejecutan pruebas funcionales de la aplicacion intacta.
+Safari/WebKit, favicon a 16 px e impresion fisica no comprobados.
+
+**Estado de esta exploracion:** el usuario eligio Mancuerna y solicito
+un preview de portada antes de autorizar el rediseno completo.
+
+## 17. Preview con logo Mancuerna - 2026-11-02
+
+### Alcance solicitado y limite
+
+El usuario eligio Mancuerna y pidio un preview simple con la paleta y estilo
+acordados. Solo si le gusta aprobara el cambio de la web completa.
+Pidio expresamente el manual de marca final una vez aprobado.
+
+Se crea una portada estatica independiente, no una nueva implementacion
+de React ni un cambio de la aplicacion funcional. Se usa blanco/grafito,
+acentos Mandarina y Outfit/DM Sans. No hay acciones simuladas de negocio.
+El manual existente sigue siendo un borrador de trabajo, no la version final.
+
+### Entregables
+
+- [Preview de portada](./marca/preview.html): bienvenida, foto de referencia,
+  horarios, actividades, acompañamiento y contacto; navegacion interna.
+- Fotografia local WebP de Samuel Girven, Unsplash, con licencia gratuita
+  verificada en la pagina oficial. Origen en
+  [ORIGEN.txt](./marca/imagenes/ORIGEN.txt); identificada como referencia
+  y no como instalaciones de Target GYM.
+- Manual de trabajo 0.4 actualizado con logo elegido y aprobacion pendiente.
+  Las laminas anteriores enlazan el preview actual.
+
+### Comprobaciones realizadas
+
+- Chromium del sistema: 320, 360, 390, 768, 1024, 1440 y 1920 px, sin
+  desbordamiento horizontal; controles principales de al menos 44 px.
+- Logo Mancuerna, foto y fuentes locales cargados; enlaces internos y
+  archivos enlazados resueltos, sin peticiones externas ni errores de pagina.
+- Teclado: salto al contenido, acciones hacia actividades/horarios y
+  despliegue de la explicacion; preferencia de movimiento reducido respetada.
+- Axe en 390 y 1440 px, con la explicacion desplegada: sin infracciones
+  detectadas. Esto no sustituye una auditoria manual completa.
+- Capturas de escritorio y movil revisadas visualmente. Se corrigieron
+  dos separaciones de palabras al ocultar saltos de linea en movil.
+- Safari/WebKit y dispositivos fisicos no comprobados. No se ejecutan
+  pruebas funcionales de la aplicacion porque no se modifico su codigo.
+
+**Estado:** preview listo para presentar. Pendiente la aprobacion del
+usuario; no consolidar el manual final ni sustituir la interfaz completa
+antes de esa aprobacion.
+
+## 18. Revision del preview: menos plantilla, mas claridad - 2026-11-02
+
+El usuario rechazo el lenguaje visual del primer preview y pidio una
+propuesta minimalista, funcional, intuitiva y limpia, basada en sus cuatro
+referencias. Se reemplaza la portada anterior, sin cambiar la aplicacion
+ni volver a explorar el logo Mancuerna o la paleta elegida.
+
+### Direccion y contraste con el pedido
+
+Se visualizaron Hozon, Linear, Still / Form y YAAS en Chromium. Se toman
+el protagonismo de una sola imagen, la jerarquia tipografica y la claridad
+de navegacion. No se copian sus recursos, codigo, composiciones exactas,
+animaciones, ilustraciones ni tipografias comerciales.
+
+- Blanco #FFFFFF, Grafito #2C3035, gris #5C636B, gris claro #F5F6F7,
+  linea #D8DDE2 y un acento Mandarina #F48335.
+- Una familia de interfaz: DM Sans local. Titulares de peso medio y
+  texto de 16 px; se elimina la expresividad redondeada del titular anterior.
+- Composicion: titulo directo sobre ubicacion, explicacion y una accion;
+  fotografia amplia debajo. Actividades desplegables en lugar de iconos
+  y tarjetas repetidas. Horarios y direccion accesibles desde la cabecera.
+- Sin esloganes de relleno, etiquetas decorativas, numeracion arbitraria,
+  flechas repetidas, esquinas organicas ni bloques de color ornamentales.
+- Las funciones del preview son reales: anclas, desplegables por teclado
+  y enlace a mapas. No se incorporan login, pagos ni reservas ficticias.
+
+Esquema de lectura:
+
+    logo                         actividades / horarios / ubicacion
+    titulo de ubicacion          explicacion + ver actividades
+    fotografia amplia del espacio de referencia
+    actividades                  listado desplegable
+    visita                       horarios + direccion + como llegar
+    pie y aclaracion de preview
+
+La fotografia anterior desenfocada se sustituye por una vista del espacio
+de Danielle Cerullo; autor, caracter gratuito y archivo original
+comprobados en Unsplash. Debe seguir identificada como referencia.
+
+Esta revision no es una aprobacion del diseno. El manual sigue siendo de
+trabajo y se consolidara solo despues de la decision del usuario.
+
+### Resultado y comprobacion
+
+- HTML/CSS del preview reemplazados, sin nueva variante ni dependencias.
+  Se retiro la portada anterior; logo y paleta se mantienen.
+- Capturas de la pagina completa a 390 y 1440 px revisadas visualmente.
+- 320, 360, 390, 768, 1024, 1440 y 1920 px: sin desbordamiento de pagina,
+  con controles principales de al menos 44 px.
+- Recursos y fuente local cargados, un H1, anclas resueltas y foto de
+  referencia identificada; sin errores ni peticiones externas al cargar.
+- Teclado: salto al contenido, foco en horarios/direccion y apertura/cierre
+  de las cuatro actividades y de la nota de preview.
+- Destino de Maps comprobado: URL oficial de busqueda con direccion
+  completa del proyecto, sin API key ni integraciones nuevas.
+- Axe en 360 y 1440 px con los desplegables abiertos: sin infracciones
+  detectadas. Preferencia de movimiento reducido comprobada.
+- Manual de trabajo actualizado a 0.5: nueva composicion, tipografia y
+  procedencia de la foto. No se declara final.
+
+No se comprobaron Safari/WebKit ni dispositivos fisicos. No se modifico
+React, API, datos o dependencias, por lo que no se ejecuta la bateria
+funcional de la aplicacion intacta. Se preservaron los cambios preexistentes.
+
+**Estado:** revision lista para evaluar, pendiente de aprobacion del
+usuario antes del manual final y del cambio de la interfaz completa.
+
+## 19. Recuperar Cerca sin perder claridad - 2026-11-02
+
+El usuario pidio acercar la ultima revision a Cerca, senalando la propuesta
+original de index.html, para evitar que la limpieza resulte en una pagina
+sin identidad. Se mantienen los parametros recientes, Mancuerna y la paleta.
+
+La comparacion con Cerca identifica tres recursos pertinentes: Outfit en
+titulares, bienvenida cercana y una composicion asimetrica con un arco.
+Se recuperan sin volver a las ilustraciones abstractas ni a llenar el fondo
+de color. La fotografia real de referencia ocupa el arco; el resto conserva
+navegacion directa, contenido breve y acciones que funcionan.
+
+    logo                         actividades / horarios / ubicacion
+    foto en arco                 bienvenida + ubicacion + ver actividades
+    introduccion                 actividades desplegables
+    visita                       horarios + direccion + maps
+
+Outfit se limita a titulares y nombres de actividad; DM Sans mantiene
+lectura y controles. Radios de 16-24 px suavizan la accion y el desplegable
+abierto, sin convertir la pagina en una grilla de tarjetas. Blanco/grafito
+siguen siendo la base; Mandarina solo destaca la accion principal y el logo.
+
+### Resultado y comprobacion
+
+- Preview actualizado sin nueva variante, foto o dependencia; se conserva
+  la fotografia de referencia identificada y el logo elegido.
+- Capturas completas a 390 y 1440 px revisadas: se recuperan la composicion,
+  el arco y la tipografia de Cerca, sin volver al color de fondo invasivo.
+- 320, 360, 390, 768, 1024, 1440 y 1920 px: sin desbordamiento,
+  controles principales de al menos 44 px. Comprobada foto a la izquierda
+  en escritorio y texto antes de foto en movil.
+- Ambas fuentes locales cargadas; Outfit aplicado al titular y boton con
+  Mandarina exacto. Recursos, anclas y destino de Maps validos.
+- Regresion de teclado: salto al contenido, foco en horarios/direccion y
+  apertura/cierre de las cuatro actividades y de la nota de preview.
+- Axe en 360 y 1440 px con todos los desplegables abiertos: sin infracciones
+  detectadas ni desbordamiento. Movimiento reducido respetado.
+- Sin errores de pagina ni peticiones externas al cargar. Manual de
+  trabajo actualizado a 0.6; no se declara final.
+
+Safari/WebKit y dispositivos fisicos no comprobados. Sin cambios en
+React, API, datos o dependencias; se conservan los cambios preexistentes.
+
+**Estado:** preview listo para evaluar. La interfaz completa y el manual
+final siguen esperando aprobacion del usuario.
+
+## 20. Identidad Cerca aprobada: aplicacion completa y manual - 2026-11-02
+
+El usuario aprobo explicitamente la revision de la seccion 19 y pidio
+aplicarla a toda la web y generar el manual de marca.
+
+### Alcance de implementacion
+
+- Conservar Mancuerna, blanco/grafito/Mandarina, Outfit/DM Sans y el arco
+  fotografico de la portada aprobada. Mantener la foto como referencia
+  identificada hasta contar con una foto autorizada del gimnasio.
+- Actualizar logo, favicon y fuentes locales con sus licencias.
+- Portada: bienvenida y foto aprobadas, actividades desplegables, acceso
+  real a la agenda y presentacion institucional existente.
+- Componentes compartidos: cabecera responsive, navegacion publica y por
+  rol, formularios, filtros, clases, registros, membresia, reportes,
+  notificaciones, dialogos y estados de carga/vacio/error.
+- Mantener rutas, validaciones, permisos, API, persistencia, reservas,
+  pagos, membresias y asistencia. Preservar cambios ajenos del backend.
+- Consolidar un manual final de una sola identidad, separando las
+  exploraciones historicas. Entregar tambien una version visual PDF.
+- Verificar build, lint, pruebas frontend y flujos existentes de navegador,
+  ampliados para las superficies de cada rol y la marca aprobada.
+
+Se reutilizan los componentes actuales y CSS propio. Sin bibliotecas de UI,
+subagentes, commits ni despliegue. Los estados de error no heredan el
+naranja de marca: mantienen un color semantico y texto explicito.
+
+### Implementacion realizada
+
+- Portada aprobada aplicada a React, con bienvenida Outfit, arco fotografico,
+  actividades desplegables y acceso a la agenda real. Se conserva Nosotros.
+- Cabecera y pie con Mancuerna; favicon actualizado. Fuentes locales y
+  licencias distribuidas en public/marca. Se retiran Oswald/Nunito Sans del
+  manifest y lockfile mediante npm; sin nuevos paquetes.
+- Tokens y CSS compartidos actualizados para todas las rutas: agenda,
+  formularios de acceso/registro/perfil, socio, gestion e instructor,
+  registros, filtros, membresia, reportes, dialogos y estados.
+- Grafito sobre Mandarina en acciones. Error separado de marca, con borde
+  rojo oscuro y mensaje; notificaciones de confirmacion diferenciadas.
+- Manual final 1.0 en Markdown, visual HTML y PDF A4 etiquetado de 6 paginas.
+  Incluye maestros de logo, proteccion proporcional, paleta/contraste,
+  tipografia/licencias, componentes, voz, fotografia y limites de publicacion.
+  Se conserva el borrador anterior como exploracion historica separada.
+- README y FR-020 actualizados con la identidad explicitamente aprobada.
+  No se cambian reglas ni otros requisitos. Configuracion CreateApp alineada.
+
+### Verificacion realizada
+
+- npm run build y npm run lint correctos con la entrega integrada.
+- 26 pruebas frontend aprobadas en 7 archivos, incluyendo una prueba de
+  portada, enlaces reales y referencia fotografica. El descubridor integrado
+  no detecto Vitest; se uso el runner npm existente.
+- 3 recorridos Playwright aprobados: administracion/socio/instructor
+  completos, interfaz publica y zoom nativo 200 %. Se verificaron alta de
+  instructor/clase/socio, precio, pago sin duplicar, permisos, perfil,
+  reserva/cancelacion, asistencia, reportes y eliminacion con historial.
+- Identidad y Axe a 360/1440 px en 14 rutas de los tres roles, ademas de
+  portada responsive a 320/360/390/768/1024/1440/1920. Sin infracciones
+  detectadas ni desbordamiento de pagina en esas comprobaciones.
+- Desplegables por teclado, menu con Escape y foco, errores/reintento,
+  campos y formularios, dialogo y retorno de foco comprobados.
+- Capturas de portada escritorio/movil y superficies de los tres roles
+  revisadas visualmente. Sin perdida de funciones ni color de marca anterior.
+- Se adapto la configuracion E2E a rutas multiplataforma y Chromium del
+  sistema mediante variable opcional. Se uso el puerto 5175 porque 5174
+  pertenecia a otro proyecto; no se detuvo ni reutilizo ese servidor.
+- Un selector de prueba global de dd alcanzo el nuevo horario semantico
+  del pie; se acoto a report-values. La repeticion completa paso.
+- Manual HTML: responsive y Axe a 360/1440 sin infracciones; seis hojas
+  ajustadas, PDF de seis paginas confirmado y revisado visualmente.
+- Contrastes finales medidos: Grafito/blanco 13,28:1, Grafito/Mandarina
+  5,15:1, secundario/gris claro 5,62:1, borde/blanco 4,28:1 y error/fondo
+  7,60:1. Assets de distribucion identicos a sus maestros; enlaces del
+  manual resueltos; diff --check correcto respetando CRLF.
+- Web real comprobada con API local: health correcto, fuentes y assets
+  locales, anclas con foco, agenda/acceso, movil y movimiento reducido.
+  Sin errores de pagina ni peticiones externas al cargar.
+- Frontend y backend de desarrollo disponibles en 127.0.0.1:5173 y :3000,
+  con readiness HTTP verificada. Sin poblar la base local con datos E2E.
+
+No se ejecutaron nuevamente pruebas backend ni auditoria de dependencias:
+su codigo no fue modificado por esta tarea. Se conservaron los cambios
+ajenos en Database.js y persistencia.test.js.
+
+**Limites:** Safari/WebKit, dispositivos fisicos, impresion fisica,
+Neon/Vercel y publicacion no comprobados. La foto sigue identificada como
+referencia y los datos institucionales requieren confirmacion. La aprobacion
+visual no equivale a publicacion ni certificacion de accesibilidad o marca.
+
+**Estado:** identidad aprobada aplicada a toda la interfaz, manual final
+entregado y comprobaciones locales completadas. Sin commits ni despliegue.

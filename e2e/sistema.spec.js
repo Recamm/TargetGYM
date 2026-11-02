@@ -14,11 +14,33 @@ async function logout(page) { await page.getByRole('button', { name: 'Salir', ex
 async function datosUsuario(page, { nombre, email, dni }) {
     for (const [label, value] of [['Nombre',nombre],['Apellido','Sintetico'],['Email',email],['DNI',dni],['Teléfono','1100000000'],['Fecha de nacimiento','2000-01-01'],['Contraseña',password]]) await page.getByLabel(label, { exact: true }).fill(value);
 }
-test('flujo completo administrador, socio e instructor con datos reales', async ({ page, request }) => {
+async function verificarIdentidad(page, rutas, testInfo, rol) {
+    for (const ruta of rutas) {
+        await page.goto(ruta);
+        await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
+        await expect(page.getByText('Cargando información…')).toHaveCount(0);
+        await page.evaluate(() => document.fonts.ready);
+        await expect(page.locator('.brand-link img')).toHaveCount(2);
+        expect(await page.locator('h1').evaluate(element => getComputedStyle(element).fontFamily)).toContain('Outfit');
+        expect(await page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue('--action').trim())).toBe('#f48335');
+        for (const width of [360, 1440]) {
+            await page.setViewportSize({ width, height: 900 });
+            expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+            const results = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa']).analyze();
+            expect(results.violations).toEqual([]);
+        }
+    }
+    await page.screenshot({ path: testInfo.outputPath(`${rol}-marca.png`), fullPage: true });
+    await page.setViewportSize({ width: 1440, height: 900 });
+}
+test('flujo completo administrador, socio e instructor con datos reales', async ({ page, request }, testInfo) => {
+    test.setTimeout(120000);
     const failures = [];
     page.on('pageerror', error => failures.push(error.message));
     await page.clock.setFixedTime(new Date('2030-01-01T12:00:00-03:00'));
     await login(page, 'admin@example.test');
+    await verificarIdentidad(page, ['/gestion/clases', '/gestion/socios', '/gestion/pagos', '/gestion/planes', '/gestion/instructores', '/gestion/reportes', '/mi-cuenta'], testInfo, 'administrador');
+    await page.goto('/gestion/clases');
     await page.getByRole('link', { name: 'Planes', exact: true }).click();
     const mensual = page.locator('form').filter({ has: page.getByRole('heading', { name: 'Plan mensual', exact: true }) });
     await mensual.getByLabel('Precio base (ARS)').fill('15000');
@@ -51,6 +73,7 @@ test('flujo completo administrador, socio e instructor con datos reales', async 
     await page.getByRole('button', { name: 'Crear cuenta' }).click();
     await expect(page).toHaveURL('/mi-membresia');
     await expect(page.getByText(/Todavía no tenés una membresía activa/)).toBeVisible();
+    await verificarIdentidad(page, ['/mi-cuenta', '/mi-membresia', '/mis-inscripciones', '/mi-historial', '/clases'], testInfo, 'socio');
     await logout(page);
     await login(page, 'admin@example.test');
     await page.getByRole('link', { name: 'Socios', exact: true }).click();
@@ -105,6 +128,7 @@ test('flujo completo administrador, socio e instructor con datos reales', async 
     await request.post('http://127.0.0.1:3011/__test__/clock', { data: { fecha: '2030-01-02T18:01:00-03:00' } });
     await page.clock.setFixedTime(new Date('2030-01-02T18:01:00-03:00'));
     await login(page, 'instructor@example.test');
+    await verificarIdentidad(page, ['/mi-cuenta', '/instructor/clases'], testInfo, 'instructor');
     await page.getByRole('link', { name: 'Ver participantes y asistencia' }).click();
     await page.locator('li').filter({ has: page.getByText('En curso', { exact: true }) }).getByRole('button', { name: 'Marcar presente' }).click();
     await expect(page.getByText('Presente', { exact: true })).toBeVisible();
@@ -117,7 +141,7 @@ test('flujo completo administrador, socio e instructor con datos reales', async 
     await logout(page);
     await login(page, 'admin@example.test');
     await page.getByRole('link', { name: 'Reportes', exact: true }).click();
-    await expect(page.locator('dd').last()).toHaveText('1');
+    await expect(page.locator('.report-values dd').last()).toHaveText('1');
     await page.goto('/gestion/clases');
     await page.getByRole('button', { name: 'Eliminar', exact: true }).click();
     await dialog.getByRole('button', { name: 'Volver' }).click();
@@ -132,13 +156,22 @@ test('flujo completo administrador, socio e instructor con datos reales', async 
 test('interfaz publica: responsive, teclado, errores y accesibilidad', async ({ page }, testInfo) => {
     await page.goto('/');
     await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
-    for (const width of [360, 768, 1440]) {
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Qué bueno que viniste.');
+    await expect(page.locator('.hero-photo img')).toHaveAttribute('src', '/marca/gimnasio-referencia.webp');
+    await expect(page.getByText(/No corresponde a Target GYM/)).toBeVisible();
+    for (const width of [320, 360, 390, 768, 1024, 1440, 1920]) {
         await page.setViewportSize({ width, height: 900 });
         await page.evaluate(() => document.fonts.ready);
         expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
         const results = await new AxeBuilder({ page }).withTags(['wcag2a','wcag2aa','wcag21aa']).analyze();
         expect(results.violations).toEqual([]);
-        await page.screenshot({ path: testInfo.outputPath(`inicio-${width}.png`), fullPage: true });
+        if ([360, 768, 1440].includes(width)) await page.screenshot({ path: testInfo.outputPath(`inicio-${width}.png`), fullPage: true });
+    }
+    for (const activity of await page.locator('.activity').all()) {
+        await activity.locator('summary').focus();
+        if (await activity.evaluate(element => element.open)) await page.keyboard.press('Enter');
+        await page.keyboard.press('Enter');
+        expect(await activity.evaluate(element => element.open)).toBe(true);
     }
     await page.setViewportSize({ width: 360, height: 900 });
     await page.getByRole('button', { name: 'Menú', exact: true }).click();
@@ -157,22 +190,24 @@ test('interfaz publica: responsive, teclado, errores y accesibilidad', async ({ 
     await expect(page.getByText(/No hay clases para estos filtros/)).toBeVisible();
 });
 test('zoom nativo de Chromium al 200% mantiene navegacion y formularios', async ({}, testInfo) => {
+    const baseURL = testInfo.project.use.baseURL;
     const extension = testInfo.outputPath('extension-zoom');
     await mkdir(extension, { recursive: true });
     await writeFile(join(extension, 'manifest.json'), JSON.stringify({ manifest_version: 3, name: 'Prueba local de zoom', version: '1.0', permissions: ['tabs'], background: { service_worker: 'zoom.js' } }));
-    await writeFile(join(extension, 'zoom.js'), "chrome.tabs.onUpdated.addListener((id, change, tab) => { if (change.status === 'complete' && tab.url?.startsWith('http://127.0.0.1:5174/')) chrome.tabs.setZoom(id, 2); });");
+    await writeFile(join(extension, 'zoom.js'), `chrome.tabs.onUpdated.addListener((id, change, tab) => { if (change.status === 'complete' && tab.url?.startsWith(${JSON.stringify(`${baseURL}/`)})) chrome.tabs.setZoom(id, 2); });`);
     const context = await chromium.launchPersistentContext(testInfo.outputPath('perfil-zoom'), {
-        channel: 'chromium', headless: true, viewport: { width: 1440, height: 900 },
+        channel: 'chromium', headless: true, viewport: { width: 1440, height: 900 }, baseURL,
+        executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH || undefined,
         args: [`--disable-extensions-except=${extension}`, `--load-extension=${extension}`],
     });
     try {
         const worker = context.serviceWorkers()[0] || await context.waitForEvent('serviceworker');
         const page = await context.newPage();
-        await page.goto('http://127.0.0.1:5174/registro');
-        await expect.poll(() => worker.evaluate(async () => {
-            const tabs = await chrome.tabs.query({ url: 'http://127.0.0.1:5174/*' });
+        await page.goto('/registro');
+        await expect.poll(() => worker.evaluate(async url => {
+            const tabs = await chrome.tabs.query({ url: `${url}/*` });
             return tabs.length ? chrome.tabs.getZoom(tabs[0].id) : 0;
-        })).toBe(2);
+        }, baseURL)).toBe(2);
         await expect(page.getByLabel('Email', { exact: true })).toBeVisible();
         expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
         await page.getByRole('button', { name: 'Menú', exact: true }).click();
