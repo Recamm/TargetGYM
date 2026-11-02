@@ -1,104 +1,189 @@
-# Target GYM — Sistema de Gestión de Gimnasio
+# Target GYM — Sistema de gestión de gimnasio
 
-Sistema web de gestión para **Target GYM**, un gimnasio de barrio ubicado en Florida, Vicente López (BSAS), que actualmente no tiene presencia web funcional. El proyecto digitaliza la gestión de socios, membresías, clases grupales e inscripciones, siguiendo una metodología de *Spec-Driven Development* con [Speckit](https://speckit.org/).
+Sistema completo con **React/Vite + Express + PostgreSQL**: agenda pública,
+cuentas por rol, socios, planes, pagos manuales, membresías, reservas, asistencia
+y reportes. Preparado para **Vercel + Neon**, pero **no desplegado ni probado
+contra una cuenta Neon real**.
 
-## Sobre el negocio
+El [informe único de diseño y ejecución](info/Plan%20de%20diseno%20y%20ejecucion.md)
+registra decisiones y evidencia. Las consignas están en
+[Entrega 3](info/Entrega%203%20-%20Frontend%20React.md) y
+[Sistema completo](info/Consigna%20-%20Sistema%20completo.md).
 
-- **Nombre**: Target GYM
-- **Rubro**: Gimnasio / Fitness
-- **Dirección**: Gral. José de San Martín 2462, Florida, Vicente López, BSAS
-- **Horarios**: Lunes a viernes 6:00 a 22:00 hs; sábados horario reducido; domingos y feriados variable
-- **Público objetivo**: jóvenes y adultos (18-45 años) del barrio, trabajadores de oficina de la zona y vecinos que buscan un gimnasio de cercanía
+## Ejecutar localmente
 
-Más detalle en [info/TP - Fichas Tecnicas (Targer GYM).md](info/TP%20-%20Fichas%20Tecnicas%20(Targer%20GYM).md).
+Requiere Node **24.x** y npm. Ejecutar los comandos desde la raíz del repositorio.
+El único lockfile vigente es el de la raíz; npm instala ambos workspaces.
 
-## Funcionalidades principales
-
-- **Registro y gestión de membresías**: alta de socios con plan mensual, trimestral o anual, con cálculo automático de vencimiento.
-- **Inscripción a clases grupales**: calendario semanal (spinning, funcional, zumba, etc.) con reserva de cupo con un clic.
-- **Gestión de clases y horarios (CRUD)**: el administrador crea, edita, cancela y elimina clases, asignando instructor, horario y cupo máximo.
-- **Historial de asistencia**: consulta de clases a las que asistió cada socio.
-- **Gestión de pagos de cuota**: registro de pagos y alertas de membresías vencidas o próximas a vencer (7 días antes).
-- **Administración de socios**: alta, modificación, suspensión y baja, con historial visible.
-- **Panel de disponibilidad público**: cualquier visitante puede ver cupos disponibles sin registrarse.
-
-## Tipos de usuario
-
-| Rol | Permisos principales |
-|---|---|
-| **Administrador** | Acceso total: gestiona socios, clases, pagos, instructores y reportes de asistencia/ocupación. |
-| **Socio / Cliente** | Se registra, contrata/renueva membresía, consulta el calendario, se inscribe o cancela su lugar en clases (regla de 2 hs de anticipación) y ve su historial. |
-| **Instructor / Empleado** | Visualiza únicamente sus clases asignadas y confirma asistencia de los socios. No puede modificar socios ni planes. |
-
-## Reglas de negocio clave
-
-- No se permite inscripción a una clase sin cupo disponible.
-- Solo socios con membresía **activa** pueden inscribirse a clases.
-- No se permite doble inscripción a la misma clase y horario.
-- Las cancelaciones requieren **2 horas o más** de anticipación al inicio de la clase.
-- El email es único por cuenta.
-- El descuento del plan anual aplica únicamente al contratarlo (no retroactivo ni transferible).
-- Solo el administrador puede modificar o eliminar clases y usuarios.
-- Al vencer la membresía, las inscripciones "Confirmada" pasan a "Pendiente" durante un período de gracia de 3 días; si no se renueva, se cancelan y se libera el cupo.
-
-## Validaciones
-
-- Campos obligatorios: nombre, apellido, email, contraseña, DNI, teléfono y fecha de nacimiento.
-- Email con formato `usuario@dominio.com`, único en el sistema.
-- Edad mínima de 16 años para registro autónomo.
-- Contraseña de al menos 8 caracteres, con una mayúscula y un número.
-- Cupo máximo de clase mayor a cero.
-- Fecha/hora de clase no puede estar en el pasado.
-
-## Modelo de dominio
-
-Entidades principales (ver [info/diagrama-clases.md](info/diagrama-clases.md)):
-
-- **Usuario** (base abstracta) → especializada en **Administrador**, **Socio** e **Instructor**
-- **Membresía**: plan contratado por un socio (mensual, trimestral, anual)
-- **Pago**: registro de pago de una cuota/membresía
-- **Clase**: actividad grupal con horario, cupo e instructor asignado
-- **Inscripción**: vínculo entre un Socio y una Clase, con flujo de estados `Pendiente → Confirmada → En curso → Finalizada / Cancelada`
-
-## Identidad visual (UX/UI)
-
-| Rol | Color | Hex | Uso |
-|---|---|---|---|
-| Principal | Negro profundo | `#1A1A1A` | Fondos, navbar, secciones |
-| Secundario | Blanco humo | `#F5F5F5` | Textos, contraste |
-| Acento | Rojo energía | `#E63946` | Botones y llamados a la acción |
-
-**Tipografías**: [Oswald](https://fonts.google.com/specimen/Oswald) para títulos (condensada, impactante) y [Nunito Sans](https://fonts.google.com/specimen/Nunito+Sans) para cuerpo de texto (legible, amigable).
-
-Detalle completo en [info/Entregar - Target GYM (UX-UI).md](info/Entregar%20-%20Target%20GYM%20(UX-UI).md).
-
-## Estructura del proyecto
-
-```
-TargetGYM/
-├── backend/
-│   └── src/
-│       └── models/       # Clases de dominio (sin lógica de negocio)
-├── specs/
-│   └── 001-sistema-gestion-gimnasio/
-│       ├── spec.md       # Especificación funcional (Speckit)
-│       └── checklists/
-├── info/                 # Fichas técnicas, reglas de negocio y diseño UX/UI
-└── how-to-use-speckit.md # Guía de uso de Speckit en este proyecto
+```powershell
+npm ci
+npm run admin:create -- --local
 ```
 
-## Desarrollo con Speckit
+El alta inicial es interactiva: nombre, apellido, email y contraseña de al menos
+12 caracteres con mayúscula y número. La contraseña no se muestra. **No existen
+usuarios ni contraseñas predeterminados**.
 
-Este proyecto usa [Speckit](https://speckit.org/) para *Spec-Driven Development*. Ver [how-to-use-speckit.md](how-to-use-speckit.md) para instalación y flujo de trabajo (`/speckit.specify`, `/speckit.plan`, `/speckit.tasks`, `/speckit.implement`).
+Después, en dos terminales:
 
-## Requisitos mínimos del proyecto (consigna académica)
+```powershell
+npm run dev:backend
+```
 
-| Requisito | Implementación en Target GYM |
+```powershell
+npm run dev:frontend
+```
+
+Abrir **http://127.0.0.1:5173**. La API escucha en **127.0.0.1:3000** y Vite
+proxifica `/api`, sin necesitar CORS ni guardar credenciales en React.
+
+El modo local usa PostgreSQL embebido (PGlite) y conserva datos y el secreto de
+sesión en `backend\.local-data`, excluido de Git. **Detener el backend antes de
+ejecutar otra migración o alta inicial en la misma base local**: PGlite no es
+un servidor compartido entre procesos. Las pruebas usan otra base aislada.
+
+### Primer recorrido
+
+1. Ingresar con el administrador creado.
+2. En **Gestión → Planes**, configurar los precios reales y el descuento anual.
+   Los precios empiezan sin configurar; no se inventan importes.
+3. Crear un instructor y una clase con fecha futura, duración y cupo.
+4. Registrar un socio desde la web o desde Gestión.
+5. Registrar su pago manual: la membresía recién entonces queda activa.
+6. El socio puede reservar, consultar/cancelar inscripciones y ver su asistencia.
+7. Desde el inicio de la clase, el instructor asignado o el administrador registra
+   presentes/ausentes. El historial acredita solo asistencias a clases finalizadas.
+
+## Roles y reglas
+
+| Rol | Operaciones |
 |---|---|
-| Autenticación | Login y registro para Socios y Administradores |
-| Dos tipos de usuario | Administrador y Socio (más Instructor como plus) |
-| CRUD principal | CRUD completo de Clases |
-| Funcionalidad propia del negocio | Inscripción a clases grupales con control de cupo y cancelación |
-| Flujo de estados | Pendiente → Confirmada → En Curso → Finalizada / Cancelada |
-| Validaciones de negocio | Membresía activa, cupo disponible, email único, no doble inscripción |
-| Relación entre entidades | Socio → Inscripción → Clase |
+| Visitante | Presentación, agenda y disponibilidad, registro e ingreso |
+| Socio | Perfil, solicitud de plan/renovación, membresía y pagos propios, reserva/cancelación e historial |
+| Administrador | Socios y estados, instructores, CRUD/cancelación de clases, planes/precios, pagos, asistencia y reportes |
+| Instructor | Perfil, clases asignadas y asistencia de sus propios participantes |
+
+- Registro desde **16 años inclusive**, email/DNI únicos y contraseña de 8 a 128
+  caracteres, con mayúscula y número.
+- Planes de **1/3/12 meses calendario**, ajustando al último día válido.
+  La renovación anticipada se suma al vencimiento vigente.
+- El servidor calcula el importe; el descuento anual no se traslada a otros planes.
+  Un UUID identifica cada operación de pago para que reintentar no duplique la renovación.
+- Solo socios y membresías activos pueden reservar. No hay sobreventa ni reservas
+  activas duplicadas. El cupo se deriva de Pendientes, Confirmadas y En curso.
+- Cancelación propia con **al menos 2 horas** de anticipación; repetirla no
+  libera un segundo lugar.
+- Gracia de **3 días solo por vencimiento**, conservando el lugar. Sin renovación,
+  se cancela a los tres días exactos o al inicio de la clase, lo que ocurra primero.
+- Suspensión/baja bloquea nuevas reservas y cancela las futuras. La baja de socios
+  y clases conserva historial; no borra pagos ni relaciones.
+- Los estados se concilian en el servidor antes de las operaciones, también si
+  no hubo una pestaña abierta. La agenda se consulta cada **30 segundos**.
+- Las solicitudes de contratación/renovación se guardan; **no son cobros online**.
+
+## Arquitectura y API
+
+```text
+api\index.js              Entrada serverless de Vercel
+backend\src\             Routes, Controllers, Services, Repositories,
+                         Models, Middlewares, Exceptions y Responses
+backend\src\database\    Esquema y adaptadores PostgreSQL/PGlite
+backend\src\tests\       Pruebas de reglas, HTTP y persistencia
+frontend\src\            Páginas, componentes, servicios, hooks y pruebas
+e2e\                    Recorridos de navegador
+info\                   Consignas, requisitos y plan único
+.createapp\              Política y referencias locales
+```
+
+La lógica está en Services; SQL parametrizado y relaciones en Repositories/esquema.
+Las transacciones bloquean una fila compartida para serializar cambios de cupos,
+pagos y estados incluso entre instancias PostgreSQL. Los modelos originales se
+conservan como documentación estructural; los DTO operativos vienen de SQL.
+
+Sesiones persistidas, cookies HttpOnly/SameSite, Secure en producción, CSRF,
+contraseñas con scrypt, límites de autenticación y errores centralizados.
+React no almacena contraseñas ni tokens de sesión en localStorage.
+
+Todos los recursos están bajo `/api`: `auth`, `clases`, `planes`, `socios`,
+`instructores`, `pagos`, `inscripciones`, `mi-cuenta`, `mi-membresia`,
+`mis-pagos`, `mi-historial`, `reportes`, `health` y `maintenance`.
+Éxito: `{success:true,data:...}`. Error: `{success:false,message:...}`.
+Eliminar una clase conserva HTTP 200 con `data:null`.
+
+La zona horaria del gimnasio es `America/Argentina/Buenos_Aires`.
+La navegación y el estado de sesión usan actualizaciones de la misma prioridad
+para evitar redirecciones contradictorias al ingresar, registrarse o salir.
+
+## Preparar Neon y Vercel
+
+La aplicación **no crea servicios, cuentas ni despliegues automáticamente**.
+
+1. Crear/configurar una base Neon y guardar su URL PostgreSQL con TLS en
+   `backend\.env`, tomando como referencia [el ejemplo](backend/.env.example).
+   No colocar secretos en variables `VITE_*`, archivos públicos ni en el chat.
+2. Usar `DATABASE_MODE=postgres` y ejecutar:
+
+   ```powershell
+   npm run db:migrate
+   npm run admin:create
+   ```
+
+3. En Vercel, seleccionar la raíz del repositorio y Node 24.x. El
+   [archivo de configuración](vercel.json) declara build, salida de Vite,
+   rutas API/SPA y un cron diario compatible con Hobby.
+4. Configurar `DATABASE_URL`, `SESSION_SECRET` y `CRON_SECRET` como variables
+   privadas. Usar secretos aleatorios de al menos 32 caracteres.
+   La URL agrupada de Neon es adecuada para conexiones serverless.
+5. Tras autorizar el despliegue, comprobar `/api/health`, login/registro/cookies,
+   rutas SPA directas, archivos estáticos, concurrencia desde varias instancias
+   y ejecución del cron con su autorización.
+
+**Nunca usar la base local en Vercel**: el adaptador lo rechaza explícitamente.
+Las migraciones se ejecutan por separado; no desde cada invocación serverless.
+El cron diario complementa la conciliación por operación; no promete ejecución
+al minuto ni refresco instantáneo.
+
+## Verificar
+
+```powershell
+npm test
+npm run lint
+npm run build
+npm run test:e2e
+npm audit
+```
+
+Verificado: **15 pruebas backend, 25 frontend y 3 recorridos Playwright**;
+lint sin advertencias, build de producción y auditoría sin vulnerabilidades.
+Las pruebas cubren roles, último cupo concurrente, renovaciones/gracia, asistencia,
+persistencia en disco, errores, formularios, móvil y zoom nativo de Chromium al 200%.
+
+Playwright levanta procesos aislados en **3011/5174**, usa solo datos sintéticos y
+cierra los procesos al terminar. Si falta Chromium, ejecutar
+`npx playwright install chromium` y reintentar. No poblar la base local del usuario
+para probar. Las capturas y trazas quedan excluidas de Git.
+
+Los umbrales de disponibilidad <10 s y reserva <60 s se comprobaron localmente;
+no son garantías para cualquier red. Axe no reemplaza una auditoría manual
+completa. No se acreditan Safari/WebKit ni Neon/Vercel reales sin probarlos.
+
+## Diseño y herramientas
+
+Identidad: negro `#1A1A1A`, blanco humo `#F5F5F5`, rojo marca `#E63946`
+y rojo accesible `#B52B38` para acciones con texto claro. Oswald/Nunito Sans
+se sirven localmente. Se conserva navbar fija, hero, nosotros, servicios y footer.
+La ilustración es propia: no se simulan fotografías, cifras ni testimonios reales.
+Dirección: Gral. José de San Martín 2462, Florida, Vicente López.
+No se inventan contactos/redes ausentes en las fuentes.
+
+Superpowers está adaptado localmente mediante CreateApp y `ca-workflow`,
+sin plugin global ni infraestructura Spec Kit. Leer
+[AGENTS.md](AGENTS.md) y [POLICY.md](.createapp/POLICY.md).
+Las extensiones recomendadas incluyen Oxlint, Playwright, Prettier,
+Mermaid y REST Client; ESLint se conserva para los proyectos que lo utilicen.
+
+```powershell
+createapp . --doctor
+```
+
+No se realizaron commits ni publicación automática.

@@ -26,3 +26,15 @@ Thumbs.db
 dist/
 build/
 coverage/
+
+# CreateApp: archivos locales
+.createapp/tools/
+
+# Runtime local y pruebas
+.local-data/
+.vercel/
+.vitest/
+test-results/
+playwright-report/
+.env.*
+!.env.example

@@ -1,12 +1,19 @@
 import { Router } from 'express';
-import claseController from '../controllers/ClaseController.js';
+import ClaseController from '../controllers/ClaseController.js';
+import { requireRoles } from '../middlewares/auth.js';
 
-const router = Router();
-
-router.get('/', claseController.getAll);
-router.get('/:id', claseController.getById);
-router.post('/', claseController.create);
-router.put('/:id', claseController.update);
-router.delete('/:id', claseController.delete);
-
-export default router;
+export default function claseRoutes(service, usuarios) {
+    const router = Router();
+    const controller = new ClaseController(service);
+    const admin = requireRoles(usuarios, 'Administrador');
+    router.get('/', async (req, res, next) => {
+        try { req.user = req.session.userId ? await usuarios.findById(req.session.userId) : null; next(); }
+        catch (error) { next(error); }
+    }, controller.getAll);
+    router.get('/:id', controller.getById);
+    router.post('/', admin, controller.create);
+    router.put('/:id', admin, controller.update);
+    router.delete('/:id', admin, controller.delete);
+    router.post('/:id/cancelar', admin, controller.cancelar);
+    return router;
+}

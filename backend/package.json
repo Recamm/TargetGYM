@@ -6,9 +6,19 @@
   "main": "src/server.js",
   "scripts": {
     "start": "node src/server.js",
-    "dev": "node --watch src/server.js"
+    "dev": "node --env-file-if-exists=.env --watch src/server.js",
+    "dev:local": "node --env-file-if-exists=.env --watch src/local.js",
+    "test": "node --test src/tests/*.test.js",
+    "db:migrate": "node --env-file-if-exists=.env src/scripts/migrate.js",
+    "admin:create": "node --env-file-if-exists=.env src/scripts/create-admin.js"
   },
   "dependencies": {
-    "express": "^4.19.2"
+    "express": "^4.19.2",
+    "pg": "^8.23.1",
+    "express-session": "^1.19.0",
+    "helmet": "^8.3.0"
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "^0.5.14"
   }
 }

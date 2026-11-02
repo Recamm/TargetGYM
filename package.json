@@ -1,0 +1,22 @@
+{
+  "name": "targetgym",
+  "private": true,
+  "type": "module",
+  "workspaces": ["backend", "frontend"],
+  "engines": { "node": "24.x" },
+  "scripts": {
+    "dev:backend": "npm run dev:local --workspace backend",
+    "dev:frontend": "npm run dev --workspace frontend",
+    "build": "npm run build --workspace frontend",
+    "test": "npm run test --workspace backend && npm run test --workspace frontend",
+    "lint": "npm run lint --workspace frontend",
+    "db:migrate": "npm run db:migrate --workspace backend",
+    "admin:create": "npm run admin:create --workspace backend --",
+    "test:e2e": "playwright test"
+  },
+  "devDependencies": {
+    "jsdom": "^29.1.1",
+    "@playwright/test": "^1.64.1",
+    "@axe-core/playwright": "^4.14.0"
+  }
+}

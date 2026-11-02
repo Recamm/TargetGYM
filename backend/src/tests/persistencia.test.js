@@ -1,0 +1,45 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { mkdtemp, rm } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { createDatabase, migrate } from '../database/Database.js';
+import AuthService from '../services/AuthService.js';
+import SessionStore from '../repositories/SessionStore.js';
+import EstadoService from '../services/EstadoService.js';
+import MembresiaService from '../services/MembresiaService.js';
+import ClaseService from '../services/ClaseService.js';
+import InscripcionService from '../services/InscripcionService.js';
+test('usuarios y sesiones persisten tras cerrar y reabrir PostgreSQL embebido', async () => {
+    const directory = await mkdtemp(join(tmpdir(), 'targetgym-persistencia-'));
+    let db;
+    try {
+        db = await createDatabase({ mode: 'local', dataDir: directory });
+        await migrate(db);
+        const datos = { nombre: 'Prueba', apellido: 'Sintetica', email: 'persistencia@example.test', password: 'PruebaSegura123!', dni: '90004000', telefono: '1100000000', fechaNacimiento: '2000-01-01' };
+        const auth = new AuthService(db), user = await auth.registrar(datos);
+        const instructor = await auth.registrar({ ...datos, dni: '90004001', email: 'i@example.test', especialidad: 'Funcional' }, 'Instructor');
+        const admin = await auth.registrar({ ...datos, dni: '90004002', email: 'a@example.test' }, 'Administrador');
+        const estados = new EstadoService(db), membresias = new MembresiaService(db, estados);
+        await membresias.configurar('mensual', { precioCentavos: 1000000, descuentoPorcentaje: 0 });
+        await membresias.registrarPago({ socioId: user.id, tipoPlan: 'mensual', metodoPago: 'Efectivo', operacionId: crypto.randomUUID() }, admin);
+        const clase = await new ClaseService(db, estados).create({ nombre: 'Persistencia', tipo: 'Funcional', fecha: '2099-01-01', horaInicio: '18:00', duracionMinutos: 60, cupoMaximo: 2, instructorId: instructor.id });
+        await new InscripcionService(db, estados).reservar({ claseId: clase.id }, user);
+        const session = { userId: user.id, csrfToken: 'token-sintetico', cookie: { expires: new Date(Date.now() + 3600000).toISOString() } };
+        await new Promise((resolve, reject) => new SessionStore(db).set('sid-sintetico', session, error => error ? reject(error) : resolve()));
+        await db.close(); db = null;
+        db = await createDatabase({ mode: 'local', dataDir: directory });
+        await migrate(db);
+        assert.equal((await new AuthService(db).repository.findById(user.id)).email, user.email);
+        const estadosRestaurados = new EstadoService(db), membresiasRestauradas = new MembresiaService(db, estadosRestaurados);
+        assert.equal((await membresiasRestauradas.actual(user.id)).tipoPlan, 'mensual');
+        assert.equal((await membresiasRestauradas.pagos(user.id)).length, 1);
+        assert.equal((await new ClaseService(db, estadosRestaurados).getById(clase.id)).instructorId, instructor.id);
+        assert.equal((await new InscripcionService(db, estadosRestaurados).list(user.id))[0].claseId, clase.id);
+        const restored = await new Promise((resolve, reject) => new SessionStore(db).get('sid-sintetico', (error, value) => error ? reject(error) : resolve(value)));
+        assert.equal(restored.userId, user.id);
+        assert.equal(restored.csrfToken, 'token-sintetico');
+        await new Promise((resolve, reject) => new SessionStore(db).destroy('sid-sintetico', error => error ? reject(error) : resolve()));
+        assert.equal(await new Promise((resolve, reject) => new SessionStore(db).get('sid-sintetico', (error, value) => error ? reject(error) : resolve(value))), null);
+    } finally { if (db) await db.close(); await rm(directory, { recursive: true }); }
+});

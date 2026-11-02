@@ -31,4 +31,14 @@ export class InternalServerError extends AppError {
     }
 }
 
+export class UnauthorizedError extends AppError {
+    constructor(message = 'Debes iniciar sesion.') { super(message, 401); }
+}
+export class ForbiddenError extends AppError {
+    constructor(message = 'No tienes permiso para esta operacion.') { super(message, 403); }
+}
+export class TooManyRequestsError extends AppError {
+    constructor(message) { super(message, 429); }
+}
+
 export default AppError;

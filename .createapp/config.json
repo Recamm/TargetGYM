@@ -1,0 +1,39 @@
+{
+  "name": "targetgym",
+  "directory": ".",
+  "agent": "copilot",
+  "agents": [
+    "copilot"
+  ],
+  "stack": "web",
+  "template": "config-only",
+  "mode": "balanced",
+  "coordinator": "superpowers",
+  "testing": "balanced",
+  "autonomy": "milestones",
+  "parallel": false,
+  "design": "existing",
+  "database": "postgres",
+  "goal": "Target GYM: sistema completo implementado con React/Vite, JavaScript/JSX, CSS propio y Express 4 por capas. PostgreSQL Neon para produccion preparada para Vercel; PGlite explicito para desarrollo y pruebas locales. Sesiones persistidas, CSRF, roles Administrador/Socio/Instructor, socios, planes configurables, pagos manuales, membresias, clases, reservas, asistencia y reportes. Superpowers local mediante ca-workflow es el unico coordinador. Mantener el plan y requisitos de info, la identidad negro/blanco/rojo, Oswald y Nunito Sans. Sin subagentes, worktrees, commits, cuentas externas ni publicacion automaticos. Verificar reglas, permisos, persistencia, UI y errores. No confundir preparacion con despliegue verificado en Neon/Vercel.",
+  "skills": [
+    "browser-test",
+    "performance",
+    "security",
+    "simplicity",
+    "sources",
+    "ux",
+    "visual",
+    "web-review",
+    "workflow"
+  ],
+  "packs": [
+    "addy",
+    "anthropic",
+    "ponytail",
+    "superpowers",
+    "uiux"
+  ],
+  "vercel_react": true,
+  "vercel_web": true,
+  "vercel_composition": false
+}

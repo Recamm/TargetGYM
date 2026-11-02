@@ -1,0 +1,260 @@
+{
+  "schema": 1,
+  "reviewed": "2026-11-01",
+  "sources": {
+    "obra/superpowers": {
+      "commit": "2ce8aa15d05bd57213e6f746f953aafb7ded7a8b",
+      "prefixes": [
+        "skills/brainstorming",
+        "skills/writing-plans",
+        "skills/executing-plans",
+        "skills/test-driven-development",
+        "skills/systematic-debugging",
+        "skills/verification-before-completion",
+        "skills/requesting-code-review",
+        "skills/receiving-code-review",
+        "skills/finishing-a-development-branch",
+        "skills/using-git-worktrees",
+        "skills/subagent-driven-development",
+        "skills/dispatching-parallel-agents"
+      ],
+      "files": [
+        {
+          "path": "LICENSE",
+          "sha": "abf0390320aa14406af7a520b9b0739fdda9bf08",
+          "size": 1070
+        },
+        {
+          "path": "skills/brainstorming/SKILL.md",
+          "sha": "7f5eef02f894c4f24cea313660c0465ce9c084ed",
+          "size": 13602
+        },
+        {
+          "path": "skills/brainstorming/builder-check-prompt.md",
+          "sha": "136e9c1d516ee1852abc5e556e76ce1b085d3827",
+          "size": 881
+        },
+        {
+          "path": "skills/brainstorming/scripts/frame-template.html",
+          "sha": "f540bb8a4f88107e2b37b2871a4c1a55a3b6f720",
+          "size": 8094
+        },
+        {
+          "path": "skills/brainstorming/scripts/helper.js",
+          "sha": "e11d26489ce248f37af3e4dd01ddec6a4e88287f",
+          "size": 5615
+        },
+        {
+          "path": "skills/brainstorming/scripts/server.cjs",
+          "sha": "fdc796122583f5d6687d9582eb265c2fa0cb7781",
+          "size": 25699
+        },
+        {
+          "path": "skills/brainstorming/scripts/start-server.sh",
+          "sha": "016a8e4870142ce2adbe81a021d8b6b9073e7618",
+          "size": 6908
+        },
+        {
+          "path": "skills/brainstorming/scripts/stop-server.sh",
+          "sha": "7cacfe9440043f7a46eac555cd835fad0769c425",
+          "size": 3263
+        },
+        {
+          "path": "skills/brainstorming/visual-companion.md",
+          "sha": "8dca065bd9adb9d4fa82a66acbb4176ea23259c6",
+          "size": 13413
+        },
+        {
+          "path": "skills/dispatching-parallel-agents/SKILL.md",
+          "sha": "3fa091b348bbe0a18eaa0e17e9092c97f7005cbe",
+          "size": 6078
+        },
+        {
+          "path": "skills/executing-plans/SKILL.md",
+          "sha": "ac77129d7c695734105004b6da10169de8d13df3",
+          "size": 18103
+        },
+        {
+          "path": "skills/executing-plans/scripts/task-done",
+          "sha": "e5fc6a992fb41745a4113a55a5da5cbb11ddde55",
+          "size": 1692
+        },
+        {
+          "path": "skills/executing-plans/scripts/task-start",
+          "sha": "fab75b55b2e51c0de1a1331d19c3124924380eac",
+          "size": 963
+        },
+        {
+          "path": "skills/finishing-a-development-branch/SKILL.md",
+          "sha": "fa8aecaf8813f1b19d19996f7957d1b0121f2d9c",
+          "size": 7781
+        },
+        {
+          "path": "skills/receiving-code-review/SKILL.md",
+          "sha": "950da7b74bf6dbed6b8726d12ddadd65a9f5fda7",
+          "size": 6203
+        },
+        {
+          "path": "skills/requesting-code-review/SKILL.md",
+          "sha": "68d338a58ecdd8b77bfbb519b781ef223dbbb842",
+          "size": 2974
+        },
+        {
+          "path": "skills/requesting-code-review/code-reviewer.md",
+          "sha": "6d358b5d7d450c83cacbe450b7dbd4e673b694ad",
+          "size": 6449
+        },
+        {
+          "path": "skills/subagent-driven-development/SKILL.md",
+          "sha": "ea170ed101d61a52fdee0ade8368ec0723980a5c",
+          "size": 19506
+        },
+        {
+          "path": "skills/subagent-driven-development/implementer-prompt.md",
+          "sha": "5c8ecd61fba036263bf88d0af24d47125780efa0",
+          "size": 6335
+        },
+        {
+          "path": "skills/subagent-driven-development/re-review-prompt.md",
+          "sha": "d49c1825f01e79641ba37e5e942d1d2bbaad1a3c",
+          "size": 4761
+        },
+        {
+          "path": "skills/subagent-driven-development/references/batching.md",
+          "sha": "6224e4ba255ed8359d608aaa4b8af785b6fdee70",
+          "size": 583
+        },
+        {
+          "path": "skills/subagent-driven-development/references/cannot-verify.md",
+          "sha": "e952f2d40c2646840f33f7856707f08828cbd46a",
+          "size": 513
+        },
+        {
+          "path": "skills/subagent-driven-development/references/final-review.md",
+          "sha": "851a5c5520cbb377b823229cbfdf441dcd79ac27",
+          "size": 2447
+        },
+        {
+          "path": "skills/subagent-driven-development/references/fix-loop.md",
+          "sha": "0b476e92a068af56113ff0a5c9c7ebef1afe7d2c",
+          "size": 4249
+        },
+        {
+          "path": "skills/subagent-driven-development/references/handling-reports.md",
+          "sha": "cf91cdcddde1e051bf2fc51329197af4063b9dbc",
+          "size": 1062
+        },
+        {
+          "path": "skills/subagent-driven-development/references/preflight.md",
+          "sha": "170164883949e00aace6297b600b2c5a72bc6d5a",
+          "size": 1353
+        },
+        {
+          "path": "skills/subagent-driven-development/references/resuming.md",
+          "sha": "409b826eb8c875c51dd3799add37fcaab43b69b3",
+          "size": 614
+        },
+        {
+          "path": "skills/subagent-driven-development/scripts/review-package",
+          "sha": "fa7625f053dc852200ddd497662508ff1ae40bb1",
+          "size": 2029
+        },
+        {
+          "path": "skills/subagent-driven-development/scripts/sdd-workspace",
+          "sha": "b4661eb6ef646dae804c6b7932ccdbe942520a55",
+          "size": 3684
+        },
+        {
+          "path": "skills/subagent-driven-development/scripts/task-brief",
+          "sha": "b49fc546c85e1d6f6c8b523d6c887c55d98ed989",
+          "size": 1322
+        },
+        {
+          "path": "skills/subagent-driven-development/task-reviewer-prompt.md",
+          "sha": "5c619bc510440b7bf156e78c4dfc60f198963cf0",
+          "size": 9031
+        },
+        {
+          "path": "skills/systematic-debugging/CREATION-LOG.md",
+          "sha": "9aa03092809feaf93c9bfa985252f6f1c9624692",
+          "size": 4257
+        },
+        {
+          "path": "skills/systematic-debugging/SKILL.md",
+          "sha": "62fc752aaef59a8bbed5d305f4cadc60f8ae07ed",
+          "size": 9530
+        },
+        {
+          "path": "skills/systematic-debugging/condition-based-waiting-example.ts",
+          "sha": "703a06b653160d060bbf46ab5c6e0cd7446bd592",
+          "size": 5054
+        },
+        {
+          "path": "skills/systematic-debugging/condition-based-waiting.md",
+          "sha": "70994f777c586f7d4c43033aac34c7cf0da6688b",
+          "size": 3516
+        },
+        {
+          "path": "skills/systematic-debugging/defense-in-depth.md",
+          "sha": "e2483354dc2b62478a2624e34ca18bc0efe887b2",
+          "size": 3650
+        },
+        {
+          "path": "skills/systematic-debugging/find-polluter.sh",
+          "sha": "985f5d08ccf8a3f2d40739cfcaf4413bb24bf1cb",
+          "size": 1986
+        },
+        {
+          "path": "skills/systematic-debugging/root-cause-tracing.md",
+          "sha": "0e72e8f9566b7ef85e814633d1feacad9d0c5868",
+          "size": 5321
+        },
+        {
+          "path": "skills/systematic-debugging/test-academic.md",
+          "sha": "23a6ed7a2044e0c44d74c3101406140f4851aa41",
+          "size": 653
+        },
+        {
+          "path": "skills/systematic-debugging/test-pressure-1.md",
+          "sha": "8d13b467e4a98abfffd12161cbc3c418021d6023",
+          "size": 1900
+        },
+        {
+          "path": "skills/systematic-debugging/test-pressure-2.md",
+          "sha": "2d2315ec8a24ca872bc80d2f4056468ba051462a",
+          "size": 2283
+        },
+        {
+          "path": "skills/systematic-debugging/test-pressure-3.md",
+          "sha": "89734b86fdc756488df315d53e5c3ac2d3752cd8",
+          "size": 2692
+        },
+        {
+          "path": "skills/test-driven-development/SKILL.md",
+          "sha": "46838cc9e893c06259e3bdad0fc2425b36242f15",
+          "size": 9578
+        },
+        {
+          "path": "skills/test-driven-development/writing-good-tests.md",
+          "sha": "d3c4482fd30b4f9084bb61545fe73939a7502c28",
+          "size": 8268
+        },
+        {
+          "path": "skills/using-git-worktrees/SKILL.md",
+          "sha": "1381dacb3516b94382dd6ec736ede21ee8ede2b3",
+          "size": 6813
+        },
+        {
+          "path": "skills/verification-before-completion/SKILL.md",
+          "sha": "7d45333cc4a49c57a80df6c1fe2fa777a207afbc",
+          "size": 3646
+        },
+        {
+          "path": "skills/writing-plans/SKILL.md",
+          "sha": "4cf0275d88d67aa4ef09f4bbca9970ed6ff74a00",
+          "size": 10335
+        }
+      ]
+    }
+  }
+}

@@ -1,8 +1,42 @@
 import { Router } from 'express';
 import claseRoutes from './claseRoutes.js';
+import AuthController from '../controllers/AuthController.js';
+import { responder } from '../controllers/ClaseController.js';
+import { requireRoles } from '../middlewares/auth.js';
 
-const router = Router();
-
-router.use('/clases', claseRoutes);
-
-export default router;
+export default function routes({ auth, clases, membresias, inscripciones }) {
+    const router = Router();
+    const controller = new AuthController(auth);
+    const admin = requireRoles(auth.repository, 'Administrador');
+    const socio = requireRoles(auth.repository, 'Socio');
+    const conectado = requireRoles(auth.repository);
+    const asistencia = requireRoles(auth.repository, 'Administrador', 'Instructor');
+    router.get('/auth/sesion', controller.sesion);
+    router.post('/auth/login', controller.login);
+    router.post('/auth/registro', controller.registro);
+    router.post('/auth/logout', conectado, controller.logout);
+    router.put('/mi-cuenta', conectado, controller.perfil);
+    router.use('/clases', claseRoutes(clases, auth.repository));
+    router.get('/planes', responder(() => membresias.planesDisponibles()));
+    router.put('/planes/:tipo', admin, responder(req => membresias.configurar(req.params.tipo, req.body)));
+    router.get('/mi-membresia', socio, responder(req => membresias.actual(req.user.id)));
+    router.post('/mi-membresia/solicitud', socio, responder(req => membresias.solicitar(req.body, req.user), 201));
+    router.get('/mis-pagos', socio, responder(req => membresias.pagos(req.user.id)));
+    router.get('/socios', admin, responder(() => membresias.socios()));
+    router.post('/socios', admin, controller.crearSocio);
+    router.get('/socios/:id', admin, responder(req => membresias.detalle(req.params.id)));
+    router.put('/socios/:id', admin, controller.editarSocio);
+    router.get('/instructores', admin, responder(() => auth.repository.findAll('Instructor')));
+    router.post('/instructores', admin, controller.crearInstructor);
+    router.get('/pagos', admin, responder(() => membresias.pagos(null)));
+    router.post('/pagos', admin, responder(req => membresias.registrarPago(req.body, req.user), 201));
+    router.get('/inscripciones', socio, responder(req => inscripciones.list(req.user.id)));
+    router.post('/inscripciones', socio, responder(req => inscripciones.reservar(req.body, req.user), 201));
+    router.post('/inscripciones/:id/cancelar', socio, responder(req => inscripciones.cancelar(req.params.id, req.user)));
+    router.get('/mi-historial', socio, responder(req => inscripciones.list(req.user.id, true)));
+    router.get('/socios/:id/historial', admin, responder(req => inscripciones.historial(req.params.id)));
+    router.get('/clases/:id/participantes', asistencia, responder(req => inscripciones.participantes(req.params.id, req.user)));
+    router.put('/inscripciones/:id/asistencia', asistencia, responder(req => inscripciones.asistencia(req.params.id, req.body, req.user)));
+    router.get('/reportes', admin, responder(() => inscripciones.reportes()));
+    return router;
+}
