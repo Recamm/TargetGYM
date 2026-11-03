@@ -23,6 +23,7 @@ test('tarifas confirmadas: portada, pase diario, jubilados verificados y tarjeta
         const socioPage = await contexto.newPage();
         await socioPage.goto('/#planes');
         await expect(socioPage.locator('.plan-card')).toHaveCount(6);
+        await socioPage.locator('.plan-fold').filter({ has: socioPage.getByRole('heading', { name: 'Plan Mensual Libre', exact: true }) }).locator('summary').click();
         const mensual = socioPage.getByRole('article', { name: 'Plan Mensual Libre', exact: true });
         await expect(mensual.locator('.plan-tariff').filter({ hasText: 'Transferencia o tarjeta' })).toContainText('88.000');
         await expect(mensual.locator('.plan-tariff').filter({ hasText: 'Efectivo' })).toContainText('78.000');
@@ -34,6 +35,7 @@ test('tarifas confirmadas: portada, pase diario, jubilados verificados y tarjeta
             expect(await socioPage.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
             expect((await new AxeBuilder({ page: socioPage }).withTags(['wcag2a','wcag2aa','wcag21aa']).analyze()).violations).toEqual([]);
         }
+        await socioPage.locator('.plan-fold').filter({ has: socioPage.getByRole('heading', { name: 'Pase por un día', exact: true }) }).locator('summary').click();
         await socioPage.getByRole('link', { name: 'Elegir Pase por un día', exact: true }).click();
         await expect(socioPage.getByLabel('Plan que querés contratar')).toHaveValue('pase-dia');
         await expect(socioPage.getByText('Por 1 día corrido', { exact: true })).toBeVisible();

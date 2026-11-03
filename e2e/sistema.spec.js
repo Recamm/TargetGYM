@@ -169,9 +169,11 @@ test('interfaz publica: responsive, teclado, errores y accesibilidad', async ({ 
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('Qué bueno que viniste.');
     await expect(page.locator('.hero-photo img')).toHaveAttribute('src', '/marca/gimnasio-referencia.webp');
     await expect(page.getByText(/No corresponde a Target GYM/)).toHaveCount(0);
-    await expect(page.getByRole('article', { name: 'Plan mensual' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Plan mensual', exact: true })).toBeVisible();
     const planes = await page.request.get('/api/planes').then(response => response.json());
     for (const plan of planes.data) {
+        const fold = page.locator('.plan-fold').filter({ has: page.getByRole('heading', { name: plan.nombre, exact: true }) });
+        await fold.locator('summary').click();
         const card = page.getByRole('article', { name: plan.nombre, exact: true });
         if (plan.precioCentavos === null) await expect(card.locator('.plan-price')).toHaveText('Consultá el precio');
         else {
@@ -180,7 +182,7 @@ test('interfaz publica: responsive, teclado, errores y accesibilidad', async ({ 
             const total = new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', minimumFractionDigits: 0, maximumFractionDigits: 2 }).format(base / 100);
             await expect(card.locator('.plan-price').last()).toHaveText(total);
         }
-        await expect(card.locator('.plan-period')).toHaveText(plan.dias === null
+        await expect(fold.locator('.plan-period')).toHaveText(plan.dias === null
             ? `Por ${plan.meses} ${plan.meses === 1 ? 'mes' : 'meses'} calendario`
             : `Por ${plan.dias} ${plan.dias === 1 ? 'día corrido' : 'días corridos'}`);
     }
@@ -375,6 +377,7 @@ test('asociación por transferencia, portal del equipo y activación solo por pa
     expect(claseResponse.status()).toBe(201);
     const claseId = (await claseResponse.json()).data.id;
     await logout(page);
+    await page.locator('.plan-fold').filter({ has: page.getByRole('heading', { name: 'Plan mensual', exact: true }) }).locator('summary').click();
     await page.getByRole('link', { name: 'Elegir Plan mensual' }).click();
     await expect(page).toHaveURL('/asociate?plan=mensual');
     await expect(page.getByLabel('Plan que querés contratar')).toHaveValue('mensual');

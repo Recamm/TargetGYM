@@ -1,14 +1,15 @@
 # Target GYM — Manual de marca
 
-**Versión 1.7 · Identidad aprobada el 2 de noviembre de 2026**
+**Versión 2.1 · Identidad aprobada el 2 de noviembre de 2026 · Ajustes del 3 de noviembre**
 
 **Dirección:** Cerca. **Logo:** Mancuerna. **Paleta:** blanco y grafito
 con acentos Mandarina. **Tipografía:** Outfit + DM Sans.
 
 Esta es la única identidad activa de Target GYM. Sustituye las propuestas
 Enfoque, Ritmo, Cerca bosque/lavanda y las exploraciones cálidas anteriores.
-El usuario aprobó la [portada Cerca/Mandarina](./preview.html) y su aplicación
-a la web completa. La aprobación visual no verifica los datos del gimnasio
+El usuario aprobó Cerca/Mandarina y su aplicación a la web completa; la foto
+usa [A. Rectángulo suave](./portada.html#suave), con esquinas de 24 px.
+La aprobación visual no verifica los datos del gimnasio
 ni autoriza un despliegue.
 
 [Manual visual en PDF](./Manual-de-marca.pdf) ·
@@ -99,6 +100,11 @@ tarjeta, sección o estado. No hay un porcentaje obligatorio de naranja.
 En pantallas operativas puede haber varios botones principales cuando
 pertenecen a operaciones independientes.
 
+Por revisión del usuario, se retiran los filetes naranjas de ubicación,
+beneficios y contacto, el subrayado naranja y los tintes cálidos de actividad
+y duración. La web vuelve a superficies neutras; Mandarina se reserva a los
+botones y su hover. No alterar los colores semánticos de error o confirmación.
+
 ### Combinaciones verificables
 
 - Grafito sobre blanco: aproximadamente **13,28:1**.
@@ -137,7 +143,7 @@ externos en ejecución. Solo se usan estilos normales; no simular cursivas.
 
 | Rol digital | Tamaño | Interlineado / criterio |
 |---|---|---|
-| Bienvenida de portada | 53,6–92 px en escritorio; desde 48 px en móvil | 1,02; peso 500 |
+| Bienvenida de portada | 44–76,8 px en escritorio; 41,6–64 px en móvil | 1,04; peso 500 |
 | Título de página | 40–60 px | 1,14; peso 500 |
 | Título de sección de portada | 36–48 px | 1,10 |
 | Título de contenido | 23–30 px | 1,14 |
@@ -155,8 +161,9 @@ No renombrar las fuentes ni quitar sus licencias al entregar archivos.
 
 ## 5. Composición y formas
 
-La portada tiene un único gesto protagonista: una fotografía en arco
-a la izquierda y la bienvenida a la derecha. En móvil se lee primero
+La portada usa **A. Rectángulo suave**: una fotografía horizontal 4:3
+a la izquierda y la bienvenida a la derecha, en columnas iguales con 64 px
+de separación (32 px en tamaños intermedios). En móvil se lee primero
 la bienvenida y luego la imagen. Se conserva espacio entre bloques;
 no se rellena con ilustraciones o estadísticas ficticias.
 
@@ -164,8 +171,8 @@ no se rellena con ilustraciones o estadísticas ficticias.
   32 px en tamaños intermedios y 20 px en móvil.
 - Escala de espacio principal: 8, 12, 16, 20, 24, 28, 32, 48, 64, 88 y 96 px.
 - Botón: radio 16 px. Campo: 12 px. Panel: 20–24 px.
-- Arco: esquinas superiores del 48%; esquinas inferiores de 24 px.
-  No repetirlo en cada tarjeta o formulario.
+- Foto: radio 24 px en las cuatro esquinas y proporción 4:3 también en móvil.
+  Sustituye el arco de la exploración anterior.
 - Sin gradientes de adorno, sombras genéricas, flechas repetidas, numeración
   arbitraria, carruseles automáticos ni movimientos obligatorios.
 - Los radios ayudan a agrupar; no sustituyen jerarquía, título ni etiqueta.
@@ -178,7 +185,7 @@ son referencias RGB para pantalla; no se certificaron CMYK ni Pantone.
 | Superficie | Tratamiento implementado |
 |---|---|
 | Cabecera | Nombre sin símbolo; Inicio, Clases, Planes; Ya soy socio discreto y Asociate Mandarina |
-| Portada | Bienvenida Cerca, foto en arco, actividades, planes con precios reales y agenda |
+| Portada | Bienvenida Cerca, foto rectangular 4:3 con radio 24 px, actividades y planes reales |
 | Agenda pública / socio | Filtros sobre gris claro; fecha, instructor, duración y cupo visibles |
 | Acceso / registro / perfil | Campos blancos con borde perceptible, etiqueta y error cercano |
 | Área del socio | Mi espacio como entrada; cuenta creada y membresía activa se distinguen |
@@ -188,13 +195,16 @@ son referencias RGB para pantalla; no se certificaron CMYK ni Pantone.
 | Notificaciones | Flotantes, temporales, texto explícito, cierre accesible y acento semántico |
 | Vacío / carga / error | Panel gris o error diferenciado; nunca éxito simulado |
 
-Las acciones principales usan Mandarina con texto Grafito. Las secundarias
-son blancas con borde; las discretas, texto subrayado. Mantener al menos
+Las acciones principales usan Mandarina con texto Grafito. Las secundarias,
+discretas, menú y cierres usan Grafito con texto blanco; las discretas
+conservan el subrayado. Mantener al menos
 44 × 44 px en controles principales y foco Grafito visible de 3 px.
-Hover y foco: fondo Mandarina suave `#FFAD73` para principales, gris
-`#E8EBEE` para secundarias/discretas, menú y cierres. Transición de fondo/borde de
+Hover y foco: las principales pasan a fondo Grafito con texto blanco;
+las demás pasan a Mandarina con texto Grafito. Incluye botones de
+administración, confirmación y eliminación, conservando etiquetas y diálogos.
+Transición de fondo, borde y texto de
 220 ms con `cubic-bezier(.2, .7, .2, 1)`, sin mover ni escalar controles.
-Texto Grafito durante toda la transición. Deshabilitados no cambian.
+Deshabilitados no cambian.
 Sin transición con movimiento reducido; en táctil no se fuerza un hover.
 No ocultar datos o acciones importantes solo para reducir densidad.
 
@@ -232,16 +242,20 @@ el foco al control anterior disponible o al contenido principal.
 Siempre se permite cierre manual. Los errores junto a campos o paneles
 permanecen visibles hasta su corrección o reintento.
 
-Las tarjetas de planes usan **A. Clara**, aprobada el 2 de noviembre de 2026:
-superficie blanca, texto/foco Grafito, ayudas gris secundario y borde
-`#737B85`. Nombre y duración (esta sobre gris claro) preceden a descripción y
-tarifas etiquetadas por método. Efectivo primero; otros medios con el mismo
-importe se agrupan, sin ofrecer medios deshabilitados o incompatibles.
-Precio protagonista y botón Mandarina de ancho completo para elegir el plan.
-Sin sombras ni relleno naranja general. Radio 24 px, separación 24 px y
-padding 28 px (24 px en móvil). Ancho flexible, máximo 440 px en portada;
-centrar el grupo y las filas incompletas, desde una tarjeta hasta muchas,
-y alinear las acciones al pie aunque haya distintas promociones.
+Los planes usan **C. Desplegables**, aprobada el 3 de noviembre de 2026.
+Conservan blanco, texto/foco Grafito, ayudas gris y separadores `#737B85`.
+Cada fila ocupa el ancho disponible: nombre, duración, una tarifa con su
+método y «Tarifas y condiciones». Efectivo primero si está disponible;
+nunca se anuncia una promoción condicionada como precio universal.
+Todos inician cerrados; cada uno se puede abrir/cerrar de forma independiente
+con puntero o teclado. Al abrir: todas las tarifas por método, descripción,
+requisitos y botón Mandarina para elegir, según el rol y disponibilidad.
+Sin sombras, relleno naranja, carrusel ni desplazamiento horizontal.
+Resumen: padding 20 × 8 px (18 × 8 px en móvil). Dos columnas en el cuerpo,
+tarifas a la izquierda y detalle/acción a la derecha; en móvil se apila.
+Texto de resumen 18,4–20,8 px; importe 16–25,6 px adaptable al contenedor.
+Foco 3 px y signo +/−; cerrado, el contenido no entra en la navegación.
+La actualización de tarifas conserva el estado abierto del plan.
 El panel reserva el espacio de su scrollbar para no cambiar de posición
 horizontal entre secciones. Caja identifica métodos deshabilitados con
 texto, no solo color; no se quitan métodos ni pagos históricos.
@@ -249,7 +263,7 @@ texto, no solo color; no se quitan métodos ni pagos históricos.
 Los planes de portada consultan los precios configurados y se actualizan
 cada 30 s; solo se publican planes habilitados. Mostrar el total en ARS
 por el período completo, indicando meses calendario o días corridos.
-En Clara, omitir decimales que sean cero; conservar centavos cuando existan.
+En portada, omitir decimales que sean cero; conservar centavos cuando existan.
 La tipografía se adapta al contenedor, no al viewport, y el importe no se
 divide entre líneas. No cambiar el formato del historial o los comprobantes.
 En descuentos generales, usar precio anterior y porcentaje o importe fijo exacto.
@@ -264,6 +278,11 @@ La acción lleva al registro, membresía, configuración o consulta según
 el rol; no cobra online. Tarjeta significa pago presencial pendiente, nunca
 un checkout ni un pedido de datos de tarjeta.
 Carga, vacío y error con reintento son explícitos.
+
+El [estudio de distribuciones compactas](./planes-compactos.html#desplegables)
+registra C como aprobada. Compactas, Filas y Horizontal quedan como
+antecedentes, igual que las tarjetas Clara originales. No reducir espacio
+recortando importes o condiciones.
 
 Administración permite crear/editar planes y confirmar su deshabilitación
 o eliminación con consecuencias claras. Los nombres históricos no son
@@ -335,7 +354,8 @@ desarrollaron para este proyecto; no se afirma registro jurídico.
 - Componentes y responsive: [App.css](../../frontend/src/App.css).
 - Distribución de logo, foto y fuentes: [marca](../../frontend/public/marca/).
 - Maestros de logo: [logos](./logos/). No mezclar rutas históricas.
-- Muestra aprobada: [preview.html](./preview.html), conservada como referencia.
+- Foto aprobada: [portada.html#suave](./portada.html#suave), actualizada a radio 24 px.
+- Exploración inicial: [preview.html](./preview.html), conservada como antecedente.
 
 Antes de publicar: confirmar dirección/horarios/actividades, obtener fotos
 reales autorizadas, comprobar rutas y roles con datos reales y verificar el

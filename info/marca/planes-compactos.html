@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Cuatro formas más compactas de mostrar los planes reales de Target gym.">
+  <title>Planes, con menos espacio · Target gym</title>
+  <link rel="icon" href="../../frontend/public/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="planes.css">
+  <link rel="stylesheet" href="planes-compactos.css">
+  <script type="module" src="planes-compactos.js"></script>
+</head>
+<body>
+  <a class="skip" href="#propuestas">Saltar a los diseños</a>
+  <div class="shell">
+    <header class="masthead">
+      <a class="brand" href="/">Target gym</a>
+      <span>Estudio de distribución</span>
+      <a href="/#planes">Ver la sección actual</a>
+    </header>
+    <main>
+      <section class="intro" aria-labelledby="titulo">
+        <h1 id="titulo">Todos los planes.<br>Menos espacio.</h1>
+        <div>
+          <p>Cuatro alternativas para acortar la sección sin achicar la letra ni perder las tarifas.</p>
+          <p class="muted">C. Desplegables está aprobada y aplicada a la web. Se conservan las superficies neutras, los botones Mandarina/Grafito y la foto redondeada. Las demás opciones quedan como antecedentes.</p>
+        </div>
+      </section>
+      <fieldset class="variants">
+        <legend>Elegí una distribución para probarla</legend>
+        <label><input type="radio" name="distribucion" value="compactas" checked><span><strong>A. Compactas</strong><small>La tarjeta Clara, más corta.</small></span></label>
+        <label><input type="radio" name="distribucion" value="filas"><span><strong>B. Filas</strong><small>Nombre, tarifas y acción en una fila.</small></span></label>
+        <label><input type="radio" name="distribucion" value="desplegables"><span><strong>C. Desplegables</strong><small>Abrís solo el plan que te interesa.</small></span></label>
+        <label><input type="radio" name="distribucion" value="horizontal"><span><strong>D. Horizontal</strong><small>Una sola fila, sin avance automático.</small></span></label>
+      </fieldset>
+      <section id="propuestas" aria-labelledby="design-title" aria-busy="true">
+        <div class="design-intro">
+          <div><h2 id="design-title">A. Compactas</h2><p id="design-description" aria-live="polite">Precios lado a lado, menos espacio interior y descripción desplegable. Todos los planes siguen a la vista.</p></div>
+          <p class="benefits">Pase libre y clases incluidas.<br>Sin matrícula ni inscripción.</p>
+        </div>
+        <p id="estado" role="status">Cargando el catálogo del gimnasio…</p>
+        <button id="reintentar" type="button" hidden>Reintentar carga</button>
+        <div id="recorrido" class="rail-controls" hidden>
+          <p>Deslizá la fila o usá los botones. También podés recorrerla con Tab.</p>
+          <div><button id="anterior" class="rail-button" type="button" aria-controls="tarjetas">Anterior</button><button id="siguiente" class="rail-button" type="button" aria-controls="tarjetas">Siguiente</button></div>
+        </div>
+        <div id="tarjetas" class="compact-samples" data-layout="compactas"></div>
+        <p class="payment-note">Importes en ARS por el período completo. Pago coordinado en el gimnasio; tarjeta presencial, sin cobro online.</p>
+      </section>
+      <aside class="preview-note" aria-labelledby="nota-title">
+        <h2 id="nota-title">Qué gana y qué cede cada opción</h2>
+        <p><strong>A.</strong> Mantiene la comparación de todos los planes. La descripción se abre a pedido; requisitos y promociones siguen visibles.</p>
+        <p><strong>B.</strong> Ordena la información como una lista. En móvil se apila y conserva los precios lado a lado.</p>
+        <p><strong>C.</strong> Es la más resumida al entrar. La tarifa de referencia indica su método; abrí cada plan para ver todas las tarifas, condiciones y acción.</p>
+        <p><strong>D.</strong> Reduce la altura a una sola fila. Requiere desplazarse para descubrir todos los planes; no es la mejor para compararlos todos juntos.</p>
+        <p>Se usa el catálogo actual, sin inventar precios ni ocultar condiciones de pago. Los botones llevan al formulario real, no registran compras. <a href="/#planes">Ver C. Desplegables aplicada</a>.</p>
+      </aside>
+    </main>
+    <footer><span>Target gym · Cerca / Mandarina</span><a href="planes.html">Estudio anterior · A. Clara</a></footer>
+  </div>
+</body>
+</html>

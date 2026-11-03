@@ -51,7 +51,7 @@ test('panel estable con scrollbar real al navegar entre secciones cortas y larga
     } finally { await browser.close(); }
 });
 
-test('planes con 1, 2, 3, 4, 5 y 7 tarjetas se centran y se adaptan sin desbordar', async ({ page }, testInfo) => {
+test('planes con 1, 2, 3, 4, 5 y 7 desplegables ocupan el ancho disponible sin desbordar', async ({ page }, testInfo) => {
     let cantidad = 1;
     await page.route('**/api/planes', route => route.fulfill({ json: { success: true, data: Array.from({ length: cantidad }, (_, index) => ({
         tipo: `plan-${index}`, nombre: `Plan ${index + 1}`, meses: index + 1, dias: null, precioCentavos: 1500000,
@@ -64,47 +64,43 @@ test('planes con 1, 2, 3, 4, 5 y 7 tarjetas se centran y se adaptan sin desborda
         await page.goto('/');
         await expect(page.locator('.plan-card')).toHaveCount(cantidad);
         await page.evaluate(() => document.fonts.ready);
-        const medidas = await page.locator('.plan-grid').evaluate(element => {
-            const cards = [...element.children].map(card => {
-                const { x, y, width, right, bottom } = card.getBoundingClientRect();
-                const button = card.querySelector('a.button.primary'), style = getComputedStyle(card);
-                const padding = parseFloat(style.paddingLeft) + parseFloat(style.paddingRight);
-                return { x, y, width, right, bottom, fondo: style.backgroundColor, color: style.color,
-                    button: button && { width: button.getBoundingClientRect().width, fondo: getComputedStyle(button).backgroundColor, height: button.getBoundingClientRect().height },
-                    contenido: card.clientWidth - padding };
-            });
-            const section = element.closest('section').getBoundingClientRect();
-            return { cards, centro: section.x + section.width / 2, overflow: document.documentElement.scrollWidth > innerWidth };
+        const medidas = await page.locator('.plan-list').evaluate(element => {
+            const box = element.getBoundingClientRect();
+            return { ancho: box.width, x: box.x, folds: [...element.children].map(fold => {
+                const rect = fold.getBoundingClientRect();
+                return { ancho: rect.width, x: rect.x, open: fold.open };
+            }), overflow: document.documentElement.scrollWidth > innerWidth };
         });
         expect(medidas.overflow).toBe(false);
-        const centro = (Math.min(...medidas.cards.map(card => card.x)) + Math.max(...medidas.cards.map(card => card.right))) / 2;
-        expect(Math.abs(centro - medidas.centro)).toBeLessThanOrEqual(1);
-        for (const card of medidas.cards) {
-            expect(card.width).toBeGreaterThanOrEqual(Math.min(280, width - 48));
-            expect(card.fondo).toBe('rgb(255, 255, 255)');
-            expect(card.color).toBe('rgb(44, 48, 53)');
-            expect(card.button).not.toBeNull();
-            expect(Math.abs(card.button.width - card.contenido)).toBeLessThanOrEqual(1);
-            expect(card.button.height).toBeGreaterThanOrEqual(48);
-            expect(card.button.fondo).toBe('rgb(244, 131, 53)');
+        for (const fold of medidas.folds) {
+            expect(Math.abs(fold.ancho - medidas.ancho)).toBeLessThanOrEqual(1);
+            expect(Math.abs(fold.x - medidas.x)).toBeLessThanOrEqual(1);
+            expect(fold.open).toBe(false);
         }
+        await expect(page.getByRole('link', { name: /^Elegir / })).toHaveCount(0);
         if (width === 1600 && cantidad === 1) {
-            expect(medidas.cards[0].width).toBeLessThanOrEqual(520);
             await page.screenshot({ path: testInfo.outputPath('plan-unico.png'), fullPage: true });
         }
         if (width === 1600 && cantidad === 5) await page.screenshot({ path: testInfo.outputPath('planes-cinco.png'), fullPage: true });
         if (cantidad === 3 && [390, 1600].includes(width)) {
             expect((await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa']).analyze()).violations).toEqual([]);
+            const summary = page.locator('.plan-fold > summary').first();
+            await summary.focus();
+            await page.keyboard.press('Enter');
+            await expect(page.locator('.plan-fold').first()).toHaveJSProperty('open', true);
             const elegir = page.locator('.plan-card a').first();
             await elegir.focus();
+            await expect(elegir).toBeVisible();
+            await expect(elegir).toHaveCSS('background-color', 'rgb(44, 48, 53)');
             expect(await elegir.evaluate(element => getComputedStyle(element).outlineColor)).toBe('rgb(44, 48, 53)');
             await expect(elegir).toBeFocused();
+            expect((await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa']).analyze()).violations).toEqual([]);
         }
     }
     expect((await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa']).analyze()).violations).toEqual([]);
 });
 
-test('precios completos en una línea dentro de cada tarjeta, incluso al cambiar las columnas', async ({ page }) => {
+test('precios completos en resumen y detalle de cada plan en todos los anchos', async ({ page }) => {
     let cantidad = 6;
     await page.route('**/api/planes', route => route.fulfill({ json: { success: true, data: Array.from({ length: cantidad }, (_, index) => ({
         tipo: `precio-${index}`, nombre: `Plan ${index + 1}`, meses: 1, dias: null,
@@ -116,39 +112,134 @@ test('precios completos en una línea dentro de cada tarjeta, incluso al cambiar
         await page.setViewportSize({ width, height: 900 });
         await page.goto('/');
         await expect(page.locator('.plan-card')).toHaveCount(cantidad);
+        for (const fold of await page.locator('.plan-fold').all()) await fold.locator('summary').click();
         await page.evaluate(() => document.fonts.ready);
-        const precios = await page.locator('.plan-card .plan-price').evaluateAll(nodes => nodes.map(node => {
+        const precios = await page.locator('.plan-summary-amount, .plan-card .plan-price').evaluateAll(nodes => nodes.map(node => {
             const range = document.createRange();
             range.selectNodeContents(node);
             const rects = [...range.getClientRects()].filter(rect => rect.width > 0), box = node.getBoundingClientRect();
             return { lineas: new Set(rects.map(rect => Math.round(rect.y))).size,
                 dentro: rects.every(rect => rect.left >= box.left - 1 && rect.right <= box.right + 1),
-                legible: parseFloat(getComputedStyle(node).fontSize) >= 20 };
+                legible: parseFloat(getComputedStyle(node).fontSize) >= 16 };
         }));
-        expect(precios, `pantalla ${width}px, ${cantidad} planes`).toEqual(Array(cantidad).fill({ lineas: 1, dentro: true, legible: true }));
+        expect(precios, `pantalla ${width}px, ${cantidad} planes`).toEqual(Array(cantidad * 2).fill({ lineas: 1, dentro: true, legible: true }));
         expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
     }
 });
 
+test('C abre con teclado, conserva foco y estado al actualizar tarifas y no promete medios apagados', async ({ page }) => {
+    await page.clock.install();
+    let efectivo = true;
+    await page.route('**/api/planes', route => route.fulfill({ json: { success: true, data: [{
+        tipo: 'mensual', nombre: 'Plan Mensual Libre', meses: 1, dias: null, precioCentavos: 8800000,
+        precioDescuentoCentavos: 7800000, descuentoPorcentaje: 0, metodoDescuento: 'Efectivo', condicionesDescuento: '',
+        descripcion: 'Entrenamiento acompañado.', requisitosAcceso: 'Condición verificada en recepción.',
+        metodoExclusivo: null, permiteTarjeta: true, habilitado: true,
+    }] } }));
+    await page.route('**/api/metodos-pago', route => route.fulfill({ json: { success: true, data: ['Efectivo', 'Transferencia', 'Tarjeta']
+        .map(codigo => ({ codigo, habilitado: codigo !== 'Efectivo' || efectivo, permiteSocio: true })) } }));
+    await page.goto('/#planes');
+    const fold = page.locator('.plan-fold'), summary = fold.locator('summary');
+    await expect(summary).toContainText('Efectivo');
+    await expect(summary).toContainText('78.000');
+    await expect(page.getByRole('link', { name: 'Elegir Plan Mensual Libre', exact: true })).toHaveCount(0);
+    await summary.focus();
+    await page.keyboard.press('Enter');
+    await expect(fold).toHaveJSProperty('open', true);
+    await expect(page.getByRole('article', { name: 'Plan Mensual Libre', exact: true })).toContainText('Condición verificada en recepción.');
+    await expect(page.getByRole('link', { name: 'Elegir Plan Mensual Libre', exact: true })).toBeVisible();
+    efectivo = false;
+    await page.clock.fastForward(30000);
+    await expect(summary).toContainText('Transferencia o tarjeta');
+    await expect(summary).toContainText('88.000');
+    await expect(fold).toHaveJSProperty('open', true);
+    await expect(summary).toBeFocused();
+    await expect(fold.locator('.plan-card')).not.toContainText('78.000');
+    await expect(fold.locator('.plan-card')).not.toContainText('Efectivo');
+    await page.keyboard.press('Enter');
+    await expect(fold).toHaveJSProperty('open', false);
+    await expect(page.getByRole('link', { name: 'Elegir Plan Mensual Libre', exact: true })).toHaveCount(0);
+    await expect(summary).toBeFocused();
+});
+
+test('portada A conserva foto horizontal, esquinas de 24 px y superficies neutras responsive', async ({ page }, testInfo) => {
+    for (const width of [320, 390, 760, 1024, 1440]) {
+        await page.setViewportSize({ width, height: 900 });
+        await page.goto('/');
+        const foto = page.locator('.hero-photo img');
+        await expect(foto).toBeVisible();
+        await page.evaluate(() => document.fonts.ready);
+        const medidas = await foto.evaluate(img => {
+            const rect = img.getBoundingClientRect(), copy = document.querySelector('.hero-copy').getBoundingClientRect();
+            const style = getComputedStyle(img);
+            return { cargada: img.complete && img.naturalWidth > 0, proporcion: rect.width / rect.height,
+                radios: [style.borderTopLeftRadius, style.borderTopRightRadius, style.borderBottomLeftRadius, style.borderBottomRightRadius],
+                x: rect.x, y: rect.y, right: rect.right, copyX: copy.x, copyBottom: copy.bottom,
+                overflow: document.documentElement.scrollWidth > innerWidth };
+        });
+        expect(medidas.cargada).toBe(true);
+        expect(medidas.proporcion).toBeCloseTo(4 / 3, 2);
+        expect(medidas.radios).toEqual(['24px', '24px', '24px', '24px']);
+        expect(medidas.overflow).toBe(false);
+        const suave = 'rgb(245, 246, 247)';
+        await expect(page.locator('.location-line')).toHaveCSS('border-left-width', '0px');
+        await expect(page.locator('.site-header nav > a[aria-current="page"]')).toHaveCSS('text-decoration-color', 'rgb(44, 48, 53)');
+        await expect(page.locator('.activity[open]')).toHaveCSS('background-color', suave);
+        await expect(page.locator('.plan-summary-heading .plan-period').first()).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+        await expect(page.locator('.plan-card').first()).toHaveCSS('background-color', 'rgb(255, 255, 255)');
+        await expect(page.locator('.gym-benefits li').first()).toHaveCSS('border-left-width', '0px');
+        await expect(page.locator('.footer-visit')).toHaveCSS('border-top-width', '0px');
+        if (width > 760) expect(medidas.right).toBeLessThan(medidas.copyX);
+        else expect(medidas.y).toBeGreaterThan(medidas.copyBottom);
+        if ([390, 1440].includes(width)) {
+            const actividad = page.locator('.activity').nth(1), control = actividad.locator('summary');
+            await control.focus();
+            await page.keyboard.press('Enter');
+            await expect(actividad).toHaveJSProperty('open', true);
+            await expect(actividad).toHaveCSS('background-color', suave);
+            await page.keyboard.press('Enter');
+            await expect(actividad).toHaveJSProperty('open', false);
+            await expect(actividad).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+            await control.blur();
+            await page.screenshot({ path: testInfo.outputPath(`portada-A-${width}.png`), fullPage: true });
+            expect((await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa']).analyze()).violations).toEqual([]);
+        }
+    }
+});
+
 test('botones cambian de fondo con transición, conservan geometría y respetan deshabilitados y movimiento reducido', async ({ page }) => {
-    await page.goto('/');
-    for (const [nombre, esperado] of [['Ver planes', 'rgb(255, 173, 115)'], ['Ver clases', 'rgb(232, 235, 238)']]) {
-        const boton = page.getByRole('link', { name: nombre, exact: true });
+    const naranja = 'rgb(244, 131, 53)', grafito = 'rgb(44, 48, 53)', blanco = 'rgb(255, 255, 255)';
+    async function verificar(boton, primario = false) {
+        const esperado = primario ? grafito : naranja, texto = primario ? blanco : grafito;
         await page.mouse.move(0, 0);
-        const inicial = await boton.evaluate(el => ({ color: getComputedStyle(el).backgroundColor, ancho: el.getBoundingClientRect().width }));
+        await expect(boton).toHaveCSS('background-color', primario ? naranja : grafito);
+        const inicial = await boton.boundingBox();
         await boton.hover();
-        await expect.poll(() => boton.evaluate(el => getComputedStyle(el).backgroundColor)).toBe(esperado);
-        const final = await boton.evaluate(el => ({ color: getComputedStyle(el).backgroundColor, ancho: el.getBoundingClientRect().width,
+        await expect(boton).toHaveCSS('background-color', esperado);
+        await expect(boton).toHaveCSS('color', texto);
+        const final = await boton.evaluate(el => ({ ancho: el.getBoundingClientRect().width, alto: el.getBoundingClientRect().height,
             duracion: getComputedStyle(el).transitionDuration, propiedad: getComputedStyle(el).transitionProperty }));
-        expect(final.color).not.toBe(inicial.color);
-        expect(final.ancho).toBe(inicial.ancho);
+        expect(final.ancho).toBe(inicial.width);
+        expect(final.alto).toBe(inicial.height);
         expect(final.duracion).toContain('0.22s');
         expect(final.propiedad).toContain('background-color');
+        await page.mouse.move(0, 0);
+        await page.keyboard.press('Tab');
+        await boton.focus();
+        await expect(boton).toHaveCSS('background-color', esperado);
+        await expect(boton).toHaveCSS('color', texto);
+        await expect(boton).toHaveCSS('outline-style', 'solid');
+        await boton.blur();
+        await expect(boton).toHaveCSS('background-color', primario ? naranja : grafito);
     }
+    await page.goto('/');
+    await verificar(page.getByRole('link', { name: 'Ver planes', exact: true }), true);
+    await verificar(page.getByRole('link', { name: 'Ver clases', exact: true }));
+    await page.goto('/clases');
+    await verificar(page.getByRole('button', { name: 'Limpiar filtros', exact: true }));
+    await page.goto('/');
     await page.setViewportSize({ width: 390, height: 900 });
-    const menu = page.getByRole('button', { name: 'Menú', exact: true });
-    await menu.hover();
-    await expect(menu).toHaveCSS('background-color', 'rgb(232, 235, 238)');
+    await verificar(page.getByRole('button', { name: 'Menú', exact: true }));
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.route('**/api/metodos-pago', route => route.fulfill({ json: { success: true, data: [] } }));
     await page.goto('/asociate');
@@ -162,7 +253,8 @@ test('botones cambian de fondo con transición, conservan geometría y respetan 
     const principal = page.getByRole('link', { name: 'Ver planes', exact: true });
     await principal.hover();
     await expect(principal).toHaveCSS('transition-duration', '0s');
-    await expect(principal).toHaveCSS('background-color', 'rgb(255, 173, 115)');
+    await expect(principal).toHaveCSS('background-color', grafito);
+    await expect(principal).toHaveCSS('color', blanco);
     await page.emulateMedia({ reducedMotion: 'no-preference' });
     await page.goto('/equipo');
     await page.getByLabel('Email', { exact: true }).fill('admin@example.test');
@@ -170,10 +262,21 @@ test('botones cambian de fondo con transición, conservan geometría y respetan 
     await page.getByRole('button', { name: 'Ingresar', exact: true }).click();
     const cerrar = page.getByRole('button', { name: 'Cerrar notificación' });
     await expect(cerrar).toBeVisible();
-    await cerrar.hover();
-    await expect(cerrar).toHaveCSS('background-color', 'rgb(232, 235, 238)');
+    await verificar(cerrar);
     await cerrar.click();
     await expect(cerrar).toHaveCount(0);
+    await ingresarEquipo(page);
+    await page.goto('/gestion/planes');
+    const plan = page.getByRole('article').first();
+    await verificar(plan.getByRole('button', { name: 'Editar', exact: true }));
+    const eliminar = plan.getByRole('button', { name: 'Eliminar', exact: true });
+    await verificar(eliminar);
+    await eliminar.click();
+    const dialogo = page.getByRole('dialog');
+    await expect(dialogo).toBeVisible();
+    await verificar(dialogo.getByRole('button', { name: 'Confirmar', exact: true }), true);
+    await dialogo.getByRole('button', { name: 'Volver', exact: true }).click();
+    await expect(dialogo).toHaveCount(0);
 });
 
 test('el aviso real de logout desaparece solo aunque el puntero quede encima', async ({ page }) => {

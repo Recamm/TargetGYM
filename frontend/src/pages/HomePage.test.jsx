@@ -23,6 +23,49 @@ beforeEach(() => {
 function setup(usuario = null) {
     return render(<MemoryRouter><AuthContext.Provider value={{ usuario }}><NotificationProvider><HomePage /></NotificationProvider></AuthContext.Provider></MemoryRouter>);
 }
+async function abrirPlan(nombre) {
+    const fold = (await screen.findByRole('heading', { name: nombre, exact: true })).closest('details');
+    fireEvent.click(fold.querySelector('summary'));
+    return fold.querySelector('article');
+}
+
+test('C muestra resumen por método y conserva tarifas y requisitos dentro del desplegable cerrado', async () => {
+    listarPlanes.mockResolvedValue([{ ...planes[0], nombre: 'Plan libre', precioCentavos: 8800000,
+        precioDescuentoCentavos: 7800000, metodoDescuento: 'Efectivo', descripcion: 'Entrenamiento acompañado.',
+        requisitosAcceso: 'Confirmar requisito en recepción.' }]);
+    setup();
+    const titulo = await screen.findByRole('heading', { name: 'Plan libre' });
+    const fold = titulo.closest('details');
+    expect(fold).not.toBeNull();
+    expect(fold).not.toHaveAttribute('open');
+    const resumen = within(fold.querySelector('summary'));
+    expect(resumen.getByText('Efectivo')).toBeVisible();
+    expect(resumen.getByText(priceText(7800000))).toBeVisible();
+    expect(resumen.getByText('Por 1 mes calendario')).toBeVisible();
+    expect(screen.getByRole('link', { name: 'Elegir Plan libre' })).not.toBeVisible();
+    fireEvent.click(fold.querySelector('summary'));
+    expect(fold).toHaveAttribute('open');
+    const cuerpo = within(fold.querySelector('article'));
+    expect(cuerpo.getByText(priceText(7800000))).toBeVisible();
+    expect(cuerpo.getByText(priceText(8800000))).toBeVisible();
+    expect(cuerpo.getByText('Entrenamiento acompañado.')).toBeVisible();
+    expect(cuerpo.getByText('Confirmar requisito en recepción.')).toBeVisible();
+    expect(cuerpo.getByRole('link', { name: 'Elegir Plan libre' })).toHaveAttribute('href', '/asociate?plan=mensual');
+    fireEvent.click(fold.querySelector('summary'));
+    expect(fold).not.toHaveAttribute('open');
+    expect(screen.getByRole('link', { name: 'Elegir Plan libre' })).not.toBeVisible();
+});
+
+test('C informa falta de métodos en el resumen y no usa una tarifa falsa', async () => {
+    listarMetodosPago.mockResolvedValue([]);
+    listarPlanes.mockResolvedValue([planes[0]]);
+    setup();
+    const fold = (await screen.findByRole('heading', { name: 'Plan mensual' })).closest('details');
+    expect(fold).not.toBeNull();
+    expect(within(fold.querySelector('summary')).getByText('Sin métodos disponibles')).toBeVisible();
+    expect(within(fold.querySelector('summary')).getByText('Consultá en recepción')).toBeVisible();
+    expect(within(fold.querySelector('summary')).queryByText(priceText(1000000))).not.toBeInTheDocument();
+});
 
 test('mantiene Cerca y la agenda real, sin leyenda bajo la foto', async () => {
     const { container } = setup();
@@ -31,21 +74,21 @@ test('mantiene Cerca y la agenda real, sin leyenda bajo la foto', async () => {
     expect(screen.getByRole('link', { name: 'Ver clases', exact: true })).toHaveAttribute('href', '/clases');
     expect(screen.queryByText(/No corresponde a Target GYM/)).not.toBeInTheDocument();
     expect(screen.getByRole('img')).toHaveAttribute('src', '/marca/gimnasio-referencia.webp');
-    expect(container.querySelectorAll('details')).toHaveLength(4);
-    expect(container.querySelectorAll('details[open]')).toHaveLength(1);
+    expect(container.querySelectorAll('.activity')).toHaveLength(4);
+    expect(container.querySelectorAll('.activity[open]')).toHaveLength(1);
     expect(screen.getByRole('link', { name: 'Quiero asociarme' })).toHaveAttribute('href', '/asociate');
     await screen.findByText('Plan mensual');
 });
 
 test('muestra importes del servidor por periodo y aplica el descuento una sola vez', async () => {
     setup();
-    const anual = (await screen.findByRole('heading', { name: 'Plan anual', exact: true })).closest('article');
+    const anual = await abrirPlan('Plan anual');
     expect(within(anual).getByText(priceText(9900000))).toBeVisible();
     expect(within(anual).getByText(dinero(11000000).replace(/\s/g, ' '))).toHaveProperty('tagName', 'DEL');
     expect(within(anual).getByText('10% de descuento')).toBeVisible();
-    expect(within(anual).getByText('Por 12 meses calendario')).toBeVisible();
-    expect(screen.getByText(priceText(1000000))).toBeVisible();
-    expect(screen.getByText(priceText(2500000))).toBeVisible();
+    expect(within(anual.closest('details').querySelector('summary')).getByText('Por 12 meses calendario')).toBeVisible();
+    expect(within(await abrirPlan('Plan mensual')).getByText(priceText(1000000))).toBeVisible();
+    expect(within(await abrirPlan('Plan trimestral')).getByText(priceText(2500000))).toBeVisible();
     expect(screen.getByRole('link', { name: 'Asociate', exact: true })).toHaveAttribute('href', '/asociate');
     expect(screen.getByRole('link', { name: 'Elegir Plan anual' })).toHaveAttribute('href', '/asociate?plan=anual');
     expect(screen.getByRole('link', { name: 'Elegir Plan anual' })).toHaveClass('button', 'primary');
@@ -54,7 +97,8 @@ test('muestra importes del servidor por periodo y aplica el descuento una sola v
 test('precio sin configurar no se transforma en cero y no simula pagos', async () => {
     listarPlanes.mockResolvedValue([{ ...planes[0], precioCentavos: null }]);
     setup();
-    expect(await screen.findByText('Consultá el precio')).toBeVisible();
+    const card = await abrirPlan('Plan mensual');
+    expect(within(card).getByText('Consultá el precio')).toBeVisible();
     expect(screen.queryByText(priceText(0))).not.toBeInTheDocument();
     expect(screen.getByText(/El pago se coordina en el gimnasio/)).toBeVisible();
     expect(screen.queryByRole('link', { name: /^Elegir / })).not.toBeInTheDocument();
@@ -63,7 +107,7 @@ test('precio sin configurar no se transforma en cero y no simula pagos', async (
 test('descuento condicionado muestra base y promoción sin prometer una rebaja incondicional', async () => {
     listarPlanes.mockResolvedValue([{ ...planes[0], tipo: 'plan-personalizado', nombre: 'Plan flexible', descuentoPorcentaje: 20, metodoDescuento: 'Efectivo', condicionesDescuento: 'Pago presencial.' }]);
     setup();
-    const card = (await screen.findByRole('heading', { name: 'Plan flexible' })).closest('article');
+    const card = await abrirPlan('Plan flexible');
     expect(within(card).getByText(priceText(1000000))).toHaveClass('plan-price');
     expect(within(card).getByText(`Con descuento: ${dinero(800000).replace(/\s/g, ' ')}`)).toBeVisible();
     expect(within(card).getByText(/Pago presencial/)).toHaveTextContent('Pagando con efectivo. Pago presencial. Se confirma al pagar en el gimnasio.');
@@ -90,13 +134,13 @@ test('pase diario publica el importe exacto en efectivo y su duración, sin porc
         precioCentavos: 3000000, precioDescuentoCentavos: 2500000, metodoDescuento: 'Efectivo', permiteTarjeta: false,
         descripcion: 'Pase libre y clases incluidas.', requisitosAcceso: '', metodoExclusivo: null }]);
     setup();
-    const card = (await screen.findByRole('heading', { name: 'Pase por un día' })).closest('article');
+    const card = await abrirPlan('Pase por un día');
     expect(within(card).getByText(priceText(3000000))).toBeVisible();
     expect(within(card).getByText(priceText(2500000))).toBeVisible();
     expect(within(card).getByText('Efectivo')).toBeVisible();
     expect(within(card).getByText('Transferencia')).toBeVisible();
     expect(within(card).queryByText(/Tarjeta/)).not.toBeInTheDocument();
-    expect(within(card).getByText('Por 1 día corrido')).toBeVisible();
+    expect(within(card.closest('details').querySelector('summary')).getByText('Por 1 día corrido')).toBeVisible();
     expect(within(card).getByText('Pase libre y clases incluidas.')).toBeVisible();
     expect(card).not.toHaveTextContent('0%');
 });
@@ -118,11 +162,12 @@ test('carga de precios mantiene la bienvenida visible', () => {
     expect(screen.queryByText('Plan mensual')).not.toBeInTheDocument();
 });
 
-test('Clara agrupa importes por método sin ofrecer efectivo deshabilitado ni redondear centavos', async () => {
+test('C agrupa importes por método sin ofrecer efectivo deshabilitado ni redondear centavos', async () => {
     listarPlanes.mockResolvedValue([{ ...planes[0], precioCentavos: 8800050, precioDescuentoCentavos: 7800000, metodoDescuento: 'Efectivo' }]);
     listarMetodosPago.mockResolvedValue(['Transferencia', 'Tarjeta'].map(codigo => ({ codigo, habilitado: true, permiteSocio: true })));
     setup();
-    const card = (await screen.findByRole('heading', { name: 'Plan mensual' })).closest('article');
+    const card = await abrirPlan('Plan mensual');
+    expect(within(card.closest('details').querySelector('summary')).getByText(priceText(8800050))).toBeVisible();
     expect(within(card).getByText('Transferencia o tarjeta')).toBeVisible();
     expect(within(card).getByText(priceText(8800050))).toBeVisible();
     expect(within(card).queryByText(priceText(7800000))).not.toBeInTheDocument();
@@ -143,7 +188,8 @@ test('sin métodos compatibles informa el estado y no ofrece contratar el plan',
     listarMetodosPago.mockResolvedValue([]);
     listarPlanes.mockResolvedValue([planes[0]]);
     setup();
-    expect(await screen.findByText('No hay métodos de pago disponibles para este plan. Consultá en el gimnasio.')).toBeVisible();
+    const card = await abrirPlan('Plan mensual');
+    expect(within(card).getByText('No hay métodos de pago disponibles para este plan. Consultá en el gimnasio.')).toBeVisible();
     expect(screen.queryByRole('link', { name: 'Elegir Plan mensual' })).not.toBeInTheDocument();
 });
 
@@ -152,7 +198,8 @@ test.each([
     ['Administrador', 'Configurar planes', '/gestion/planes'],
     ['Instructor', 'Consultar en el gimnasio', '/#contacto'],
 ])('la acción de planes respeta el rol %s', async (rol, label, href) => {
-    setup({ rol });
+    const { container } = setup({ rol });
     expect(await screen.findByRole('link', { name: label })).toHaveAttribute('href', href);
+    for (const summary of container.querySelectorAll('.plan-fold > summary')) fireEvent.click(summary);
     expect(screen.queryByRole('link', { name: /^Elegir / })).not.toBeInTheDocument();
 });

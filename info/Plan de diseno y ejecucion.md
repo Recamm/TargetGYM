@@ -1756,3 +1756,159 @@ La referencia se puede reemplazar por una foto propia autorizada mas adelante.
 Estado: Clara y hover aplicados localmente; cuatro alternativas fotograficas
 entregadas para elegir. Sin cambios a pagos, catalogo, permisos ni datos
 comerciales, sin commits o despliegue. No acredita Safari/iPhone real.
+
+## 33. Rectangulo suave aprobado y hover Mandarina/Grafito
+
+Pedido del 3 de noviembre: aplicar A. Rectangulo suave con esquinas menos
+redondeadas y alternar el fondo de todos los botones entre naranja y gris
+oscuro. Sustituye las decisiones de arco y hover de las secciones anteriores.
+
+- Foto horizontal 4:3, radio 12 px en las cuatro esquinas, columnas iguales,
+  imagen izquierda y bienvenida derecha; en movil texto primero y foto
+  despues, sin modificar la proporcion. Misma foto local y procedencia.
+- Principales: Mandarina con texto Grafito a Grafito con texto blanco.
+  Resto de botones: Grafito con texto blanco a Mandarina con texto Grafito.
+  Incluye secundarios, discretos, eliminacion, confirmaciones, menus de
+  sitio/equipo y cierres. Enlaces de texto conservan su tratamiento.
+- Transicion 220 ms de fondo/borde/texto, sin cambios geometricos; foco
+  visible equivalente al hover, deshabilitados sin reaccion y movimiento
+  reducido sin transicion. No se altera ninguna accion ni permiso.
+- Muestra de foto marcada como aprobada, radio sincronizado, otras opciones
+  historicas conservadas. Muestra de tarjetas y manual 1.8 alineados.
+- Verificado: tres recorridos Chromium correctos (foto en cinco anchos,
+  hover/foco de principales, secundarios, discretos, eliminacion, dialogo,
+  menu y cierre, e interfaz publica con teclado/errores/Axe). Se comprobaron
+  colores de fondo/texto finales, geometria estable, deshabilitados y
+  movimiento reducido. Capturas de 390/1440 px revisadas.
+- Muestra A con radio 12 px y las cuatro muestras de tarjetas con hover
+  comprobados; Axe sin incidencias a 390/1440 px. Build, lint, sintaxis y
+  whitespace correctos. Manual 1.8: seis A4 etiquetadas, fuentes e imagenes
+  cargadas, sin desbordes.
+- Preview abierto en http://localhost:5173/ y comprobado con seis planes,
+  foto cargada y sin desborde. Este origen evita el service worker previo
+  de otra aplicacion en 127.0.0.1, sin eliminar sus registros o caches.
+
+P1–P8 siguen pendientes. Sin commits, despliegue o cambios comerciales.
+Chromium no acredita Safari/iPhone real.
+
+## 34. Foto mas suave y presencia Mandarina fuera de los botones
+
+Pedido del 3 de noviembre: redondear un poco mas la foto y agregar detalles
+naranjas sin perder el enfoque minimalista de las referencias originales.
+Se conserva A. Rectangulo suave, la identidad y los hover ya aprobados.
+
+- Radio de foto 24 px, antes 12 px; misma proporcion 4:3 y orden responsive.
+- Mandarina #F48335 en subrayado de ruta activa, filetes de ubicacion y
+  beneficios, borde de actividad abierta y limite superior de contacto.
+  Los filetes repiten un solo recurso grafico con funcion de orientacion.
+- Tinte Mandarina suave #FFF2E8 en actividad abierta y etiquetas de duracion.
+  Tarjetas y fondo principal siguen blancos; texto Grafito/gris, sin agregar
+  ilustraciones, sombras, gradientes, fotos inventadas o efectos automaticos.
+  Signos y contenido conservan el estado de cada actividad sin depender del color.
+- Referencias: espacio y composicion de Hozon/Still Form, jerarquia de Linear
+  y acento de marca de YAAS, sin copiar sus materiales ni su identidad.
+  Se consultaron otra vez las cuatro paginas; la extraccion de Still Form
+  y YAAS fue limitada, se conserva la observacion visual previa.
+- Muestras y manual 1.9 sincronizados. P1–P8 siguen sin aprobar; no se agrega
+  contenido comercial, funcionalidad, commits o despliegue por este ajuste.
+
+Validado: tres recorridos Chromium correctos. Foto, acentos y ausencia de
+desborde a 320/390/760/1024/1440 px; abrir/cerrar actividades con teclado,
+colores de estado, tarjetas blancas, hover/foco, deshabilitados y movimiento
+reducido comprobados. Axe sin incidencias y capturas revisadas a 390/1440 px.
+Muestras A/Clara sincronizadas y Axe correcto en ambos anchos. Build, lint,
+sintaxis y whitespace correctos. PDF 1.9 de seis A4 etiquetadas, fuentes e
+imagenes completas, sin desbordes. Preview compartido actualizado, seis
+planes reales cargados. No acredita Safari/iPhone real.
+
+## 35. Acentos retirados y distribuciones de planes mas compactas
+
+Revision del usuario: no conservar los detalles naranjas de la seccion 34;
+preparar varias alternativas para reducir el espacio del catalogo, sin
+aplicarlas antes de elegir. Se conserva la foto A con radio 24 px y los
+botones Mandarina/Grafito.
+
+- Retirados filetes de ubicacion, beneficios/contacto, subrayado naranja y
+  tintes calidos. Actividades y duraciones vuelven al gris claro. Manual 2.0.
+- Comparador aislado en `marca/planes-compactos.html`, con catalogo real,
+  radios accesibles y enlaces directos. No cambia la seccion de planes activa.
+- A. Compactas: tarifas lado a lado, menos espacio interior y descripcion
+  desplegable; todos los planes visibles, requisitos/promociones expuestos.
+- B. Filas: nombre, tarifas y accion en columnas; descripcion desplegable
+  y condiciones debajo. En movil se apila sin recortar importes.
+- C. Desplegables: resumen de nombre, periodo y tarifa con su metodo;
+  al abrir, todas las tarifas, descripcion, requisitos y accion. Mayor
+  ahorro inicial a costa de abrir el plan para comparar sus condiciones.
+- D. Horizontal: una fila con desplazamiento nativo, scrollbar visible,
+  botones anterior/siguiente y acceso por teclado. Sin avance automatico.
+  Menor altura pero menor visibilidad inmediata de los planes restantes.
+- Se extrae el renderizador/carga de la muestra anterior para reutilizar
+  contratos, tarifas, promociones y notas, sin duplicar logica monetaria.
+  Texto seguro, errores/reintento, vacio y falta de metodos explicitos.
+
+Medicion con seis planes y mismo ancho de contenido: en 1440 px, alturas
+de catalogo frente a Clara de 1108 px: A 711 px (36% menos), B 871 px (21%),
+C 581 px (48%, cerradas), D 388 px (65%). En 390 px: A 31%, B 37%, C 75%
+y D 87% menos. Se mide el catalogo, no las instrucciones del comparador;
+al abrir descripciones/planes aumenta la altura. Cada alternativa ahorra
+al menos 20% en los cinco anchos comprobados, sin recortar los importes.
+
+Validado: seis recorridos Chromium correctos entre ejecuciones focalizadas.
+Veinte combinaciones de distribucion/ancho con ahorro >=20%, precios
+completos, todas las descripciones/condiciones accesibles y Axe sin
+incidencias a 390/1440 px, abiertas y cerradas segun recorrido. Sesenta y
+cuatro combinaciones adicionales con 1/2/3/7 planes, nombres largos, centavos
+y precio maximo sin desbordes. Teclado/radios/enlaces directos, desplegables,
+scroll/foco y extremos de tira, movimiento reducido, error HTTP/reintento,
+vacio, contratos invalidos, metodos apagados, planes deshabilitados, precio
+nulo, promocion condicionada y texto seguro comprobados. El comparador
+anterior sigue renderizando con el helper extraido. Foto y hover preservados.
+Build, lint frontend y lint/sintaxis de muestras correctos; PDF 2.0 de seis
+A4 etiquetadas con fuentes/imagenes completas y sin desbordes. Ocho capturas
+del catalogo local real y lamina comparativa revisadas. Comparador abierto
+en la pestana compartida con seis planes y sin desborde.
+P1–P8 siguen pendientes; sin cambios a cobros/datos, commits o despliegue.
+Solo se retiraron los acentos en la aplicacion; la distribucion definitiva
+de planes sigue pendiente de eleccion. No acredita Safari/iPhone real.
+
+## 36. C. Desplegables aplicada
+
+Eleccion del usuario: C. Desplegables. Se aplica la distribucion aprobada a
+la portada, conservando superficies neutras, foto 24 px y hover ya elegido.
+
+- Cada plan muestra nombre, periodo y primera tarifa disponible con su
+  metodo; al abrir, todas las tarifas, descripcion, requisitos y accion.
+  Sin metodos/precio: estado explicito, sin importe ni contratacion inventados.
+- Elementos details/summary nativos, cerrados inicialmente y con apertura
+  independiente. Teclado, foco Grafito y signo +/−. El cuerpo cerrado queda
+  fuera del recorrido de teclado y la actualizacion no reinicia su apertura.
+- Cuerpo en dos columnas (tarifas/detalle) y apilado en movil. Precio
+  adaptable al contenedor y centavos preservados. No se alteran roles,
+  tarifas, catalogo, cobros, vigencias o asociacion.
+- Se reutilizan PlanPrice, PlanConditions y tarifasPlan, sin duplicar reglas
+  monetarias. Las dos expectativas nuevas de resumen/despliegue fallaron
+  antes de implementar. Pruebas existentes adaptadas al nuevo estado cerrado.
+- Comparadores marcan C aprobada; otras opciones y Clara quedan historicas.
+  Manual 2.1 alineado. La comparacion de altura ahora usa el estudio Clara
+  como antecedente; la portada actual ya no es una referencia de tarjetas.
+
+Verificado:
+
+- 17 tests de Home y 9 recorridos Chromium correctos: 24 combinaciones de
+  cantidad/ancho, 54 de precios en resumen/cuerpo, teclado, actualizacion
+  de metodos con apertura/foco preservados, tarifas y asociacion por pago.
+- C aplicada reduce al menos 20% de altura frente al estudio Clara con
+  los mismos seis planes y ancho de catalogo, en cinco pantallas.
+  Es altura del catalogo cerrado; no es una promesa sobre toda la pagina.
+- Catalogo real revisado a 390/1440 px, abierto/cerrado: sin desborde ni
+  hallazgos Axe WCAG A/AA. Se conservan $78.000 efectivo y $88.000 otros
+  medios del mensual. Altura cerrada: 754/576 px, respectivamente.
+- Build y lint de frontend correctos. Lint de muestras y E2E sin errores;
+  mantiene un aviso previo no-empty-pattern en la prueba de zoom.
+  Whitespace correcto con la configuracion CRLF del plan.
+- Manual 2.1 regenerado: seis A4 tagged, fuentes/imagenes completas y
+  ninguna hoja desbordada. Capturas revisadas de planes y pagina 5.
+- Preview responde HTTP 200 y pestaña compartida abierta en /#planes.
+
+La revision visual usa Chromium; no acredita Safari/iPhone real.
+P1–P8 siguen pendientes. Sin commits, despliegue ni cambios comerciales.

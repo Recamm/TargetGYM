@@ -5,7 +5,7 @@ import { listarPlanes, listarMetodosPago } from '../services/membresiasService.j
 import useResource from '../utils/useResource.js';
 import PlanPrice from '../components/PlanPrice.jsx';
 import { PlanConditions } from '../components/PlanDetails.jsx';
-import { periodoPlan, tarifasPlan } from '../utils/planes.js';
+import { periodoPlan, tarifasPlan, precioPlanTexto } from '../utils/planes.js';
 import gimnasio from '../../../info/target-gym/datos-verificados.json';
 
 const actividades = [
@@ -57,14 +57,28 @@ export default function HomePage() {
             </div>
             <ul className="gym-benefits">{gimnasio.beneficios.map(beneficio => <li key={beneficio}>{beneficio}</li>)}</ul>
             <ResourceState resource={planes}>
-                {planes.data?.length === 0 ? <EmptyState>Todavía no hay planes disponibles. Consultá en el gimnasio.</EmptyState> : <ResourceState resource={metodos}><div className="plan-grid">
-                    {planes.data?.map(plan => <article className="plan-card" key={plan.tipo} aria-labelledby={`plan-${plan.tipo}`}>
-                        <header><h3 id={`plan-${plan.tipo}`}>{plan.nombre}</h3><p className="plan-period">Por {periodoPlan(plan)}</p></header>
-                        {plan.descripcion && <p className="plan-description">{plan.descripcion}</p>}
-                        <PlanPrice plan={plan} metodos={metodos.data} />
-                        <PlanConditions plan={plan} />
-                        {!usuario && plan.precioCentavos !== null && metodos.data && tarifasPlan(plan, metodos.data).length > 0 && <Link className="button primary" to={`/asociate?plan=${encodeURIComponent(plan.tipo)}`}>Elegir {plan.nombre}</Link>}
-                    </article>)}
+                {planes.data?.length === 0 ? <EmptyState>Todavía no hay planes disponibles. Consultá en el gimnasio.</EmptyState> : <ResourceState resource={metodos}><div className="plan-list">
+                    {metodos.data && planes.data?.map(plan => {
+                        const tarifas = tarifasPlan(plan, metodos.data), primera = tarifas[0];
+                        return <details className="plan-fold" key={plan.tipo}>
+                            <summary>
+                                <div className="plan-summary-heading"><h3 id={`plan-${plan.tipo}`}>{plan.nombre}</h3><p className="plan-period">Por {periodoPlan(plan)}</p></div>
+                                <div className="plan-summary-price">
+                                    <span className="plan-summary-method">{primera ? primera.etiqueta : 'Sin métodos disponibles'}</span>
+                                    <span className={`plan-summary-amount${!primera || primera.importeCentavos === null ? ' is-unpriced' : ''}`}>{primera ? precioPlanTexto(primera.importeCentavos) : 'Consultá en recepción'}</span>
+                                </div>
+                                <span className="plan-summary-action">Tarifas y condiciones<span className="disclosure-mark" aria-hidden="true" /></span>
+                            </summary>
+                            <article className="plan-card" aria-labelledby={`plan-${plan.tipo}`}>
+                                <PlanPrice plan={plan} metodos={metodos.data} />
+                                <div className="plan-copy">
+                                    {plan.descripcion && <p className="plan-description">{plan.descripcion}</p>}
+                                    <PlanConditions plan={plan} />
+                                    {!usuario && plan.precioCentavos !== null && tarifas.length > 0 && <Link className="button primary" to={`/asociate?plan=${encodeURIComponent(plan.tipo)}`}>Elegir {plan.nombre}</Link>}
+                                </div>
+                            </article>
+                        </details>;
+                    })}
                 </div></ResourceState>}
                 {planes.data?.length > 0 && <Link className="button secondary" to={planAction[0]}>{planAction[1]}</Link>}
             </ResourceState>
