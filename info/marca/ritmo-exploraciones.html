@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Tu ritmo. Tu lugar. Tres nuevas direcciones gráficas para Target gym: Pulso, Pausa y Noche.">
+  <meta name="theme-color" content="#f5f4ef">
+  <title>Tu ritmo. Tu lugar. · Target gym</title>
+  <link rel="icon" href="../../frontend/public/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="ritmo-exploraciones.css">
+</head>
+<body>
+  <a class="skip-link" href="#mockups">Saltar al diseño seleccionado</a>
+  <div class="lab">
+    <header class="lab-header">
+      <div class="lab-caption">
+        <p>Target gym <span>/ exploración 02</span></p>
+        <h1>Tu ritmo. Tu lugar.</h1>
+      </div>
+      <fieldset class="lab-switcher">
+        <legend class="sr-only">Elegí una dirección gráfica. Usá las flechas del teclado para cambiar.</legend>
+        <label class="direction-label">
+          <input id="direction-pulso" type="radio" name="direction" value="pulso" checked aria-controls="pulso">
+          <span class="swatch swatch-pulso" aria-hidden="true"></span>
+          <span><small>01</small> Pulso</span>
+        </label>
+        <label class="direction-label">
+          <input id="direction-pausa" type="radio" name="direction" value="pausa" aria-controls="pausa">
+          <span class="swatch swatch-pausa" aria-hidden="true"></span>
+          <span><small>02</small> Pausa</span>
+        </label>
+        <label class="direction-label">
+          <input id="direction-noche" type="radio" name="direction" value="noche" aria-controls="noche">
+          <span class="swatch swatch-noche" aria-hidden="true"></span>
+          <span><small>03</small> Noche</span>
+        </label>
+      </fieldset>
+      <a class="lab-back" href="portadas-conceptuales.html">Primera ronda <span aria-hidden="true">↗</span></a>
+    </header>
+
+    <main id="mockups" tabindex="-1">
+      <article class="concept concept-pulso" id="pulso" aria-label="Pulso: portada centrada y recorrido editorial">
+        <header class="pulse-nav page-width">
+          <a class="pulse-brand" href="#pulso-inicio" aria-label="Target gym, inicio">target<span>gym</span><span class="brand-dot" aria-hidden="true"></span></a>
+          <p>Florida, Buenos Aires</p>
+          <nav aria-label="Navegación Pulso">
+            <a href="#pulso-actividades">Qué hacemos</a>
+            <a href="#pulso-planes">Planes</a>
+            <a class="pulse-nav-cta" href="#pulso-visita">Vení a conocernos <span aria-hidden="true">↗</span></a>
+          </nav>
+        </header>
+
+        <section class="pulse-hero page-width" id="pulso-inicio" aria-labelledby="pulso-title">
+          <div class="pulse-headline">
+            <p class="micro">Un gimnasio. Muchas formas de moverte.</p>
+            <h2 id="pulso-title"><span>Tu ritmo.</span> <span>Tu lugar.</span></h2>
+          </div>
+          <div class="pulse-hero-copy">
+            <p>No hay una sola forma de entrenar. Encontrá la tuya, con un equipo que te acompañe.</p>
+            <a class="pulse-button" href="#pulso-actividades">Encontrá tu actividad <span aria-hidden="true">↘</span></a>
+          </div>
+          <a class="pulse-scroll-cue" href="#pulso-foto">Entrá en movimiento <span aria-hidden="true">↓</span></a>
+        </section>
+
+        <figure class="pulse-photo" id="pulso-foto">
+          <div class="pulse-photo-frame">
+            <img src="imagenes/gimnasio-referencia.webp" alt="Pesas y máquinas en una sala de entrenamiento de referencia; no es la sede de Target gym" width="1920" height="1040" fetchpriority="high">
+            <div class="pulse-photo-label" aria-hidden="true"><span>HACÉ<br>LUGAR.</span><span>↗</span></div>
+          </div>
+          <figcaption class="page-width"><span>Fuerza. Movimiento. Buena compañía.</span><span>Entrená cerca, en Florida.</span></figcaption>
+        </figure>
+
+        <section class="pulse-activities page-width" id="pulso-actividades" aria-labelledby="pulso-activities-title">
+          <div class="pulse-section-heading">
+            <p class="micro">01 / Encontrá lo tuyo</p>
+            <h3 id="pulso-activities-title">El movimiento<br>empieza acá.</h3>
+            <p>Pesas, máquinas o entrenamiento compartido. Vos elegís por dónde empezar.</p>
+          </div>
+          <div class="pulse-activity-list">
+            <details open>
+              <summary><span>01</span><h4>Musculación</h4><span class="disclosure" aria-hidden="true"></span></summary>
+              <p>Trabajá fuerza con pesas y máquinas. Profesores de educación física te acompañan con una rutina personalizada.</p>
+            </details>
+            <details>
+              <summary><span>02</span><h4>Funcional</h4><span class="disclosure" aria-hidden="true"></span></summary>
+              <p>Un entrenamiento grupal que combina fuerza, coordinación y movilidad. Consultá días y horarios en la agenda.</p>
+            </details>
+            <details>
+              <summary><span>03</span><h4>Cardio</h4><span class="disclosure" aria-hidden="true"></span></summary>
+              <p>Equipamiento para trabajar resistencia e incorporar movimiento a tu rutina.</p>
+            </details>
+            <details>
+              <summary><span>04</span><h4>Clases grupales</h4><span class="disclosure" aria-hidden="true"></span></summary>
+              <p>Entrená con otras personas y con guía profesional. Revisá en la agenda las clases, horarios y lugares disponibles.</p>
+            </details>
+          </div>
+        </section>
+
+        <section class="pulse-join" id="pulso-planes" aria-labelledby="pulso-join-title">
+          <div class="page-width pulse-join-grid">
+            <div><p class="micro">02 / Un lugar para vos</p><h3 id="pulso-join-title">Hacé lugar<br>para vos.</h3></div>
+            <div class="pulse-join-copy">
+              <ul><li>Pase libre y clases incluidas.</li><li>Sin matrícula ni inscripción.</li><li>Acompañamiento desde el primer día.</li></ul>
+              <p>Consultá opciones y tarifas vigentes. El pago se coordina en el gimnasio, no online.</p>
+              <a class="pulse-button pulse-button-dark" href="https://wa.me/5491168244559" target="_blank" rel="noopener noreferrer">Consultar planes por WhatsApp <span aria-hidden="true">↗</span></a>
+            </div>
+          </div>
+        </section>
+
+        <footer class="pulse-footer page-width" id="pulso-visita">
+          <div class="pulse-footer-top">
+            <div><p class="micro">03 / A la vuelta</p><h3>Nos vemos<br>en Florida.</h3><address>Av. San Martín 2462<br>Florida, Vicente López</address><a class="underlink" href="https://maps.app.goo.gl/fyNL18dV3umtNDJx8" target="_blank" rel="noopener noreferrer">Cómo llegar <span aria-hidden="true">↗</span></a></div>
+            <dl class="schedule"><div><dt>Lunes a viernes</dt><dd>6 a 22 h</dd></div><div><dt>Sábados</dt><dd>8 a 20 h</dd></div><div><dt>Domingos</dt><dd>Cerrado</dd></div><div><dt>Feriados</dt><dd>10 a 18 h</dd></div></dl>
+          </div>
+          <div class="pulse-footer-bottom"><a class="pulse-brand" href="#pulso-inicio">target<span>gym</span></a><p>Tu ritmo. Tu lugar.</p><a class="underlink" href="https://www.instagram.com/targetgym_florida/" target="_blank" rel="noopener noreferrer">Instagram <span aria-hidden="true">↗</span></a></div>
+        </footer>
+        <p class="concept-note page-width">01 / Pulso + Ritmo — Portada centrada y fotografía que se abre con el scroll, sin alterar el desplazamiento natural. Movimiento reducido respetado; versión estática en navegadores sin soporte. Foto licenciada de referencia, no representa la sede. No modifica la web activa.</p>
+      </article>
+
+      <article class="concept concept-pausa" id="pausa" aria-label="Pausa: editorial cálido, papel y vino">
+        <header class="pause-nav page-width">
+          <nav aria-label="Actividades Pausa"><a href="#pausa-actividades">El movimiento</a><a href="#pausa-lugar">El lugar</a></nav>
+          <a class="pause-brand" href="#pausa-inicio" aria-label="Target gym, inicio">target<span>gym</span></a>
+          <a class="pause-nav-link" href="#pausa-visita">Pasá a conocernos <span aria-hidden="true">↗</span></a>
+        </header>
+
+        <section class="pause-hero page-width" id="pausa-inicio" aria-labelledby="pausa-title">
+          <p class="micro pause-location"><span aria-hidden="true">✳</span> Un poco de tiempo para vos. Florida, Buenos Aires.</p>
+          <h2 id="pausa-title"><span>Tu ritmo.</span> <em>Tu lugar.</em></h2>
+          <div class="pause-editorial">
+            <div class="pause-aside"><p class="micro">Entrenar, sin vueltas.</p><p>No hace falta<br>saber por dónde<br>empezar.</p><p class="pause-aside-copy">Para eso estamos. Te acompañamos a encontrar una rutina que encaje con tu día.</p><a class="underlink" href="#pausa-actividades">Encontrá tu actividad <span aria-hidden="true">↘</span></a></div>
+            <figure class="pause-photo"><img src="imagenes/gimnasio-referencia.webp" alt="Fotografía editorial de referencia de pesas y una sala de entrenamiento; no corresponde a Target gym" width="1920" height="1040"><figcaption>Movimiento cotidiano. Acompañamiento cercano.</figcaption></figure>
+            <div class="pause-side-note"><span class="pause-orbit" aria-hidden="true">↗</span><p>Fuerza.<br>Calma.<br>Constancia.</p><span class="pause-side-line" aria-hidden="true"></span><p class="micro">A tu manera.</p></div>
+          </div>
+        </section>
+
+        <section class="pause-manifesto page-width" id="pausa-lugar" aria-labelledby="pausa-manifesto-title">
+          <p class="micro">Un gimnasio de barrio, en Florida.</p>
+          <h3 id="pausa-manifesto-title">No se trata de ir más rápido.<br>Se trata de <em>encontrar tu ritmo.</em></h3>
+          <div class="pause-manifesto-copy"><span aria-hidden="true">↳</span><p>Musculación, cardio y clases grupales. Profesores de educación física que te acompañan desde el primer día. Y un lugar cerca, al que podés volver.</p></div>
+        </section>
+
+        <section class="pause-activities page-width" id="pausa-actividades" aria-labelledby="pausa-activities-title">
+          <div class="pause-section-intro"><p class="micro">Distintas formas de moverte</p><h3 id="pausa-activities-title">Lo que te<br><em>hace bien.</em></h3><p>Consultá días, horarios y lugares disponibles en la agenda.</p></div>
+          <div class="pause-activity-list">
+            <details open><summary><span>01</span><h4>Musculación</h4><span class="disclosure" aria-hidden="true"></span></summary><p>Pesas y máquinas para trabajar fuerza, con una rutina personalizada y acompañamiento.</p></details>
+            <details><summary><span>02</span><h4>Funcional</h4><span class="disclosure" aria-hidden="true"></span></summary><p>Fuerza, coordinación y movilidad en un entrenamiento grupal.</p></details>
+            <details><summary><span>03</span><h4>Cardio</h4><span class="disclosure" aria-hidden="true"></span></summary><p>Equipamiento para trabajar resistencia y sumar movimiento a tu día.</p></details>
+            <details><summary><span>04</span><h4>Clases grupales</h4><span class="disclosure" aria-hidden="true"></span></summary><p>Entrenamiento compartido y guiado. Revisá las clases disponibles en la agenda.</p></details>
+          </div>
+        </section>
+
+        <section class="pause-invitation" aria-labelledby="pausa-invitation-title">
+          <div class="page-width">
+            <p class="micro">Pase libre · Clases incluidas · Sin matrícula ni inscripción</p>
+            <h3 id="pausa-invitation-title">Un lugar al que<br>quieras <em>volver.</em></h3>
+            <a class="pause-button" href="https://wa.me/5491168244559" target="_blank" rel="noopener noreferrer">Conocé los planes <span aria-hidden="true">↗</span></a>
+            <p class="invitation-help">Tarifas vigentes por consulta. El pago se coordina en el gimnasio.</p>
+          </div>
+        </section>
+
+        <footer class="pause-footer page-width" id="pausa-visita">
+          <div><p class="micro">Te esperamos en Florida</p><h3>Cerca de vos.</h3><address>Av. San Martín 2462<br>Florida, Vicente López</address><a class="underlink" href="https://maps.app.goo.gl/fyNL18dV3umtNDJx8" target="_blank" rel="noopener noreferrer">Cómo llegar <span aria-hidden="true">↗</span></a></div>
+          <dl class="schedule"><div><dt>Lunes a viernes</dt><dd>6 a 22 h</dd></div><div><dt>Sábados</dt><dd>8 a 20 h</dd></div><div><dt>Domingos</dt><dd>Cerrado</dd></div><div><dt>Feriados</dt><dd>10 a 18 h</dd></div></dl>
+          <div class="pause-signature"><a class="pause-brand" href="#pausa-inicio">target<span>gym</span></a><a class="underlink" href="https://www.instagram.com/targetgym_florida/" target="_blank" rel="noopener noreferrer">Instagram <span aria-hidden="true">↗</span></a></div>
+        </footer>
+        <p class="concept-note page-width">02 / Pausa — Exploración gráfica. Fotografía licenciada de referencia, no representa la sede. No modifica la web activa.</p>
+      </article>
+
+      <article class="concept concept-noche" id="noche" aria-label="Noche: fotografía inmersiva, carbón y azul hielo">
+        <header class="night-nav page-width">
+          <a class="night-brand" href="#noche-inicio" aria-label="Target gym, inicio"><span class="night-brand-symbol" aria-hidden="true"></span>target gym</a>
+          <nav aria-label="Navegación Noche"><a href="#noche-actividades">Entrená</a><a href="#noche-lugar">El lugar</a><a class="night-nav-cta" href="#noche-planes">Encontrá tu plan <span aria-hidden="true">↗</span></a></nav>
+        </header>
+
+        <section class="night-hero" id="noche-inicio" aria-labelledby="noche-title">
+          <img class="night-hero-image" src="imagenes/gimnasio-referencia.webp" alt="Interior de un gimnasio de referencia; esta fotografía no representa las instalaciones de Target gym" width="1920" height="1040">
+          <div class="night-hero-content page-width">
+            <div class="night-hero-top"><p class="micro"><span class="night-location-dot" aria-hidden="true"></span> Florida, Buenos Aires</p><p class="micro">Cerca de vos. A tu manera.</p></div>
+            <h2 id="noche-title"><span>Tu ritmo.</span> <span>Tu lugar.</span></h2>
+            <div class="night-hero-bottom"><p>Un espacio para entrenar.<br>Un equipo para acompañarte.</p><a class="night-button" href="#noche-actividades">Empezá por acá <span aria-hidden="true">↘</span></a></div>
+          </div>
+          <p class="night-photo-credit">Fotografía de referencia</p>
+        </section>
+
+        <div class="night-benefits page-width" aria-label="Beneficios"><p>Pase libre</p><span aria-hidden="true">✳</span><p>Clases incluidas</p><span aria-hidden="true">✳</span><p>Sin matrícula ni inscripción</p></div>
+
+        <section class="night-activities page-width" id="noche-actividades" aria-labelledby="noche-activities-title">
+          <div class="night-section-top"><p class="micro">01 — El movimiento</p><h3 id="noche-activities-title">Elegí cómo<br>sentirte bien.</h3><p>Musculación, cardio y clases grupales. Consultá la agenda para ver horarios y lugares disponibles.</p></div>
+          <div class="night-activity-grid">
+            <details open><summary><span>01 / Fuerza</span><h4>Musculación</h4><span class="disclosure" aria-hidden="true"></span></summary><p>Pesas, máquinas y una rutina personalizada. Acompañamiento profesional para empezar y seguir.</p></details>
+            <details><summary><span>02 / Movimiento</span><h4>Funcional</h4><span class="disclosure" aria-hidden="true"></span></summary><p>Fuerza, coordinación y movilidad en un entrenamiento grupal.</p></details>
+            <details><summary><span>03 / Resistencia</span><h4>Cardio</h4><span class="disclosure" aria-hidden="true"></span></summary><p>Equipamiento para trabajar resistencia e incorporar movimiento a tu rutina.</p></details>
+            <details><summary><span>04 / En compañía</span><h4>Clases grupales</h4><span class="disclosure" aria-hidden="true"></span></summary><p>Entrenamiento compartido y guiado. Consultá las clases y sus horarios en la agenda.</p></details>
+          </div>
+        </section>
+
+        <section class="night-place page-width" id="noche-lugar" aria-labelledby="noche-place-title">
+          <p class="micro">02 — El lugar</p>
+          <div><h3 id="noche-place-title">No tenés que<br>hacerlo <span>solo.</span></h3><p>Profesores de educación física te acompañan con una rutina personalizada desde el primer día y te ayudan durante el entrenamiento.</p></div>
+          <div class="night-place-note"><span class="night-place-symbol" aria-hidden="true">↗</span><p>Duchas, vestidores y lockers.<br>Traé tu candado.</p></div>
+        </section>
+
+        <section class="night-plan" id="noche-planes" aria-labelledby="noche-plan-title">
+          <div class="page-width night-plan-grid"><div><p class="micro">03 — El próximo paso</p><h3 id="noche-plan-title">Dale lugar<br>a tu ritmo.</h3></div><div><p>Encontrá el plan que acompañe tu rutina. Consultá opciones y tarifas vigentes; el pago se coordina en el gimnasio.</p><a class="night-button night-button-dark" href="https://wa.me/5491168244559" target="_blank" rel="noopener noreferrer">Hablemos por WhatsApp <span aria-hidden="true">↗</span></a></div></div>
+        </section>
+
+        <footer class="night-footer page-width">
+          <div><p class="micro">Nos vemos en Florida</p><address>Av. San Martín 2462<br>Florida, Vicente López</address><a class="underlink" href="https://maps.app.goo.gl/fyNL18dV3umtNDJx8" target="_blank" rel="noopener noreferrer">Cómo llegar <span aria-hidden="true">↗</span></a></div>
+          <dl class="schedule"><div><dt>Lunes a viernes</dt><dd>6 a 22 h</dd></div><div><dt>Sábados</dt><dd>8 a 20 h</dd></div><div><dt>Domingos</dt><dd>Cerrado</dd></div><div><dt>Feriados</dt><dd>10 a 18 h</dd></div></dl>
+          <div class="night-footer-bottom"><a class="night-brand" href="#noche-inicio">target gym</a><p>Tu ritmo. Tu lugar.</p><a class="underlink" href="https://www.instagram.com/targetgym_florida/" target="_blank" rel="noopener noreferrer">Instagram <span aria-hidden="true">↗</span></a></div>
+        </footer>
+        <p class="concept-note page-width">03 / Noche — Exploración gráfica, no un horario exclusivo de entrenamiento. Foto de referencia; no representa la sede. No modifica la web activa.</p>
+      </article>
+    </main>
+    <footer class="lab-footer"><span>Exploraciones visuales, no una identidad final aprobada.</span><a href="portadas-conceptuales.html">Volver a la primera ronda <span aria-hidden="true">↗</span></a></footer>
+  </div>
+  <script>
+    document.querySelector('.lab-switcher').addEventListener('change', () => {
+      window.scrollTo({ top: 0, behavior: 'instant' });
+    });
+  </script>
+</body>
+</html>

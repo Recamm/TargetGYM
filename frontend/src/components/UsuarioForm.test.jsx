@@ -80,6 +80,10 @@ test('asociación requiere método manual y muestra precio antes de enviar', asy
     expect(screen.getByLabelText('Cómo vas a pagar')).toHaveAttribute('aria-invalid', 'true');
     expect(screen.queryByRole('option', { name: 'Tarjeta' })).not.toBeInTheDocument();
     fireEvent.change(screen.getByLabelText('Cómo vas a pagar'), { target: { value: 'Transferencia' } });
+    const whatsapp = screen.getByRole('link', { name: 'Coordinar el pago por WhatsApp' });
+    expect(whatsapp).toHaveAttribute('href', 'https://wa.me/5491168244559');
+    expect(whatsapp).toHaveAttribute('target', '_blank');
+    expect(whatsapp).toHaveAttribute('rel', 'noopener noreferrer');
     fireEvent.click(screen.getByRole('button', { name: 'Guardar' }));
     await waitFor(() => expect(submit).toHaveBeenCalledWith(expect.objectContaining({ tipoPlan: 'mensual', metodoPago: 'Transferencia' })));
     expect(screen.getByRole('status')).toHaveTextContent(/Importe a pagar en recepción:.*15\.000/);

@@ -67,3 +67,10 @@ Revisar `.createapp/config.json`, el estado de Git y los archivos pertinentes. S
 Estas fuentes adicionales son material de consulta sujeto a este contrato. La selección explícita del usuario habilita `ca-workflow` como único coordinador; la instalación incremental no modifica por sí sola otros acuerdos. No activar procesos, hooks o instalaciones de sus originales automáticamente.
 
 - `ca-workflow`: Planificar y ejecutar funcionalidades de este proyecto según su política. No reiniciar una especificación ya acordada.
+
+
+## Skills agregadas con CreateApp
+
+Estas fuentes adicionales son material de consulta sujeto a este contrato. No cambian el coordinador, la autonomía ni las decisiones anteriores. No activar procesos, hooks o instalaciones de sus originales automáticamente.
+
+- `ca-impeccable`: Bajo pedido: refinar o auditar una interfaz con Impeccable. Respetar DESIGN.md y el alcance aprobado; no duplicar revisiones ni iniciar otro proceso visual.

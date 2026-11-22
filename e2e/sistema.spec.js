@@ -26,8 +26,9 @@ async function verificarIdentidad(page, rutas, testInfo, rol) {
         await page.evaluate(() => document.fonts.ready);
         await expect(page.locator('.brand-link img')).toHaveCount(0);
         await expect(page.locator('.brand-link')).toHaveText(await page.locator('.equipo-shell').count() ? ['Target gym'] : ['Target gym', 'Target gym']);
-        expect(await page.locator('h1').evaluate(element => getComputedStyle(element).fontFamily)).toContain('Outfit');
-        expect(await page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue('--action').trim())).toBe('#f48335');
+        expect(await page.locator('h1').evaluate(element => getComputedStyle(element).fontFamily)).toContain('Barlow Condensed');
+        expect(await page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue('--action').trim())).toBe('#ddff78');
+        expect(await page.locator('.form-panel, .clase-card, .state-panel, .records li').evaluateAll(elements => elements.every(element => getComputedStyle(element).borderRadius === '0px'))).toBe(true);
         for (const width of [360, 1440]) {
             await page.setViewportSize({ width, height: 900 });
             expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
@@ -166,8 +167,8 @@ test('flujo completo administrador, socio e instructor con datos reales', async 
 test('interfaz publica: responsive, teclado, errores y accesibilidad', async ({ page }, testInfo) => {
     await page.goto('/');
     await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
-    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Qué bueno que viniste.');
-    await expect(page.locator('.hero-photo img')).toHaveAttribute('src', '/marca/gimnasio-referencia.webp');
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Tu ritmo. Tu lugar.');
+    await expect(page.locator('.pulso-photo, .pulso-home img')).toHaveCount(0);
     await expect(page.getByText(/No corresponde a Target GYM/)).toHaveCount(0);
     await expect(page.getByRole('heading', { name: 'Plan mensual', exact: true })).toBeVisible();
     const planes = await page.request.get('/api/planes').then(response => response.json());
@@ -206,8 +207,7 @@ test('interfaz publica: responsive, teclado, errores y accesibilidad', async ({ 
     await page.getByRole('button', { name: 'Menú', exact: true }).click();
     await expect(page.getByRole('button', { name: 'Menú', exact: true })).toHaveAttribute('aria-expanded', 'true');
     await expect(nav.getByRole('link', { name: 'Inicio', exact: true })).toBeVisible();
-    expect(await nav.evaluate(element => getComputedStyle(element).animationName)).toBe('menu-enter');
-    expect(await nav.evaluate(element => getComputedStyle(element).animationDuration)).toBe('0.22s');
+    expect(await nav.evaluate(element => getComputedStyle(element).animationName)).toBe('none');
     await expect(nav.getByRole('link', { name: 'Actividades', exact: true })).toHaveCount(0);
     await nav.getByRole('link', { name: 'Inicio', exact: true }).focus();
     await page.keyboard.press('Escape');
@@ -219,7 +219,7 @@ test('interfaz publica: responsive, teclado, errores y accesibilidad', async ({ 
     await nav.getByRole('link', { name: 'Planes', exact: true }).click();
     await expect(nav).not.toBeVisible();
     await expect(page).toHaveURL('/#planes');
-    await expect(page.getByRole('heading', { name: 'Un plan para tu rutina.' })).toBeInViewport();
+    await expect(page.getByRole('heading', { name: 'Entrenar, sin vueltas.' })).toBeInViewport();
     await page.emulateMedia({ reducedMotion: 'no-preference' });
     await page.setViewportSize({ width: 720, height: 450 });
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
@@ -417,7 +417,7 @@ test('asociación por transferencia, portal del equipo y activación solo por pa
             await page.getByRole('button', { name: 'Menú', exact: true }).click();
             const nav = page.getByRole('navigation', { name: 'Gestión del gimnasio' });
             await expect(nav).toBeVisible();
-            expect(await page.locator('.equipo-sidebar').evaluate(element => getComputedStyle(element).animationName)).toBe('menu-enter');
+            expect(await page.locator('.equipo-sidebar').evaluate(element => getComputedStyle(element).animationName)).toBe('none');
             await nav.getByRole('link', { name: 'Resumen' }).focus();
             await page.keyboard.press('Escape');
             await expect(page.getByRole('button', { name: 'Menú', exact: true })).toBeFocused();

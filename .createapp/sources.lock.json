@@ -877,6 +877,12 @@
         "workflow"
       ],
       "sources_lock": ".createapp/additions/aa4d8bf3017c590c46d6/sources.lock.json"
+    },
+    {
+      "skills": [
+        "impeccable"
+      ],
+      "sources_lock": ".createapp/additions/27312d88cc697a82f75a/sources.lock.json"
     }
   ]
 }

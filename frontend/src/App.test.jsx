@@ -63,6 +63,7 @@ test('cambiar filtros no mueve ni roba foco; otra página empieza arriba sin ani
     fireEvent.click(screen.getByRole('link', { name: 'Otra página' }));
     expect(window.scrollTo).toHaveBeenLastCalledWith({ top: 0, left: 0, behavior: 'instant' });
     expect(screen.getByRole('heading', { name: 'Clases' })).toHaveFocus();
+    expect(document.querySelector('.pulso-home')).toBeNull();
 });
 
 test('movimiento reducido e ingreso directo conservan navegación inmediata', () => {

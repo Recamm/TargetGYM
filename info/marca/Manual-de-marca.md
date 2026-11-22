@@ -1,20 +1,51 @@
 # Target GYM — Manual de marca
 
-**Versión 2.1 · Identidad aprobada el 2 de noviembre de 2026 · Ajustes del 3 de noviembre**
+**Versión 3 · Pulso Afiche aprobada para todo el sistema el 22 de noviembre de 2026**
 
-**Dirección:** Cerca. **Logo:** Mancuerna. **Paleta:** blanco y grafito
-con acentos Mandarina. **Tipografía:** Outfit + DM Sans.
+**Dirección:** Pulso Afiche. **Logotipo web:** target gym tipográfico.
+**Paleta:** papel, tinta y lima. **Tipografía:** Barlow Condensed + DM Sans.
 
-Esta es la única identidad activa de Target GYM. Sustituye las propuestas
-Enfoque, Ritmo, Cerca bosque/lavanda y las exploraciones cálidas anteriores.
-El usuario aprobó Cerca/Mandarina y su aplicación a la web completa; la foto
-usa [A. Rectángulo suave](./portada.html#suave), con esquinas de 24 px.
-La aprobación visual no verifica los datos del gimnasio
-ni autoriza un despliegue.
+Pulso Afiche sustituye Cerca en inicio, clases, asociación, login, cuenta,
+membresías y paneles de administrador e instructor. Los tokens son globales;
+el titular de escala afiche pertenece solo al inicio, que no muestra fotos.
+El rediseño no cambia permisos, reglas comerciales ni datos, y no autoriza
+un despliegue.
 
-[Manual visual en PDF](./Manual-de-marca.pdf) ·
-[Manual visual navegable](./manual.html) ·
+[PDF histórico de Cerca](./Manual-de-marca.pdf) ·
+[Manual visual histórico de Cerca](./manual.html) ·
 [Exploraciones históricas, no vigentes](./Exploraciones-de-marca.md)
+
+## Pulso Afiche: normas vigentes
+
+El sistema adopta [Pulso Afiche](./pulso-variantes.html): papel
+`#f5f5ee`, tinta `#20251c`, lima `#ddff78`, Barlow Condensed 600/700 y DM Sans.
+“Tu ritmo. Tu lugar.” ocupa el centro de la primera pantalla; la segunda
+línea lleva un fondo lima plano. El inicio no incluye fotografía.
+
+Acciones con borde o fondo sólido y estados de foco/hover, no texto
+subrayado. Navegación con superficies de interacción y estado activo.
+Sin movimiento decorativo vinculado al scroll. Tarifas, requisitos, roles y
+funciones no cambian. Los encabezados de gestión usan una superficie lima;
+la navegación activa se destaca sin depender solo del color. Los títulos
+operativos son grandes pero no ocupan toda la pantalla como la portada.
+
+Formularios, entradas, confirmaciones, registros, avisos y tarjetas de
+clases son rectangulares, con reglas finas y sin sombras decorativas.
+Los botones primarios usan tinta sobre papel en hover/foco; los secundarios
+son contornos. Las acciones destructivas mantienen rojo semántico, y los
+estados de error/confirmación conservan texto explícito. Los controles de
+navegación y los importes no se animan.
+
+Fuentes de distribución: `frontend/public/marca/fonts`; pesos 600 y 700
+de Barlow Condensed, DM Sans variable y sus licencias OFL. Los estilos base
+viven en `frontend/src/index.css` y `frontend/src/App.css`; solo la
+composición de la portada queda en `frontend/src/pages/PulsoHome.css`.
+
+## Anexo: Cerca, identidad histórica no vigente
+
+Las secciones siguientes conservan el antecedente de noviembre de 2026,
+incluidos los maestros gráficos y normas de la versión 2.1. No se aplican
+a la interfaz actual ni sustituyen las normas Pulso Afiche de arriba.
 
 ## 1. La idea de marca
 
@@ -313,24 +344,17 @@ No inventar precios, testimonios, estadísticas, cupos o instructores.
 La agenda obtiene sus datos del sistema; la descripción institucional y
 la oferta de actividades requieren confirmación del gimnasio antes de publicar.
 
-## 8. Fotografía y movimiento
+## 8. Imagen y movimiento
 
 Priorizar fotos autorizadas del gimnasio real: espacio, equipamiento y
 entrenamiento cotidiano. Respetar permisos de imagen de personas. No usar
 fotografía generada para aparentar instalaciones o resultados reales.
 
-La aplicación local conserva una **fotografía de referencia**
-de [Danielle Cerullo / Unsplash](https://unsplash.com/photos/woman-standing-surrounded-by-exercise-equipment-CQfNt66ttZM),
-bajo [Unsplash License](https://unsplash.com/license), de uso gratuito.
-Se muestra en gris y se sirve como WebP local de 1920 × 1040 px.
+El inicio vigente no muestra fotografías ni anima contenido con el scroll.
+Se conserva un archivo de referencia de [Danielle Cerullo / Unsplash](https://unsplash.com/photos/woman-standing-surrounded-by-exercise-equipment-CQfNt66ttZM)
+en los recursos locales y en mockups históricos, bajo [Unsplash License](https://unsplash.com/license).
+**No representa Target GYM** y no debe usarse para presentar sus instalaciones.
 El [registro de origen](./imagenes/ORIGEN.txt) conserva su procedencia.
-
-**No representa Target GYM.** Reemplazarla por fotografía autorizada real
-antes de presentarla como sus instalaciones. Esta limitación permanece
-documentada aquí y en los registros de origen; por pedido del usuario no
-hay leyenda bajo la fotografía en la web funcional. La licencia no exige
-un crédito visible. No implica exclusividad
-ni certificación de todas las autorizaciones de imagen para campañas.
 
 No hay animaciones decorativas automáticas; la entrada del menú responde
 a una acción del usuario. Los cambios de estado se

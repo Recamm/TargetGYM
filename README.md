@@ -283,37 +283,44 @@ completa. No se acreditan Safari/WebKit ni Neon/Vercel reales sin probarlos.
 
 ## Diseño y herramientas
 
-Identidad **Cerca**, aprobada el 2 de noviembre de 2026: blanco `#FFFFFF`,
-grafito `#2C3035` y Mandarina `#F48335` como acento, logo **Mancuerna**,
-Outfit para titulares y DM Sans para lectura/controles, ambas locales y con
-licencias OFL. Se aplica a portada, agenda, formularios y paneles por rol.
+Identidad **Pulso Afiche**, aprobada para todo el sistema el 22 de noviembre
+de 2026: papel `#F5F5EE`, tinta `#20251C` y lima `#DDFF78`.
+Barlow Condensed 600/700 para titulares y DM Sans para lectura/controles,
+locales y con licencias OFL. Se aplica a portada, agenda, formularios y
+paneles de administrador, socio e instructor.
 Los errores y confirmaciones conservan colores semánticos y texto explícito.
-Temporalmente, la cabecera y el pie usan solo **Target gym** en Outfit,
-sin símbolo; los maestros Mancuerna se conservan. El favicon usa una T.
+La cabecera y el pie usan **target gym** en Barlow Condensed, sin símbolo;
+los maestros Mancuerna se conservan como antecedentes. El favicon usa una T.
 Los avisos transitorios se cierran a los 4 s (confirmación) o 8 s (error),
 sin pausa por puntero/foco; conservan cierre manual y devuelven el foco si
 estaba en el aviso. Los errores en campos/paneles no se ocultan.
 Inicio muestra precios configurados en ARS por período, descuentos reales
-y pago manual; se actualizan cada 30 s. Las tarjetas grises con borde
-se centran y adaptan a cualquier cantidad; las filas incompletas también
-quedan centradas. El panel reserva espacio para la barra de desplazamiento
+y pago manual; se actualizan cada 30 s. Los planes se despliegan en filas;
+formularios y registros usan superficies planas, reglas finas y controles
+rectangulares. El panel reserva espacio para la barra de desplazamiento
 para no moverse lateralmente entre secciones. Navegación reducida a Inicio,
-Clases, Planes y accesos de sesión/rol. El menú móvil entra en 220 ms y
-respeta movimiento reducido.
+Clases, Planes y accesos de sesión/rol. Los menús se abren inmediatamente;
+el inicio no muestra fotografías ni tiene movimiento ligado al scroll.
 
 Los enlaces dentro de la misma página usan scroll suave, también al volver
 al inicio o repetir la misma ancla. El foco acompaña el destino sin provocar
 otro salto. Cambiar de página o preferir movimiento reducido usa navegación
 inmediata; cambiar solo filtros de URL conserva posición y foco.
 
-[Manual final de marca](info/marca/Manual-de-marca.md) ·
-[Manual visual PDF](info/marca/Manual-de-marca.pdf) ·
-[Manual visual HTML](info/marca/manual.html).
+Los enlaces a WhatsApp, Google Maps e Instagram abren una pestaña nueva con
+`noopener noreferrer`, también al coordinar el pago desde asociación,
+renovación o una solicitud pendiente. El plan y los datos del formulario
+quedan en la pestaña original. La navegación interna y los enlaces de llamada
+conservan su comportamiento.
 
-La fotografía de portada es una referencia de Danielle Cerullo / Unsplash,
-sin leyenda visible por pedido del usuario. **No corresponde a Target GYM** y debe
-reemplazarse por una foto autorizada real antes de representar sus instalaciones.
-Autor/licencia en [ORIGEN.txt](frontend/public/marca/ORIGEN.txt).
+[Manual final de marca](info/marca/Manual-de-marca.md) ·
+[Manual visual PDF de Cerca, histórico](info/marca/Manual-de-marca.pdf) ·
+[Manual visual HTML de Cerca, histórico](info/marca/manual.html).
+
+El archivo de Danielle Cerullo / Unsplash se conserva como referencia de
+mockups históricos, pero no se muestra en el inicio funcional. **No corresponde
+a Target GYM.** Autor/licencia en
+[ORIGEN.txt](frontend/public/marca/ORIGEN.txt).
 No se inventan cifras ni testimonios reales.
 Dirección: Gral. José de San Martín 2462, Florida, Vicente López.
 Teléfono y horario semanal obtenidos de Maps; Instagram aportado por el usuario.

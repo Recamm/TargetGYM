@@ -67,16 +67,17 @@ test('C informa falta de métodos en el resumen y no usa una tarifa falsa', asyn
     expect(within(fold.querySelector('summary')).queryByText(priceText(1000000))).not.toBeInTheDocument();
 });
 
-test('mantiene Cerca y la agenda real, sin leyenda bajo la foto', async () => {
+test('aplica Afiche con titular centrado, sin fotografía y con agenda y acciones reales', async () => {
     const { container } = setup();
-    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Qué bueno que viniste.');
-    expect(screen.getByRole('link', { name: 'Ver planes', exact: true })).toHaveAttribute('href', '/#planes');
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Tu ritmo. Tu lugar.');
+    expect(screen.getByRole('link', { name: 'Encontrá tu actividad', exact: true })).toHaveAttribute('href', '/#servicios');
     expect(screen.getByRole('link', { name: 'Ver clases', exact: true })).toHaveAttribute('href', '/clases');
-    expect(screen.queryByText(/No corresponde a Target GYM/)).not.toBeInTheDocument();
-    expect(screen.getByRole('img')).toHaveAttribute('src', '/marca/gimnasio-referencia.webp');
+    expect(container.querySelector('.pulso-photo')).toBeNull();
+    expect(container.querySelector('img')).toBeNull();
     expect(container.querySelectorAll('.activity')).toHaveLength(4);
     expect(container.querySelectorAll('.activity[open]')).toHaveLength(1);
     expect(screen.getByRole('link', { name: 'Quiero asociarme' })).toHaveAttribute('href', '/asociate');
+    expect(screen.getByRole('link', { name: 'Quiero asociarme' })).toHaveClass('button');
     await screen.findByText('Plan mensual');
 });
 

@@ -1912,3 +1912,105 @@ Verificado:
 
 La revision visual usa Chromium; no acredita Safari/iPhone real.
 P1–P8 siguen pendientes. Sin commits, despliegue ni cambios comerciales.
+
+## 37. Tres mockups de inicio para comparar composiciones - 2026-11-06
+
+- Se completó [el estudio interactivo de portadas](./marca/portadas-conceptuales.html)
+  con tres páginas de inicio completas y estructuralmente distintas: Casa
+  abierta, Ritmo y Al alcance. Cada una reorganiza portada, actividades,
+  planes y visita, no solo el color o el titular.
+- La selección usa elementos `<details>` nativos y exclusivos, sin depender
+  de JavaScript; mouse y teclado abren una propuesta y pliegan las otras.
+- Las tres alternativas mantienen la identidad Cerca / Mandarina aprobada,
+  las fuentes locales y los contenidos verificados. La fotografía sigue
+  identificada como referencia y no representa la sede.
+- Las referencias de Awwwards, Agrumea Farm y Monument orientan la escala
+  tipográfica y el uso editorial de la imagen; no se copian sus interfaces,
+  contenidos ni colores.
+- Es una exploración independiente: no modifica React, la portada activa,
+  la marca aprobada ni las decisiones pendientes.
+- Chromium: cambio entre las tres composiciones, enlaces internos, imagen
+  cargada y vista responsive comprobados a 320, 375, 768 y 1440 px, sin
+  desbordamiento horizontal.
+
+La comprobación visual usa Chromium; no acredita Safari/iPhone real.
+
+## 38. Pulso Afiche aplicada al inicio - 2026-11-22
+
+- Elección explícita: aplicar Afiche a la página actual. Alcance: inicio,
+  su cabecera y pie; no cambia gestión, cuenta, agenda, tarifas ni roles.
+- Titular “Tu ritmo. Tu lugar.” centrado; papel, tinta y lima; fuentes
+  Barlow Condensed locales con licencia. Imagen rectangular que abre al
+  scrollear, sin leyendas visibles debajo y con alternativa estática.
+- Acciones con borde/fondo y foco claro, sin subrayados. Se preservan los
+  desplegables, tarifas por método, carga/error/reintento, asociación y
+  navegación a clases. No se inventan precios ni se simulan cobros.
+- Verificado: 22 tests de Home/App/Footer; ocho recorridos Chromium:
+  seis tamaños de titular, 24 combinaciones de cantidad/ancho de catálogo,
+  54 casos de precios, teclado, actualización de tarifas, menú, anclas,
+  scroll reversible y movimiento reducido. Build/lint correctos.
+- Catálogo real: seis planes a 390/1440 px; mensual de $78.000 en efectivo
+  y $88.000 en otros medios preservado. Cuatro auditorías Axe adicionales
+  del catálogo real abierto/cerrado sin infracciones, fuentes completas,
+  sin desbordes ni errores de ejecución. Capturas revisadas.
+- Actualización de alcance en el manual de marca; sin publicación ni commits.
+
+La validación visual usa Chromium; no acredita Safari/iPhone real.
+
+## 39. Pulso Afiche en toda la aplicación - 2026-11-22
+
+- Alcance ampliado por pedido explícito: clases, asociación, acceso de socios,
+  portal del equipo, perfil y paneles de administración, socios e instructores.
+  Se conserva la composición especial del inicio aprobado.
+- Identidad compartida: Barlow Condensed/DM Sans locales, papel, tinta y lima;
+  títulos condensados, controles rectangulares, navegación activa clara y
+  formularios editoriales. Las acciones destructivas y los errores conservan
+  sus colores semánticos. No se animan los datos ni los menús operativos.
+- Se preservan rutas, permisos, precios, pagos, reservas, confirmaciones y
+  accesibilidad. El pie Afiche se aplica a todas las páginas públicas.
+  README y manual de marca actualizados; Cerca queda como apéndice histórico.
+- Verificación: 86 pruebas frontend, build y lint correctos. Nueve recorridos
+  Chromium aprobados: tres roles con datos de prueba, pagos y asociación,
+  navegación, teclado, zoom real al 200 %, controles y movimiento reducido,
+  portada y páginas públicas a 320/1440 px, con auditorías Axe integradas.
+  El lint de E2E conserva una advertencia preexistente ajena a este cambio.
+- Cuenta administradora nueva creada en la base local con autorización,
+  mediante el servicio existente y contraseña aleatoria; no se restablecen
+  cuentas anteriores ni se guardan credenciales en archivos del proyecto.
+  Backend reiniciado y disponible; ingreso normal al panel comprobado.
+- Nueve rutas del panel/perfil comprobadas con datos locales cargados a
+  320/1140 px: sin desbordamiento horizontal ni alertas de error.
+  Login, clases, resumen y planes revisados visualmente. No se modificaron
+  socios, clases ni pagos existentes durante esta comprobación local.
+
+Sin dependencias nuevas, commits ni despliegue. La comprobación usa Chromium;
+Safari/WebKit y dispositivos físicos no están certificados.
+
+## 40. Enlaces externos en pestaña nueva - 2026-11-22
+
+- WhatsApp para coordinar pagos abre otra pestaña desde asociación,
+  renovación y solicitudes pendientes. Maps, WhatsApp e Instagram del pie
+  también usan `target="_blank"` y `rel="noopener noreferrer"`.
+- Se conservan navegación interna, anclas, llamadas, destinos y estilos.
+  No se agregan ventanas mediante JavaScript ni dependencias.
+- Dos regresiones unitarias reprodujeron la falta de nueva pestaña antes
+  del cambio. Verificación final: 14 tests de pie, asociación y renovación;
+  build y lint correctos. Dos recorridos Chromium aprobados: pestañas reales
+  para los cuatro enlaces, sin acceso a la ventana original y conservando
+  plan, método y datos del formulario; asociación por transferencia intacta.
+- Los destinos externos se interceptan en la prueba de pestañas: no se
+  contacta WhatsApp, Maps ni Instagram ni se envían mensajes.
+  README actualizado. Sin cambios en datos locales ni publicación.
+
+## 41. Inicio sin fotografía - 2026-11-22
+
+- Pedido: retirar del inicio la imagen ubicada inmediatamente después de
+  “Tu ritmo. Tu lugar.” Se quitan su elemento visual, sus reglas de layout y
+  su movimiento ligado al scroll. El titular, actividades, planes, pie y
+  comportamiento del resto de la aplicación permanecen intactos.
+- El archivo y el crédito de origen se conservan para mockups históricos;
+  la página funcional ya no los referencia. README y manual de marca
+  actualizados; los mockups archivados no se modifican.
+- Verificado: test del inicio y 6 viewport Chromium (320, 390, 760, 1024,
+  1440, 1920 px), sin imagen, desbordes ni cambios en anclas y acciones;
+  recorrido público accesible en Chromium.

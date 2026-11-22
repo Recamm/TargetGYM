@@ -11,3 +11,15 @@ test('muestra WhatsApp confirmado con formato móvil argentino sin cambiar el te
     expect(screen.getByText('10 a 18 h')).toBeVisible();
     expect(screen.getByText(/Av. San Martín 2462/)).toBeVisible();
 });
+
+test('abre los sitios externos en otra pestaña sin cambiar los enlaces internos ni las llamadas', () => {
+    render(<MemoryRouter><Footer /></MemoryRouter>);
+    for (const name of ['Cómo llegar', 'WhatsApp: 11 6824-4559', 'Instagram: @targetgym_florida']) {
+        const link = screen.getByRole('link', { name });
+        expect(link).toHaveAttribute('target', '_blank');
+        expect(link).toHaveAttribute('rel', 'noopener noreferrer');
+    }
+    for (const name of ['Llamar: 011 4795-5087', 'Acceso del equipo', 'Target GYM, volver al inicio']) {
+        expect(screen.getByRole('link', { name })).not.toHaveAttribute('target');
+    }
+});

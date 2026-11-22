@@ -29,6 +29,7 @@ import MiEspacioPage from './pages/MiEspacioPage.jsx';
 import GestionInicioPage from './pages/GestionInicioPage.jsx';
 import ActivarAccesoPage from './pages/ActivarAccesoPage.jsx';
 import './App.css';
+import './pages/PulsoHome.css';
 
 export default function App() {
     const location = useLocation(), { pathname, search } = location, { usuario } = useAuth();
@@ -73,5 +74,5 @@ export default function App() {
             <Route path="*" element={<NotFoundPage />} />
         </Routes>
     </main>;
-    return <><a className="skip-link" href="#contenido">Saltar al contenido</a>{equipo ? <EquipoLayout>{contenido}</EquipoLayout> : <><Header />{contenido}<Footer /></>}</>;
+    return <><a className="skip-link" href="#contenido">Saltar al contenido</a>{equipo ? <EquipoLayout>{contenido}</EquipoLayout> : <div className={pathname === '/' ? 'pulso-home' : 'public-shell'}><Header />{contenido}<Footer /></div>}</>;
 }

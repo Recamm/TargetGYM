@@ -10,6 +10,38 @@ async function ingresarEquipo(page) {
     await expect(page.getByText('Cargando información…')).toHaveCount(0);
 }
 
+test('los enlaces externos abren otra pestaña y conservan el plan y los datos de asociación', async ({ page, context }) => {
+    await context.route(/^https:\/\/(wa\.me|maps\.app\.goo\.gl|www\.instagram\.com)\//, route =>
+        route.fulfill({ contentType: 'text/html', body: '<!doctype html><title>Destino externo de prueba</title>' }));
+    await page.route('**/api/planes', route => route.fulfill({ json: { success: true, data: [{
+        tipo: 'mensual', nombre: 'Plan mensual', meses: 1, dias: null, precioCentavos: 1500000,
+        precioDescuentoCentavos: null, descripcion: '', requisitosAcceso: '', metodoExclusivo: null,
+        permiteTarjeta: true, habilitado: true, descuentoPorcentaje: 0, condicionesDescuento: '', metodoDescuento: null,
+    }] } }));
+    await page.goto('/asociate?plan=mensual');
+    await expect(page.getByLabel('Plan que querés contratar')).toHaveValue('mensual');
+    await page.getByLabel('Nombre', { exact: true }).fill('Prueba');
+    await page.getByLabel('Email', { exact: true }).fill('nueva-cuenta@example.test');
+    await page.getByLabel('Cómo vas a pagar', { exact: true }).selectOption('Transferencia');
+    for (const name of ['Coordinar el pago por WhatsApp', 'Cómo llegar', 'WhatsApp: 11 6824-4559', 'Instagram: @targetgym_florida']) {
+        const link = page.getByRole('link', { name, exact: true });
+        const href = await link.getAttribute('href');
+        const [popup] = await Promise.all([page.waitForEvent('popup'), link.click()]);
+        try {
+            await expect(popup).toHaveURL(href);
+            expect(await popup.evaluate(() => window.opener === null)).toBe(true);
+            await expect(page).toHaveURL('/asociate?plan=mensual');
+            await expect(page.getByLabel('Plan que querés contratar')).toHaveValue('mensual');
+            await expect(page.getByLabel('Cómo vas a pagar', { exact: true })).toHaveValue('Transferencia');
+            await expect(page.getByLabel('Nombre', { exact: true })).toHaveValue('Prueba');
+            await expect(page.getByLabel('Email', { exact: true })).toHaveValue('nueva-cuenta@example.test');
+        } finally { await popup.close(); }
+    }
+    await page.locator('.association-page').getByRole('link', { name: 'Ya soy socio', exact: true }).click();
+    await expect(page).toHaveURL('/login');
+    expect(context.pages()).toHaveLength(1);
+});
+
 test('panel estable con scrollbar real al navegar entre secciones cortas y largas', async ({ baseURL }) => {
     const browser = await chromium.launch({
         executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH,
@@ -91,8 +123,8 @@ test('planes con 1, 2, 3, 4, 5 y 7 desplegables ocupan el ancho disponible sin d
             const elegir = page.locator('.plan-card a').first();
             await elegir.focus();
             await expect(elegir).toBeVisible();
-            await expect(elegir).toHaveCSS('background-color', 'rgb(44, 48, 53)');
-            expect(await elegir.evaluate(element => getComputedStyle(element).outlineColor)).toBe('rgb(44, 48, 53)');
+            await expect(elegir).toHaveCSS('background-color', 'rgb(245, 245, 238)');
+            expect(await elegir.evaluate(element => getComputedStyle(element).outlineColor)).toBe('rgb(32, 37, 28)');
             await expect(elegir).toBeFocused();
             expect((await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa']).analyze()).violations).toEqual([]);
         }
@@ -162,57 +194,75 @@ test('C abre con teclado, conserva foco y estado al actualizar tarifas y no prom
     await expect(summary).toBeFocused();
 });
 
-test('portada A conserva foto horizontal, esquinas de 24 px y superficies neutras responsive', async ({ page }, testInfo) => {
-    for (const width of [320, 390, 760, 1024, 1440]) {
-        await page.setViewportSize({ width, height: 900 });
+test('Pulso Afiche centra el titular, elimina la foto y conserva las acciones responsive', async ({ page }, testInfo) => {
+    for (const [width, height] of [[320, 568], [390, 844], [760, 900], [1024, 768], [1440, 900], [1920, 1080]]) {
+        await page.setViewportSize({ width, height });
         await page.goto('/');
-        const foto = page.locator('.hero-photo img');
-        await expect(foto).toBeVisible();
+        await expect(page.locator('.pulso-photo, .pulso-home img')).toHaveCount(0);
+        await expect(page.locator('.plan-fold')).not.toHaveCount(0);
         await page.evaluate(() => document.fonts.ready);
-        const medidas = await foto.evaluate(img => {
-            const rect = img.getBoundingClientRect(), copy = document.querySelector('.hero-copy').getBoundingClientRect();
-            const style = getComputedStyle(img);
-            return { cargada: img.complete && img.naturalWidth > 0, proporcion: rect.width / rect.height,
-                radios: [style.borderTopLeftRadius, style.borderTopRightRadius, style.borderBottomLeftRadius, style.borderBottomRightRadius],
-                x: rect.x, y: rect.y, right: rect.right, copyX: copy.x, copyBottom: copy.bottom,
-                overflow: document.documentElement.scrollWidth > innerWidth };
+        const medidas = await page.evaluate(() => {
+            const hero = document.querySelector('.pulso-hero').getBoundingClientRect();
+            return { imagenes: document.querySelectorAll('.pulso-home img').length,
+                fuente: [...document.fonts].filter(font => font.family.includes('Barlow')).every(font => font.status === 'loaded'),
+                overflow: document.documentElement.scrollWidth > innerWidth,
+                lineas: [...document.querySelectorAll('.pulso-hero h1 > span')].map(span => {
+                    const range = document.createRange(); range.selectNodeContents(span);
+                    const rect = range.getBoundingClientRect();
+                    return { izquierda: rect.left, derecha: rect.right, bottom: rect.bottom,
+                        centrado: Math.abs((rect.left + rect.right) / 2 - (hero.left + hero.right) / 2) <= hero.width * .02 };
+                }),
+                acciones: [...document.querySelectorAll('.pulso-home a')].filter(link => link.getBoundingClientRect().width).map(link => {
+                    const style = getComputedStyle(link), rect = link.getBoundingClientRect();
+                    return { texto: link.textContent, subrayado: style.textDecorationLine.includes('underline'), altura: rect.height };
+                }),
+            };
         });
-        expect(medidas.cargada).toBe(true);
-        expect(medidas.proporcion).toBeCloseTo(4 / 3, 2);
-        expect(medidas.radios).toEqual(['24px', '24px', '24px', '24px']);
+        expect(medidas.imagenes).toBe(0);
+        expect(medidas.fuente).toBe(true);
         expect(medidas.overflow).toBe(false);
-        const suave = 'rgb(245, 246, 247)';
-        await expect(page.locator('.location-line')).toHaveCSS('border-left-width', '0px');
-        await expect(page.locator('.site-header nav > a[aria-current="page"]')).toHaveCSS('text-decoration-color', 'rgb(44, 48, 53)');
-        await expect(page.locator('.activity[open]')).toHaveCSS('background-color', suave);
-        await expect(page.locator('.plan-summary-heading .plan-period').first()).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
-        await expect(page.locator('.plan-card').first()).toHaveCSS('background-color', 'rgb(255, 255, 255)');
-        await expect(page.locator('.gym-benefits li').first()).toHaveCSS('border-left-width', '0px');
-        await expect(page.locator('.footer-visit')).toHaveCSS('border-top-width', '0px');
-        if (width > 760) expect(medidas.right).toBeLessThan(medidas.copyX);
-        else expect(medidas.y).toBeGreaterThan(medidas.copyBottom);
+        expect(medidas.lineas.every(linea => linea.centrado && linea.izquierda >= 0 && linea.derecha <= width && linea.bottom < height), JSON.stringify(medidas.lineas)).toBe(true);
+        expect(medidas.acciones.every(accion => !accion.subrayado && accion.altura >= 44), JSON.stringify(medidas.acciones)).toBe(true);
+        await expect(page.getByRole('heading', { level: 1 })).toHaveText('Tu ritmo. Tu lugar.');
+        await expect(page.locator('figcaption')).toHaveCount(0);
+        await expect(page.getByText('Fuerza, movimiento y acompañamiento.', { exact: true })).toHaveCount(0);
+        await expect(page.getByText('Fotografía de referencia', { exact: true })).toHaveCount(0);
+        await expect(page.locator('.plans-section')).toHaveCSS('background-color', 'rgb(221, 255, 120)');
         if ([390, 1440].includes(width)) {
             const actividad = page.locator('.activity').nth(1), control = actividad.locator('summary');
             await control.focus();
             await page.keyboard.press('Enter');
             await expect(actividad).toHaveJSProperty('open', true);
-            await expect(actividad).toHaveCSS('background-color', suave);
             await page.keyboard.press('Enter');
             await expect(actividad).toHaveJSProperty('open', false);
-            await expect(actividad).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
             await control.blur();
-            await page.screenshot({ path: testInfo.outputPath(`portada-A-${width}.png`), fullPage: true });
+            await page.emulateMedia({ reducedMotion: 'reduce' });
+            await page.screenshot({ path: testInfo.outputPath(`pulso-afiche-${width}.png`), fullPage: true });
             expect((await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa']).analyze()).violations).toEqual([]);
         }
     }
 });
 
+test('Pulso conserva las anclas de inicio sin imagen ni movimiento ligado al scroll', async ({ page }) => {
+    await page.goto('/');
+    await expect(page.locator('.pulso-photo, .pulso-home img')).toHaveCount(0);
+    await page.getByRole('link', { name: 'Encontrá tu actividad' }).click();
+    await expect(page.locator('#servicios')).toBeFocused();
+    expect(await page.locator('#servicios').evaluate(element => element.getBoundingClientRect().top)).toBeGreaterThanOrEqual(88);
+    await page.getByRole('link', { name: 'Ver clases', exact: true }).click();
+    await expect(page.locator('.pulso-home')).toHaveCount(0);
+    expect(await page.getByRole('heading', { level: 1 }).evaluate(element => getComputedStyle(element).fontFamily)).toContain('Barlow Condensed');
+});
+
 test('botones cambian de fondo con transición, conservan geometría y respetan deshabilitados y movimiento reducido', async ({ page }) => {
-    const naranja = 'rgb(244, 131, 53)', grafito = 'rgb(44, 48, 53)', blanco = 'rgb(255, 255, 255)';
+    const tinta = 'rgb(32, 37, 28)', papel = 'rgb(245, 245, 238)', peligro = 'rgb(153, 27, 27)';
     async function verificar(boton, primario = false) {
-        const esperado = primario ? grafito : naranja, texto = primario ? blanco : grafito;
+        const destructivo = await boton.evaluate(element => element.classList.contains('danger'));
+        const esperado = primario ? papel : destructivo ? peligro : tinta;
+        const texto = primario ? tinta : papel;
+        const normal = primario ? tinta : 'rgba(0, 0, 0, 0)';
         await page.mouse.move(0, 0);
-        await expect(boton).toHaveCSS('background-color', primario ? naranja : grafito);
+        await expect(boton).toHaveCSS('background-color', normal);
         const inicial = await boton.boundingBox();
         await boton.hover();
         await expect(boton).toHaveCSS('background-color', esperado);
@@ -230,10 +280,10 @@ test('botones cambian de fondo con transición, conservan geometría y respetan 
         await expect(boton).toHaveCSS('color', texto);
         await expect(boton).toHaveCSS('outline-style', 'solid');
         await boton.blur();
-        await expect(boton).toHaveCSS('background-color', primario ? naranja : grafito);
+        await expect(boton).toHaveCSS('background-color', normal);
     }
     await page.goto('/');
-    await verificar(page.getByRole('link', { name: 'Ver planes', exact: true }), true);
+    await verificar(page.getByRole('navigation', { name: 'Navegación principal' }).getByRole('link', { name: 'Asociate', exact: true }), true);
     await verificar(page.getByRole('link', { name: 'Ver clases', exact: true }));
     await page.goto('/clases');
     await verificar(page.getByRole('button', { name: 'Limpiar filtros', exact: true }));
@@ -250,11 +300,11 @@ test('botones cambian de fondo con transición, conservan geometría y respetan 
     await expect(bloqueado).toHaveCSS('background-color', color);
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await page.goto('/');
-    const principal = page.getByRole('link', { name: 'Ver planes', exact: true });
+    const principal = page.getByRole('link', { name: 'Encontrá tu actividad', exact: true });
     await principal.hover();
     await expect(principal).toHaveCSS('transition-duration', '0s');
-    await expect(principal).toHaveCSS('background-color', grafito);
-    await expect(principal).toHaveCSS('color', blanco);
+    await expect(principal).toHaveCSS('background-color', 'rgb(32, 37, 28)');
+    await expect(principal).toHaveCSS('color', 'rgb(245, 245, 238)');
     await page.emulateMedia({ reducedMotion: 'no-preference' });
     await page.goto('/equipo');
     await page.getByLabel('Email', { exact: true }).fill('admin@example.test');
@@ -277,6 +327,30 @@ test('botones cambian de fondo con transición, conservan geometría y respetan 
     await verificar(dialogo.getByRole('button', { name: 'Confirmar', exact: true }), true);
     await dialogo.getByRole('button', { name: 'Volver', exact: true }).click();
     await expect(dialogo).toHaveCount(0);
+});
+
+test('Pulso también viste clases, login y asociación con acciones claras a 320 y 1440 px', async ({ page }) => {
+    for (const width of [320, 1440]) {
+        await page.setViewportSize({ width, height: 900 });
+        for (const ruta of ['/clases', '/login', '/asociate', '/equipo']) {
+            await page.goto(ruta);
+            await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
+            await page.evaluate(() => document.fonts.ready);
+            const estado = await page.evaluate(() => ({
+                overflow: document.documentElement.scrollWidth > innerWidth,
+                fuente: getComputedStyle(document.querySelector('main h1')).fontFamily,
+                controles: [...document.querySelectorAll('main a, main button, main input, main select, main textarea')].filter(element => element.getBoundingClientRect().width).map(element => ({
+                    texto: element.textContent,
+                    radio: getComputedStyle(element).borderRadius,
+                    decoracion: getComputedStyle(element).textDecorationLine,
+                })),
+            }));
+            expect(estado.overflow, ruta).toBe(false);
+            expect(estado.fuente, ruta).toContain('Barlow Condensed');
+            expect(estado.controles.every(control => control.radio === '0px' && !control.decoracion.includes('underline')), JSON.stringify(estado.controles)).toBe(true);
+            expect((await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa']).analyze()).violations, ruta).toEqual([]);
+        }
+    }
 });
 
 test('el aviso real de logout desaparece solo aunque el puntero quede encima', async ({ page }) => {
@@ -369,17 +443,17 @@ test('desplazamiento suave en enlaces internos, repetidos y vuelta al inicio, co
         await page.goto('/');
         await expect(page.getByText('Cargando información…')).toHaveCount(0);
         await page.evaluate(() => document.fonts.ready);
-        await comprobarClick(page.getByRole('link', { name: 'Ver planes', exact: true }), true);
+        await comprobarClick((await menu()).getByRole('link', { name: 'Planes', exact: true }), true);
         await expect(page).toHaveURL('/#planes');
         await expect(page.locator('#planes')).toBeFocused();
         await comprobarClick((await menu()).getByRole('link', { name: 'Inicio', exact: true }), true);
         await comprobarClick((await menu()).getByRole('link', { name: 'Planes', exact: true }), true);
         await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }));
-        await comprobarClick(page.getByRole('link', { name: 'Ver planes', exact: true }), true);
+        await comprobarClick((await menu()).getByRole('link', { name: 'Planes', exact: true }), true);
         await page.evaluate(() => window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'instant' }));
         await comprobarClick(page.getByRole('link', { name: 'Target GYM, volver al inicio', exact: true }), true);
         await page.emulateMedia({ reducedMotion: 'reduce' });
-        await comprobarClick(page.getByRole('link', { name: 'Ver planes', exact: true }), false);
+        await comprobarClick((await menu()).getByRole('link', { name: 'Planes', exact: true }), false);
         await expect(page.locator('#planes')).toBeFocused();
         await comprobarClick((await menu()).getByRole('link', { name: 'Clases', exact: true }), false, true);
         await expect(page).toHaveURL('/clases');

@@ -1,0 +1,66 @@
+.public-shell, .pulso-home { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+.pulso-home {
+  --gutter: clamp(24px, 5vw, 80px);
+}
+.pulso-home .container, .pulso-home .header-inner { width: min(1520px, calc(100% - var(--gutter) * 2)); }
+.pulso-home h2 { font-weight: 700; font-size: clamp(48px, 5.7vw, 86px); line-height: .98; letter-spacing: -.02em; text-wrap: balance; }
+
+.pulso-hero { container-type: inline-size; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 28px; min-height: calc(100svh - 88px); padding: 48px var(--gutter) 64px; text-align: center; }
+.pulso-hero h1 { width: 100%; margin: 0; font: 700 clamp(80px, min(22vw, 29svh), 310px)/.86 var(--heading); letter-spacing: -.025em; text-transform: uppercase; }
+.pulso-hero h1 > span { display: block; white-space: nowrap; }
+.pulso-hero h1 > span + span { width: fit-content; max-width: 100%; margin: 18px auto 0; padding: .04em .1em .1em; background: var(--action); }
+.pulso-hero mark { background: transparent; color: inherit; }
+.pulso-hero-copy { max-width: 44ch; }
+.pulso-hero-copy p { margin-bottom: 18px; font-size: 14px; text-wrap: pretty; }
+
+.pulso-home .services-section, .pulso-home .about-grid { grid-template-columns: 1fr 1.15fr; gap: 10%; padding-block: 104px; }
+.pulso-home .section-intro h2, .pulso-home .about-grid h2 { max-width: none; }
+.pulso-home .section-intro p { max-width: 36ch; margin-top: 24px; }
+.pulso-home .section-intro .button { margin-top: 12px; }
+.pulso-home .activity-list { border-top: 1px solid var(--ink); }
+.pulso-home .activity { padding: 0; }
+.pulso-home .activity[open] { border-radius: 0; background: transparent; border-bottom-color: var(--line); }
+.pulso-home .activity summary { font: 600 clamp(28px, 3.2vw, 46px)/1.15 var(--heading); min-height: 76px; padding-block: 20px; }
+.pulso-home .activity summary:hover { text-decoration: none; }
+.pulso-home .activity-content { padding: 0 30px 24px 0; }
+.pulso-home .activity-content p { font-size: 14px; }
+.pulso-home .about-grid { padding-block: 64px 88px; }
+.pulso-home .about-grid p { font-size: 16px; }
+
+.pulso-home .plans-section { background: var(--action); padding-block: 80px; }
+.pulso-home .plans-section .section-intro { display: grid; grid-template-columns: 1fr 1.15fr; gap: 10%; margin-bottom: 48px; }
+.pulso-home .plans-section .section-intro p { margin: 20px 0 0; max-width: 54ch; font-size: 14px; }
+.pulso-home .gym-benefits { display: block; font-size: 20px; margin: 0; font-weight: 400; }
+.pulso-home .plan-fold > summary { padding-inline: 0; }
+.pulso-home .plan-summary-heading h3 { font-weight: 600; font-size: clamp(28px, 2.5vw, 36px); line-height: 1.15; letter-spacing: -.02em; }
+.pulso-home .plan-summary-amount { font-weight: 600; }
+.pulso-home .plan-summary-action { min-height: 44px; padding: 8px 12px; border: 1px solid var(--ink); font-size: 12px; text-decoration: none; justify-content: space-between; }
+.pulso-home .plan-fold[open] > summary .plan-summary-action { background: var(--ink); color: var(--paper); }
+.pulso-home .plan-card { background: transparent; padding-inline: 0; padding-block: 12px 32px; }
+.pulso-home .plan-card .plan-price { font-weight: 600; }
+.pulso-home .pulso-plan-action { margin-top: 32px; }
+.pulso-home .state-panel { border-radius: 0; background: var(--paper); }
+.pulso-home .state-panel h2 { font-size: clamp(28px, 3vw, 40px); }
+
+@media (hover: hover) and (pointer: fine) {
+  .pulso-home .activity summary:hover { color: var(--muted); }
+  .pulso-home .plan-fold > summary:hover .plan-summary-action { background: var(--ink); color: var(--paper); }
+}
+@media (max-width: 760px) {
+  .pulso-home { --gutter: 22px; }
+  .pulso-hero { padding: 40px var(--gutter) 56px; gap: 28px; }
+  .pulso-hero h1 { font-size: 26cqi; }
+  .pulso-home .services-section, .pulso-home .about-grid, .pulso-home .plans-section .section-intro, .pulso-home .footer-grid { grid-template-columns: 1fr; gap: 32px; }
+  .pulso-home .services-section { padding-block: 56px; }
+  .pulso-home .about-grid { padding-block: 48px; }
+  .pulso-home .plans-section { padding-block: 48px; }
+  .pulso-home .plans-section .section-intro { margin-bottom: 32px; }
+  .pulso-home .plan-summary-action { justify-self: start; gap: 16px; }
+  .pulso-home .plan-card { grid-template-columns: 1fr; }
+  .pulso-home .footer-visit { padding-block: 56px; }
+  .pulso-home .footer-bottom { flex-wrap: wrap; }
+}
+@media (max-width: 380px) {
+  .pulso-home { --gutter: 18px; }
+  .pulso-hero-copy p { font-size: 13px; }
+}
